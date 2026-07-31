@@ -1,0 +1,122 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Documentation | SpectroDinner™">
+
+	<Navbar />
+
+	<main class="container">
+		<section class="hero">
+			<h1>Documentation</h1>
+
+			<p>
+				Technical documentation, guides and resources
+				for SpectroDinner™ projects.
+			</p>
+		</section>
+
+		<section class="cards">
+
+			<div class="card">
+				<h2>Getting Started</h2>
+				<p>
+					Learn how to install, configure and use
+					our projects.
+				</p>
+			</div>
+
+			<div class="card">
+				<h2>API Reference</h2>
+				<p>
+					Technical references, integrations and
+					developer resources.
+				</p>
+			</div>
+
+			<div class="card">
+				<h2>Guides</h2>
+				<p>
+					Step-by-step tutorials and detailed
+					explanations.
+				</p>
+			</div>
+
+		</section>
+	</main>
+
+	<Footer />
+
+</Layout>
+
+<style>
+.container {
+	max-width: 1200px;
+	margin: 100px auto;
+	padding: 0 32px;
+}
+
+.hero {
+	text-align: center;
+	margin-bottom: 70px;
+}
+
+h1 {
+	font-size: 4rem;
+	margin-bottom: 20px;
+
+	background: linear-gradient(
+		90deg,
+		#ffffff,
+		#0a84ff
+	);
+
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.hero p {
+	color: #9ca3af;
+	font-size: 1.2rem;
+}
+
+.cards {
+	display: grid;
+	grid-template-columns: repeat(
+		auto-fit,
+		minmax(280px, 1fr)
+	);
+
+	gap: 25px;
+}
+
+.card {
+	padding: 30px;
+
+	background: rgba(255,255,255,0.05);
+
+	border: 1px solid rgba(255,255,255,0.1);
+	border-radius: 20px;
+
+	backdrop-filter: blur(15px);
+
+	transition: .25s ease;
+}
+
+.card:hover {
+	transform: translateY(-5px);
+	border-color: rgba(10,132,255,0.5);
+}
+
+.card h2 {
+	margin-top:0;
+	color:white;
+}
+
+.card p {
+	color:#9ca3af;
+	line-height:1.6;
+}
+</style>

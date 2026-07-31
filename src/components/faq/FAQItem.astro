@@ -1,0 +1,659 @@
+---
+interface Props {
+
+	icon: string;
+
+	question: string;
+
+}
+
+const {
+
+	icon,
+
+	question
+
+} = Astro.props;
+---
+
+<details class="faq-item">
+
+
+	<div class="hover-glow"></div>
+
+
+
+	<summary>
+
+
+		<div class="left">
+
+
+			<div class="icon">
+
+				{icon}
+
+			</div>
+
+
+
+			<div class="text">
+
+
+				<h3>
+
+					{question}
+
+				</h3>
+
+
+			</div>
+
+
+		</div>
+
+
+
+
+		<div class="right">
+
+
+			<div class="expand">
+
+				<span></span>
+
+				<span></span>
+
+			</div>
+
+
+		</div>
+
+
+	</summary>
+
+
+
+
+	<div class="content">
+
+		<div class="content-inner">
+
+			<slot />
+
+		</div>
+
+	</div>
+
+
+</details>
+
+
+
+<style>
+
+.faq-item {
+
+	position:relative;
+
+	border-radius:24px;
+
+	overflow:hidden;
+
+
+	background:
+
+		rgba(255,255,255,.04);
+
+
+	border:
+
+		1px solid
+
+		rgba(255,255,255,.08);
+
+
+	backdrop-filter:
+
+		blur(20px);
+
+
+	transition:
+
+		.35s ease;
+
+
+	margin-bottom:24px;
+
+}
+
+
+
+.faq-item:hover {
+
+	transform:
+
+		translateY(-4px);
+
+
+	border-color:
+
+		rgba(10,132,255,.30);
+
+
+	box-shadow:
+
+		0 25px 60px
+
+		rgba(10,132,255,.15);
+
+}
+
+
+
+.hover-glow {
+
+	position:absolute;
+
+	inset:0;
+
+
+	background:
+
+		radial-gradient(
+
+			circle at top,
+
+			rgba(10,132,255,.15),
+
+			transparent 70%
+
+		);
+
+
+	opacity:0;
+
+
+	transition:.35s;
+
+
+	pointer-events:none;
+
+}
+
+
+
+.faq-item:hover .hover-glow {
+
+	opacity:1;
+
+}
+
+
+
+summary {
+
+	list-style:none;
+
+	cursor:pointer;
+
+
+	display:flex;
+
+	align-items:center;
+
+	justify-content:space-between;
+
+
+	padding:30px 34px;
+
+
+	user-select:none;
+
+}
+
+
+
+summary::-webkit-details-marker {
+
+	display:none;
+
+}
+
+
+
+.left {
+
+	display:flex;
+
+	align-items:center;
+
+	gap:22px;
+
+}
+
+
+
+.icon {
+
+	width:62px;
+
+	height:62px;
+
+
+	border-radius:18px;
+
+
+	display:flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+
+	font-size:1.6rem;
+
+
+	background:
+
+		rgba(10,132,255,.12);
+
+
+	border:
+
+		1px solid
+
+		rgba(10,132,255,.25);
+
+
+	flex-shrink:0;
+
+}
+
+
+
+.text h3 {
+
+	margin:0;
+
+
+	font-size:1.25rem;
+
+
+	font-weight:700;
+
+
+	color:white;
+
+
+	letter-spacing:-.5px;
+
+}
+
+
+
+.right {
+
+	display:flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+}
+
+
+
+.expand {
+
+	position:relative;
+
+
+	width:24px;
+
+	height:24px;
+
+}
+
+.expand span {
+
+	position:absolute;
+
+	left:50%;
+
+	top:50%;
+
+	width:20px;
+
+	height:2px;
+
+	border-radius:999px;
+
+	background:#0A84FF;
+
+	transform:
+
+		translate(-50%,-50%);
+
+	transition:
+
+		.35s ease;
+
+}
+
+
+
+.expand span:last-child {
+
+	transform:
+
+		translate(-50%,-50%)
+
+		rotate(90deg);
+
+}
+
+
+
+.faq-item[open] .expand span:last-child {
+
+	transform:
+
+		translate(-50%,-50%)
+
+		rotate(0deg);
+
+	opacity:0;
+
+}
+
+
+
+.faq-item[open] {
+
+	border-color:
+
+		rgba(10,132,255,.35);
+
+
+	box-shadow:
+
+		0 25px 70px
+
+		rgba(10,132,255,.18);
+
+}
+
+
+
+.faq-item[open] .hover-glow {
+
+	opacity:1;
+
+}
+
+
+
+.content {
+
+	display:grid;
+
+	grid-template-rows:0fr;
+
+	transition:
+
+		grid-template-rows .35s ease;
+
+}
+
+
+
+.faq-item[open] .content {
+
+	grid-template-rows:1fr;
+
+}
+
+
+
+.content-inner {
+
+	overflow:hidden;
+
+
+	padding:
+
+		0 34px 0 118px;
+
+}
+
+
+
+.content-inner > *:first-child {
+
+	margin-top:6px;
+
+}
+
+
+
+.content-inner > *:last-child {
+
+	margin-bottom:34px;
+
+}
+
+
+
+.content-inner p {
+
+	margin:18px 0;
+
+
+	color:#B9C0CB;
+
+
+	font-size:1rem;
+
+
+	line-height:1.95;
+
+}
+
+
+
+.content-inner ul {
+
+	margin:
+
+		18px 0 22px 22px;
+
+	padding:0;
+
+}
+
+
+
+.content-inner li {
+
+	margin-bottom:10px;
+
+	color:#B9C0CB;
+
+	line-height:1.8;
+
+}
+
+
+
+.content-inner strong {
+
+	color:white;
+
+	font-weight:700;
+
+}
+
+
+
+.content-inner code {
+
+	padding:3px 8px;
+
+	border-radius:8px;
+
+	font-size:.92rem;
+
+	font-family:
+
+		"JetBrains Mono",
+
+		monospace;
+
+	background:
+
+		rgba(255,255,255,.06);
+
+	border:
+
+		1px solid
+
+		rgba(255,255,255,.08);
+
+	color:#7CC6FF;
+
+}
+
+
+
+.content-inner a {
+
+	color:#58AEFF;
+
+	text-decoration:none;
+
+	transition:.25s;
+
+}
+
+
+
+.content-inner a:hover {
+
+	color:white;
+
+}
+
+
+
+@media (max-width:768px) {
+
+	summary {
+
+		padding:24px;
+
+		align-items:flex-start;
+
+	}
+
+
+
+	.left {
+
+		gap:16px;
+
+	}
+
+
+
+	.icon {
+
+		width:52px;
+
+		height:52px;
+
+		font-size:1.3rem;
+
+		border-radius:15px;
+
+	}
+
+
+
+	.text h3 {
+
+		font-size:1.05rem;
+
+		line-height:1.45;
+
+	}
+
+
+
+	.content-inner {
+
+		padding:
+
+			0 24px 0 92px;
+
+	}
+
+}
+
+
+
+@media (max-width:520px) {
+
+	summary {
+
+		padding:20px;
+
+	}
+
+
+
+	.left {
+
+		align-items:flex-start;
+
+	}
+
+
+
+	.icon {
+
+		width:46px;
+
+		height:46px;
+
+		font-size:1.15rem;
+
+		border-radius:14px;
+
+	}
+
+
+
+	.content-inner {
+
+		padding:
+
+			0 20px 0 20px;
+
+	}
+
+
+
+	.content-inner p,
+
+	.content-inner li {
+
+		font-size:.96rem;
+
+		line-height:1.85;
+
+	}
+
+}
+
+</style>

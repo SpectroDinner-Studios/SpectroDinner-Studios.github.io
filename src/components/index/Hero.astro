@@ -1,0 +1,260 @@
+<section class="hero">
+	<div class="glow"></div>
+
+	<div class="content">
+		<div class="logo-container">
+			<img 
+				src="/logo.png" alt="SpectroDinner Logo"
+			/>
+		</div>
+
+		<h1>
+			SpectroDinner™
+		</h1>
+
+		<h2>
+			Building software, games and digital experiences.
+		</h2>
+
+		<p class="description">
+			SpectroDinner is an independent software and game development studio focused on creating modern applications, immersive experiences and innovative technologies. Every project is designed with performance, quality and long-term maintainability in mind.
+		</p>
+
+		<div class="buttons">
+			<a
+				href="/projects"
+				class="primary"
+			>
+				Explore Projects →
+			</a>
+
+			<a
+				href="/documentation"
+				class="secondary"
+			>
+				Documentation
+			</a>
+		</div>
+
+		<div class="hero-tags">
+			SOFTWARE ENGINEERING • GAME DEVELOPMENT • OPEN SOURCE
+		</div>
+	</div>
+</section>
+
+<style>
+
+.hero {
+	min-height: 85vh;
+	width: 100%;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	position: relative;
+	overflow: hidden;
+
+	padding: 80px 32px;
+}
+
+.glow {
+	position: absolute;
+
+	width: 650px;
+	height: 650px;
+
+	background:
+		radial-gradient(
+			circle,
+			rgba(10,132,255,.15),
+			transparent 70%
+		);
+
+	filter: blur(70px);
+
+	z-index: -1;
+}
+
+.content {
+	width: 100%;
+	max-width: 900px;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	text-align: center;
+}
+
+.logo-container {
+	width: 120px;
+	height: 120px;
+
+	margin-bottom: 45px;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	perspective: 1000px;
+}
+
+.logo {
+	width: 100%;
+	height: 100%;
+
+	object-fit: contain;
+
+	filter:
+		drop-shadow(
+			0 0 20px
+			rgba(10,132,255,.35)
+		);
+
+	transform-style: preserve-3d;
+
+	animation:
+		logoSpin 18s linear infinite;
+}
+
+@keyframes logoSpin {
+	from {
+		transform: rotateY(0deg);
+	}
+
+	to {
+		transform: rotateY(360deg);
+	}
+}
+
+h1 {
+	margin: 0;
+
+	font-size: clamp(3rem,7vw,5.5rem);
+	font-weight: 800;
+
+	letter-spacing: -3px;
+
+	color: white;
+}
+
+h2 {
+	margin: 20px 0 0;
+
+	font-size: clamp(1.8rem,4vw,3rem);
+	font-weight: 500;
+
+	color: #9CA3AF;
+
+	letter-spacing: -1px;
+}
+
+.description {
+	margin-top: 32px;
+
+	max-width: 760px;
+
+	font-size: 1.15rem;
+	line-height: 1.8;
+
+	color: #B6BDC9;
+
+	letter-spacing: -.2px;
+}
+
+.buttons {
+	display: flex;
+
+	gap: 20px;
+
+	margin-top: 50px;
+}
+
+.buttons a {
+	padding: 15px 32px;
+
+	border-radius: 14px;
+
+	text-decoration: none;
+
+	font-weight: 600;
+
+	transition: .25s ease;
+}
+
+.primary {
+	background: #0A84FF;
+	color: white;
+}
+
+.primary:hover {
+	transform: translateY(-3px);
+
+	box-shadow:
+		0 15px 40px
+		rgba(10,132,255,.35);
+}
+
+.secondary {
+	background:
+		rgba(255,255,255,.05);
+
+	border:
+		1px solid
+		rgba(255,255,255,.12);
+
+	color: white;
+}
+
+.secondary:hover {
+	background:
+		rgba(255,255,255,.1);
+
+	transform: translateY(-3px);
+}
+
+.hero-tags {
+	margin-top: 48px;
+
+	font-size: .9rem;
+	font-weight: 600;
+
+	letter-spacing: 2px;
+	text-transform: uppercase;
+
+	color: #7C8593;
+}
+
+@media (max-width: 768px) {
+
+	.hero {
+		padding: 60px 24px;
+	}
+
+	.logo-container {
+		width: 90px;
+		height: 90px;
+	}
+
+	.description {
+		font-size: 1rem;
+		line-height: 1.7;
+	}
+
+	.buttons {
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.buttons a {
+		width: 100%;
+	}
+
+	.hero-tags {
+		font-size: .8rem;
+		line-height: 1.8;
+	}
+}
+
+</style>

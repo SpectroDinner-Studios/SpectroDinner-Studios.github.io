@@ -1,10 +1,27 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+
+import Hero from "../components/index/Hero.astro";
+import FeaturedProject from "../components/index/FeaturedProject.astro";
+import WhatWeBuild from "../components/index/WhatWeBuild.astro";
+import Leadership from "../components/index/Leadership.astro";
+
+import FAQ from "../components/faq/FAQ.astro";
 ---
 
 <Layout>
-  <main style="display:flex;justify-content:center;align-items:center;height:80vh;flex-direction:column;">
-    <h1>SpectroDinner™</h1>
-    <p>Building Open Source Software.</p>
-  </main>
+	<Navbar />
+
+	<main>
+		<Hero />
+		<FeaturedProject />
+		<WhatWeBuild />
+		<Leadership/>
+		<FAQ/>
+	</main>
+
+	<Footer />
 </Layout>

@@ -1,0 +1,141 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="About | SpectroDinner™">
+
+	<Navbar />
+
+	<main class="container">
+
+		<section class="hero">
+			<h1>About SpectroDinner™</h1>
+
+			<p>
+				A creative technology studio focused on software,
+				games and digital experiences.
+			</p>
+		</section>
+
+
+		<section class="content">
+
+			<div class="card">
+				<h2>Who We Are</h2>
+
+				<p>
+					SpectroDinner™ is an independent development
+					brand creating innovative projects through
+					code, creativity and technology.
+				</p>
+			</div>
+
+
+			<div class="card">
+				<h2>Our Vision</h2>
+
+				<p>
+					Building unique digital experiences that
+					combine engineering, design and imagination.
+				</p>
+			</div>
+
+
+			<div class="card">
+				<h2>Technology</h2>
+
+				<p>
+					Focused on modern development, game creation,
+					automation and experimental software.
+				</p>
+			</div>
+
+		</section>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+
+<style>
+.container {
+	max-width: 1200px;
+	margin: 100px auto;
+	padding: 0 32px;
+}
+
+
+.hero {
+	text-align:center;
+	margin-bottom:70px;
+}
+
+
+h1 {
+	font-size:4rem;
+	margin-bottom:20px;
+
+	background:linear-gradient(
+		90deg,
+		#ffffff,
+		#0a84ff
+	);
+
+	-webkit-background-clip:text;
+	-webkit-text-fill-color:transparent;
+}
+
+
+.hero p {
+	color:#9ca3af;
+	font-size:1.2rem;
+}
+
+
+.content {
+	display:grid;
+
+	grid-template-columns:
+		repeat(auto-fit, minmax(280px, 1fr));
+
+	gap:25px;
+}
+
+
+.card {
+	padding:30px;
+
+	background:rgba(255,255,255,0.05);
+
+	border:1px solid rgba(255,255,255,0.1);
+
+	border-radius:20px;
+
+	backdrop-filter:blur(15px);
+
+	transition:.25s ease;
+}
+
+
+.card:hover {
+	transform:translateY(-5px);
+
+	border-color:rgba(10,132,255,0.5);
+}
+
+
+.card h2 {
+	margin-top:0;
+	color:white;
+}
+
+
+.card p {
+	color:#9ca3af;
+	line-height:1.6;
+}
+</style>

@@ -1,0 +1,208 @@
+---
+import FAQHeader from "./FAQHeader.astro";
+import FAQCategory from "./FAQCategory.astro";
+import FAQItem from "./FAQItem.astro";
+import FAQCTA from "./FAQCTA.astro";
+---
+
+<section class="faq" id="faq">
+
+	<div class="container">
+
+		<FAQHeader />
+
+		<FAQCategory title="General">
+
+			<FAQItem
+				icon="🚀"
+				question="What is SpectroDinner™?"
+			>
+				<p>
+					SpectroDinner™ is an independent software and
+					game development studio focused on creating
+					digital products, interactive experiences and
+					innovative technologies.
+				</p>
+
+				<p>
+					The studio combines software engineering,
+					game development and experimental technologies
+					to build solutions designed with performance,
+					quality and long-term maintainability in mind.
+				</p>
+			</FAQItem>
+
+			<FAQItem
+				icon="👤"
+				question="Who is behind SpectroDinner™?"
+			>
+				<p>
+					SpectroDinner™ was founded and is led by
+					Elmoderador, Founder, CEO & Lead Developer.
+				</p>
+
+				<p>
+					He is responsible for the studio's vision,
+					software architecture and development process,
+					ensuring every project follows the same quality
+					standards and long-term philosophy.
+				</p>
+			</FAQItem>
+
+			<FAQItem
+				icon="📅"
+				question="When was SpectroDinner™ founded?"
+			>
+				<p>
+					SpectroDinner™ was founded in 2024 with the
+					objective of creating software, games and
+					technology projects while continuously
+					improving development practices.
+				</p>
+			</FAQItem>
+
+		</FAQCategory>
+
+
+
+		<FAQCategory title="Projects">
+
+			<FAQItem
+				icon="🎮"
+				question="What kind of projects does SpectroDinner™ create?"
+			>
+				<p>
+					The studio develops software applications,
+					video games, Minecraft plugins, developer
+					tools and experimental technologies.
+				</p>
+
+				<p>
+					Every project follows the same principles:
+					performance, maintainability, clean
+					architecture and long-term support whenever
+					possible.
+				</p>
+			</FAQItem>
+
+			<FAQItem
+				icon="⛏️"
+				question="What is TimeEconomyPlugin?"
+			>
+				<p>
+					TimeEconomyPlugin is one of
+					SpectroDinner™'s featured projects.
+				</p>
+
+				<p>
+					It is a large-scale Minecraft plugin built
+					using Java and the Paper API, focused on
+					custom gameplay mechanics, progression
+					systems and advanced server features.
+				</p>
+			</FAQItem>
+
+			<FAQItem
+				icon="🌐"
+				question="Are your projects open source?"
+			>
+				<p>
+					Some projects are publicly available through
+					GitHub, while others remain private until
+					they reach a stable release.
+				</p>
+
+				<p>
+					Public repositories are intended to encourage
+					learning, collaboration and transparency
+					within the developer community.
+				</p>
+			</FAQItem>
+
+		</FAQCategory>
+
+
+
+		<FAQCategory title="Development">
+
+			<FAQItem
+				icon="🛠️"
+				question="What technologies does SpectroDinner™ use?"
+			>
+				<p>
+					Technology depends on each project's needs.
+					Commonly used languages include Java,
+					TypeScript, JavaScript, Python and C++.
+				</p>
+
+				<p>
+					Modern development workflows, Git,
+					documentation and quality standards are part
+					of every project.
+				</p>
+			</FAQItem>
+
+			<FAQItem
+				icon="🤝"
+				question="Can I collaborate with SpectroDinner™?"
+			>
+				<p>
+					Collaboration opportunities may become
+					available depending on the project's
+					requirements.
+				</p>
+
+				<p>
+					The best way to stay informed is through our
+					official GitHub repositories and future
+					development updates.
+				</p>
+			</FAQItem>
+
+		</FAQCategory>
+
+		<FAQCTA />
+
+	</div>
+
+</section>
+
+<style>
+
+.faq {
+
+	padding:120px 32px;
+
+}
+
+.container {
+
+	max-width:1100px;
+
+	margin:auto;
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:70px;
+
+}
+
+@media (max-width:768px) {
+
+	.faq {
+
+		padding:90px 20px;
+
+	}
+
+	.container {
+
+		gap:50px;
+
+	}
+
+}
+
+</style>

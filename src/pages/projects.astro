@@ -1,0 +1,42 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+
+import ProjectHero from "../components/projects/ProjectHero.astro";
+import ProjectStats from "../components/projects/ProjectStats.astro";
+import FeaturedProjectCard from "../components/projects/FeaturedProjectCard.astro";
+import ProjectGrid from "../components/projects/ProjectGrid.astro";
+import ProjectsCTA from "../components/projects/ProjectsCTA.astro";
+---
+
+<Layout>
+
+	<Navbar />
+
+
+	<main class="projects-page">
+
+
+		<ProjectHero />
+
+
+		<ProjectStats />
+
+
+		<FeaturedProjectCard />
+
+
+		<ProjectGrid />
+
+
+		<ProjectsCTA />
+
+
+	</main>
+
+
+	<Footer />
+
+</Layout>

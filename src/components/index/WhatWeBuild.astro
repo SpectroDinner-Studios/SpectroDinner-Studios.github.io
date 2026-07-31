@@ -1,0 +1,462 @@
+<section class="services">
+
+	<div class="container">
+
+
+		<div class="header">
+
+			<span>
+				WHAT WE BUILD
+			</span>
+
+
+			<h2>
+				Engineering digital experiences.
+			</h2>
+
+
+			<p>
+				SpectroDinner™ develops software, games and
+				technologies focused on performance, creativity
+				and long-term reliability.
+			</p>
+
+		</div>
+
+
+
+
+		<div class="grid">
+
+
+			<div class="card">
+
+				<div class="icon">
+					💻
+				</div>
+
+
+				<h3>
+					Software Engineering
+				</h3>
+
+
+				<p>
+					Building modern applications, tools and
+					systems designed with scalability,
+					maintainability and performance in mind.
+				</p>
+
+
+				<div class="tags">
+
+					<span>
+						Java
+					</span>
+
+					<span>
+						TypeScript
+					</span>
+
+					<span>
+						Python
+					</span>
+
+				</div>
+
+			</div>
+
+
+
+
+
+			<div class="card">
+
+				<div class="icon">
+					🎮
+				</div>
+
+
+				<h3>
+					Game Development
+				</h3>
+
+
+				<p>
+					Creating interactive worlds and experiences
+					that combine technology, gameplay and
+					creative design.
+				</p>
+
+
+				<div class="tags">
+
+					<span>
+						Unity
+					</span>
+
+					<span>
+						Unreal Engine
+					</span>
+
+					<span>
+						Roblox
+					</span>
+
+				</div>
+
+			</div>
+
+
+
+
+
+			<div class="card">
+
+				<div class="icon">
+					⛏️
+				</div>
+
+
+				<h3>
+					Minecraft Development
+				</h3>
+
+
+				<p>
+					Developing custom Minecraft experiences,
+					plugins and gameplay systems with powerful
+					server-side technologies.
+				</p>
+
+
+				<div class="tags">
+
+					<span>
+						Paper API
+					</span>
+
+					<span>
+						Java
+					</span>
+
+					<span>
+						Bukkit
+					</span>
+
+				</div>
+
+			</div>
+
+
+
+
+
+			<div class="card">
+
+				<div class="icon">
+					🌐
+				</div>
+
+
+				<h3>
+					Open Source
+				</h3>
+
+
+				<p>
+					Sharing tools and projects with developers
+					while promoting collaboration and
+					continuous improvement.
+				</p>
+
+
+				<div class="tags">
+
+					<span>
+						GitHub
+					</span>
+
+					<span>
+						Community
+					</span>
+
+					<span>
+						Open Code
+					</span>
+
+				</div>
+
+			</div>
+
+
+
+		</div>
+
+	</div>
+
+</section>
+
+
+
+<style>
+
+.services {
+
+	padding:120px 32px;
+
+}
+
+
+
+.container {
+
+	max-width:1200px;
+
+	margin:auto;
+
+}
+
+
+
+.header {
+
+	text-align:center;
+
+	margin-bottom:70px;
+
+}
+
+
+
+.header span {
+
+	font-size:.85rem;
+
+	font-weight:700;
+
+	letter-spacing:3px;
+
+	color:#0A84FF;
+
+}
+
+
+
+.header h2 {
+
+	margin-top:20px;
+
+	font-size:
+
+		clamp(2.5rem,5vw,4rem);
+
+
+	color:white;
+
+	letter-spacing:-2px;
+
+}
+
+
+
+.header p {
+
+	max-width:750px;
+
+	margin:20px auto 0;
+
+	color:#9CA3AF;
+
+	line-height:1.8;
+
+	font-size:1.1rem;
+
+}
+
+
+
+.grid {
+
+	display:grid;
+
+	grid-template-columns:
+
+		repeat(2,1fr);
+
+
+	gap:30px;
+
+}
+
+
+
+.card {
+
+	padding:40px;
+
+	border-radius:28px;
+
+
+	background:
+
+		rgba(255,255,255,.04);
+
+
+	border:
+
+		1px solid
+
+		rgba(255,255,255,.1);
+
+
+	transition:.3s ease;
+
+
+	position:relative;
+
+	overflow:hidden;
+
+}
+
+
+
+.card::before {
+
+	content:"";
+
+
+	position:absolute;
+
+	inset:0;
+
+
+	background:
+
+		radial-gradient(
+
+			circle at top right,
+
+			rgba(10,132,255,.15),
+
+			transparent 45%
+
+		);
+
+
+	opacity:0;
+
+	transition:.3s ease;
+
+}
+
+
+
+.card:hover::before {
+
+	opacity:1;
+
+}
+
+
+
+.card:hover {
+
+	transform:
+
+		translateY(-8px);
+
+
+	border-color:
+
+		rgba(10,132,255,.4);
+
+}
+
+
+
+.icon {
+
+	font-size:2.5rem;
+
+	margin-bottom:25px;
+
+}
+
+
+
+.card h3 {
+
+	margin:0 0 15px;
+
+	color:white;
+
+	font-size:1.6rem;
+
+}
+
+
+
+.card p {
+
+	color:#9CA3AF;
+
+	line-height:1.8;
+
+}
+
+
+
+.tags {
+
+	display:flex;
+
+	flex-wrap:wrap;
+
+	gap:10px;
+
+	margin-top:25px;
+
+}
+
+
+
+.tags span {
+
+	padding:7px 14px;
+
+	border-radius:999px;
+
+
+	background:
+
+		rgba(10,132,255,.12);
+
+
+	color:#7DB7FF;
+
+	font-size:.85rem;
+
+}
+
+
+
+@media(max-width:900px) {
+
+
+	.grid {
+
+		grid-template-columns:1fr;
+
+	}
+
+
+	.card {
+
+		padding:30px;
+
+	}
+
+}
+
+</style>
