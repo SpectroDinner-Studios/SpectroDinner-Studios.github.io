@@ -1,0 +1,301 @@
+<section class="project-stats">
+
+	<div class="stats">
+
+
+		<div class="card">
+
+			<h3>
+				2024
+			</h3>
+
+			<span>
+				Founded
+			</span>
+
+		</div>
+
+
+
+		<div class="card">
+
+			<h3>
+				1+
+			</h3>
+
+			<span>
+				Active Projects
+			</span>
+
+		</div>
+
+
+
+		<div class="card">
+
+			<h3>
+				5+
+			</h3>
+
+			<span>
+				Technologies
+			</span>
+
+		</div>
+
+
+
+		<div class="card">
+
+			<h3>
+				Open
+			</h3>
+
+			<span>
+				Development Model
+			</span>
+
+		</div>
+
+
+	</div>
+
+
+
+	<div class="divider">
+
+		<span></span>
+
+	</div>
+
+</section>
+
+
+
+<style>
+
+.project-stats {
+
+	padding:70px 0 0;
+
+}
+
+
+
+.stats {
+
+	display:grid;
+
+	grid-template-columns:
+
+		repeat(4,1fr);
+
+	gap:25px;
+
+}
+
+
+
+.card {
+
+	position:relative;
+
+	padding:32px 24px;
+
+	border-radius:24px;
+
+	background:
+
+		rgba(255,255,255,.04);
+
+	border:
+
+		1px solid
+
+		rgba(255,255,255,.10);
+
+	backdrop-filter:
+
+		blur(20px);
+
+	transition:.3s ease;
+
+	overflow:hidden;
+
+}
+
+
+
+.card::before {
+
+	content:"";
+
+	position:absolute;
+
+	inset:0;
+
+	background:
+
+		linear-gradient(
+
+			135deg,
+
+			rgba(10,132,255,.10),
+
+			transparent 60%
+
+		);
+
+	opacity:0;
+
+	transition:.3s;
+
+}
+
+
+
+.card:hover {
+
+	transform:
+
+		translateY(-6px);
+
+	border-color:
+
+		rgba(10,132,255,.35);
+
+	box-shadow:
+
+		0 20px 45px
+
+		rgba(10,132,255,.15);
+
+}
+
+
+
+.card:hover::before {
+
+	opacity:1;
+
+}
+
+
+
+.card h3 {
+
+	margin:0;
+
+	font-size:2rem;
+
+	font-weight:800;
+
+	color:white;
+
+}
+
+
+
+.card span {
+
+	display:block;
+
+	margin-top:10px;
+
+	color:#9CA3AF;
+
+	font-size:.95rem;
+
+	letter-spacing:.5px;
+
+}
+
+
+
+.divider {
+
+	display:flex;
+
+	justify-content:center;
+
+	margin-top:80px;
+
+}
+
+
+
+.divider span {
+
+	width:180px;
+
+	height:4px;
+
+	border-radius:999px;
+
+	background:
+
+		linear-gradient(
+
+			90deg,
+
+			transparent,
+
+			#0A84FF,
+
+			transparent
+
+		);
+
+	box-shadow:
+
+		0 0 25px
+
+		rgba(10,132,255,.45);
+
+}
+
+
+
+@media (max-width:900px) {
+
+	.stats {
+
+		grid-template-columns:
+
+			repeat(2,1fr);
+
+	}
+
+}
+
+
+
+@media (max-width:600px) {
+
+	.stats {
+
+		grid-template-columns:1fr;
+
+		gap:18px;
+
+	}
+
+
+
+	.card {
+
+		padding:26px;
+
+	}
+
+
+
+	.divider {
+
+		margin-top:55px;
+
+	}
+
+}
+
+</style>

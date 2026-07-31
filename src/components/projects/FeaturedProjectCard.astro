@@ -1,0 +1,392 @@
+<section class="flagship">
+
+	<div class="container">
+
+
+		<span class="eyebrow">
+			FLAGSHIP PROJECT
+		</span>
+
+
+		<div class="card">
+
+
+			<div class="preview">
+
+				<img
+					src="/TEP.png"
+					alt="TimeEconomyPlugin Preview"
+					class="TEP"
+				/>
+
+				<span class="status">
+					● Active Development
+				</span>
+
+			</div>
+
+
+
+			<div class="info">
+
+				<h2>
+					TimeEconomyPlugin
+				</h2>
+
+
+				<p>
+					A large-scale Minecraft plugin built with the
+					Paper API, introducing a time-based economy and
+					progression system on top of custom gameplay
+					mechanics and advanced server-side features.
+					Designed for performance, scalability and
+					long-term maintainability.
+				</p>
+
+
+				<div class="tags">
+
+					<span>Java</span>
+
+					<span>Paper API</span>
+
+					<span>Minecraft</span>
+
+					<span>Plugin Development</span>
+
+				</div>
+
+
+				<div class="buttons">
+
+					<a
+						href="https://github.com/elmoderador"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="primary"
+					>
+						View on GitHub ↗
+					</a>
+
+					<a
+						href="/documentation"
+						class="secondary"
+					>
+						Documentation
+					</a>
+
+				</div>
+
+			</div>
+
+
+		</div>
+
+
+	</div>
+
+</section>
+
+
+
+<style>
+
+.flagship {
+
+	padding:100px 32px 0;
+
+}
+
+
+
+.container {
+
+	max-width:1200px;
+
+	margin:auto;
+
+}
+
+
+
+.eyebrow {
+
+	display:block;
+
+	font-size:.85rem;
+
+	letter-spacing:3px;
+
+	color:#0A84FF;
+
+	font-weight:700;
+
+	margin-bottom:30px;
+
+}
+
+
+
+.card {
+
+	display:grid;
+
+	grid-template-columns:1fr 1fr;
+
+	gap:50px;
+
+	padding:50px;
+
+	border-radius:30px;
+
+	background:
+
+		rgba(255,255,255,.04);
+
+	border:
+
+		1px solid
+
+		rgba(255,255,255,.1);
+
+	backdrop-filter:
+
+		blur(20px);
+
+}
+
+
+
+.preview {
+
+	position:relative;
+
+	display:flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+}
+
+
+
+.preview img {
+
+	width:75%;
+
+	max-height:280px;
+
+	object-fit:contain;
+
+	border-radius:18px;
+
+	box-shadow:
+
+		0 15px 40px
+
+		rgba(0,0,0,.35);
+
+}
+
+
+
+.status {
+
+	position:absolute;
+
+	bottom:10px;
+
+	left:50%;
+
+	transform:translateX(-50%);
+
+	padding:8px 16px;
+
+	border-radius:999px;
+
+	background:
+
+		rgba(5,5,5,.75);
+
+	border:
+
+		1px solid
+
+		rgba(255,255,255,.12);
+
+	backdrop-filter:blur(10px);
+
+	color:#4ADE80;
+
+	font-size:.8rem;
+
+	font-weight:600;
+
+	letter-spacing:.5px;
+
+	white-space:nowrap;
+
+}
+
+
+
+.info h2 {
+
+	margin:0 0 20px;
+
+	font-size:2.2rem;
+
+	color:white;
+
+	letter-spacing:-1px;
+
+}
+
+
+
+.info p {
+
+	color:#B6BDC9;
+
+	line-height:1.8;
+
+}
+
+
+
+.tags {
+
+	display:flex;
+
+	flex-wrap:wrap;
+
+	gap:12px;
+
+	margin-top:30px;
+
+}
+
+
+
+.tags span {
+
+	padding:8px 16px;
+
+	border-radius:999px;
+
+	background:
+
+		rgba(10,132,255,.12);
+
+	color:#7DB7FF;
+
+	font-size:.9rem;
+
+}
+
+
+
+.buttons {
+
+	display:flex;
+
+	gap:15px;
+
+	margin-top:40px;
+
+}
+
+
+
+.buttons a {
+
+	padding:14px 28px;
+
+	border-radius:14px;
+
+	text-decoration:none;
+
+	font-weight:600;
+
+	transition:.25s ease;
+
+}
+
+
+
+.primary {
+
+	background:#0A84FF;
+
+	color:white;
+
+}
+
+
+
+.primary:hover {
+
+	transform:translateY(-3px);
+
+	box-shadow:
+
+		0 15px 40px
+
+		rgba(10,132,255,.35);
+
+}
+
+
+
+.secondary {
+
+	border:
+
+		1px solid
+
+		rgba(255,255,255,.15);
+
+	color:white;
+
+}
+
+
+
+.secondary:hover {
+
+	background:
+
+		rgba(255,255,255,.08);
+
+	transform:translateY(-3px);
+
+}
+
+
+
+@media(max-width:900px) {
+
+	.card {
+
+		grid-template-columns:1fr;
+
+		padding:30px;
+
+	}
+
+	.buttons {
+
+		flex-direction:column;
+
+	}
+
+	.preview img {
+
+		width:90%;
+
+	}
+
+}
+
+</style>

@@ -1,0 +1,405 @@
+<section class="project-grid">
+
+	<div class="container">
+
+
+		<div class="header">
+
+			<span class="eyebrow">
+				IN THE PIPELINE
+			</span>
+
+			<h2>
+				Where we're headed next.
+			</h2>
+
+			<p>
+				Beyond our flagship release, these are the areas
+				SpectroDinner™ is actively investing in. Public
+				repositories go live as each project reaches a
+				stable milestone.
+			</p>
+
+		</div>
+
+
+
+		<div class="grid">
+
+
+			<div class="card">
+
+				<div class="top">
+
+					<div class="icon">
+						💻
+					</div>
+
+					<span class="status planning">
+						In Development
+					</span>
+
+				</div>
+
+				<h3>
+					Software Engineering
+				</h3>
+
+				<p>
+					Internal tools and applications built with
+					TypeScript and Python, focused on automation
+					and developer productivity.
+				</p>
+
+				<div class="tags">
+
+					<span>TypeScript</span>
+
+					<span>Python</span>
+
+				</div>
+
+			</div>
+
+
+
+			<div class="card">
+
+				<div class="top">
+
+					<div class="icon">
+						🎮
+					</div>
+
+					<span class="status planned">
+						Planned
+					</span>
+
+				</div>
+
+				<h3>
+					Game Development
+				</h3>
+
+				<p>
+					Early prototyping for an original game built
+					on Unity, exploring core mechanics before
+					full production begins.
+				</p>
+
+				<div class="tags">
+
+					<span>Unity</span>
+
+					<span>C#</span>
+
+				</div>
+
+			</div>
+
+
+
+			<div class="card">
+
+				<div class="top">
+
+					<div class="icon">
+						🌐
+					</div>
+
+					<span class="status planning">
+						Ongoing
+					</span>
+
+				</div>
+
+				<h3>
+					Open Source
+				</h3>
+
+				<p>
+					Publishing selected tools and libraries from
+					internal development as they mature, to give
+					back to the community.
+				</p>
+
+				<div class="tags">
+
+					<span>GitHub</span>
+
+					<span>Community</span>
+
+				</div>
+
+			</div>
+
+
+		</div>
+
+	</div>
+
+</section>
+
+
+
+<style>
+
+.project-grid {
+
+	padding:120px 32px;
+
+}
+
+
+
+.container {
+
+	max-width:1200px;
+
+	margin:auto;
+
+}
+
+
+
+.header {
+
+	text-align:center;
+
+	margin-bottom:60px;
+
+}
+
+
+
+.eyebrow {
+
+	display:block;
+
+	font-size:.85rem;
+
+	letter-spacing:3px;
+
+	color:#0A84FF;
+
+	font-weight:700;
+
+}
+
+
+
+.header h2 {
+
+	margin-top:20px;
+
+	font-size:
+
+		clamp(2.2rem,4.5vw,3.5rem);
+
+	color:white;
+
+	letter-spacing:-2px;
+
+}
+
+
+
+.header p {
+
+	max-width:650px;
+
+	margin:20px auto 0;
+
+	color:#9CA3AF;
+
+	line-height:1.8;
+
+	font-size:1.05rem;
+
+}
+
+
+
+.grid {
+
+	display:grid;
+
+	grid-template-columns:
+
+		repeat(3,1fr);
+
+	gap:30px;
+
+}
+
+
+
+.card {
+
+	padding:36px;
+
+	border-radius:26px;
+
+	background:
+
+		rgba(255,255,255,.04);
+
+	border:
+
+		1px solid
+
+		rgba(255,255,255,.1);
+
+	transition:.3s ease;
+
+}
+
+
+
+.card:hover {
+
+	transform:
+
+		translateY(-6px);
+
+	border-color:
+
+		rgba(10,132,255,.35);
+
+}
+
+
+
+.top {
+
+	display:flex;
+
+	align-items:center;
+
+	justify-content:space-between;
+
+	margin-bottom:22px;
+
+}
+
+
+
+.icon {
+
+	font-size:2.2rem;
+
+}
+
+
+
+.status {
+
+	padding:6px 14px;
+
+	border-radius:999px;
+
+	font-size:.75rem;
+
+	font-weight:700;
+
+	letter-spacing:.5px;
+
+	text-transform:uppercase;
+
+	white-space:nowrap;
+
+}
+
+
+
+.status.planning {
+
+	background:
+
+		rgba(10,132,255,.14);
+
+	color:#7DB7FF;
+
+}
+
+
+
+.status.planned {
+
+	background:
+
+		rgba(255,255,255,.08);
+
+	color:#9CA3AF;
+
+}
+
+
+
+.card h3 {
+
+	margin:0 0 12px;
+
+	color:white;
+
+	font-size:1.4rem;
+
+}
+
+
+
+.card p {
+
+	color:#9CA3AF;
+
+	line-height:1.75;
+
+	font-size:.95rem;
+
+}
+
+
+
+.tags {
+
+	display:flex;
+
+	flex-wrap:wrap;
+
+	gap:10px;
+
+	margin-top:22px;
+
+}
+
+
+
+.tags span {
+
+	padding:6px 14px;
+
+	border-radius:999px;
+
+	background:
+
+		rgba(255,255,255,.06);
+
+	color:#B6BDC9;
+
+	font-size:.82rem;
+
+}
+
+
+
+@media(max-width:900px) {
+
+	.grid {
+
+		grid-template-columns:1fr;
+
+	}
+
+}
+
+</style>

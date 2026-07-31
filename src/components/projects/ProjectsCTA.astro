@@ -1,0 +1,334 @@
+<section class="projects-cta">
+
+	<div class="background-glow glow-left"></div>
+
+	<div class="background-glow glow-right"></div>
+
+
+
+	<div class="content">
+
+
+		<span class="badge">
+			STAY UPDATED
+		</span>
+
+
+
+		<h2>
+			Follow the development.
+		</h2>
+
+
+
+		<p class="description">
+			Every repository, release and update is published
+			through our official GitHub as it becomes available.
+
+			<br><br>
+
+			Public projects are meant to encourage learning,
+			collaboration and transparency within the developer
+			community.
+		</p>
+
+
+
+		<div class="actions">
+
+			<a
+				href="https://github.com/elmoderador"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="github"
+			>
+				GitHub ↗
+			</a>
+
+			<a
+				href="/documentation"
+				class="documentation"
+			>
+				Documentation →
+			</a>
+
+		</div>
+
+
+	</div>
+
+</section>
+
+
+
+<style>
+
+.projects-cta {
+
+	position:relative;
+
+	padding:140px 32px;
+
+	overflow:hidden;
+
+	text-align:center;
+
+}
+
+
+
+.content {
+
+	position:relative;
+
+	z-index:2;
+
+	max-width:700px;
+
+	margin:auto;
+
+}
+
+
+
+.badge {
+
+	display:inline-flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+	padding:10px 20px;
+
+	border-radius:999px;
+
+	background:
+
+		rgba(10,132,255,.12);
+
+	border:
+
+		1px solid
+
+		rgba(10,132,255,.35);
+
+	color:#0A84FF;
+
+	font-size:.85rem;
+
+	font-weight:700;
+
+	letter-spacing:3px;
+
+	text-transform:uppercase;
+
+	backdrop-filter:blur(15px);
+
+}
+
+
+
+h2 {
+
+	margin-top:28px;
+
+	font-size:
+
+		clamp(2.2rem,5vw,3.2rem);
+
+	font-weight:800;
+
+	letter-spacing:-2px;
+
+	color:white;
+
+}
+
+
+
+.description {
+
+	margin-top:28px;
+
+	color:#AEB6C2;
+
+	font-size:1.05rem;
+
+	line-height:1.9;
+
+}
+
+
+
+.actions {
+
+	display:flex;
+
+	justify-content:center;
+
+	gap:20px;
+
+	margin-top:45px;
+
+}
+
+
+
+.actions a {
+
+	padding:16px 34px;
+
+	border-radius:14px;
+
+	text-decoration:none;
+
+	font-weight:600;
+
+	transition:.25s ease;
+
+}
+
+
+
+.github {
+
+	background:#0A84FF;
+
+	color:white;
+
+}
+
+
+
+.github:hover {
+
+	transform:translateY(-3px);
+
+	box-shadow:
+
+		0 15px 40px
+
+		rgba(10,132,255,.35);
+
+}
+
+
+
+.documentation {
+
+	border:
+
+		1px solid
+
+		rgba(255,255,255,.15);
+
+	color:white;
+
+}
+
+
+
+.documentation:hover {
+
+	background:
+
+		rgba(255,255,255,.08);
+
+	transform:translateY(-3px);
+
+}
+
+
+
+.background-glow {
+
+	position:absolute;
+
+	width:500px;
+
+	height:500px;
+
+	border-radius:50%;
+
+	filter:blur(90px);
+
+	z-index:0;
+
+	pointer-events:none;
+
+}
+
+
+
+.glow-left {
+
+	top:-180px;
+
+	left:-180px;
+
+	background:
+
+		radial-gradient(
+
+			circle,
+
+			rgba(10,132,255,.18),
+
+			transparent 70%
+
+		);
+
+}
+
+
+
+.glow-right {
+
+	right:-180px;
+
+	bottom:-180px;
+
+	background:
+
+		radial-gradient(
+
+			circle,
+
+			rgba(10,132,255,.12),
+
+			transparent 70%
+
+		);
+
+}
+
+
+
+@media (max-width:600px) {
+
+	.projects-cta {
+
+		padding:90px 20px;
+
+	}
+
+
+
+	h2 {
+
+		font-size:2.2rem;
+
+	}
+
+
+
+	.actions {
+
+		flex-direction:column;
+
+	}
+
+}
+
+</style>
