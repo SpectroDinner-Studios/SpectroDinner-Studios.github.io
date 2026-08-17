@@ -1,0 +1,66 @@
+<button type="button" class="lang-toggle" aria-label="Switch language / Cambiar idioma">
+	<span class="globe">🌐</span>
+	<span data-lang="es">EN</span>
+	<span data-lang="en">ES</span>
+</button>
+
+<script>
+	document.querySelectorAll(".lang-toggle").forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const current =
+				document.documentElement.getAttribute("lang") === "en" ? "en" : "es";
+
+			const next = current === "es" ? "en" : "es";
+
+			document.documentElement.setAttribute("lang", next);
+
+			try {
+				localStorage.setItem("sd-lang", next);
+			} catch (e) {}
+
+			window.dispatchEvent(
+				new CustomEvent("sd-langchange", { detail: { lang: next } })
+			);
+		});
+	});
+</script>
+
+<style>
+.lang-toggle {
+	display: flex;
+
+	align-items: center;
+
+	gap: 8px;
+
+	padding: 10px 16px;
+
+	border-radius: 12px;
+
+	background: rgba(255, 255, 255, 0.05);
+
+	border: 1px solid rgba(255, 255, 255, 0.12);
+
+	color: white;
+
+	font-weight: 700;
+
+	font-size: 0.85rem;
+
+	cursor: pointer;
+
+	transition: 0.25s ease;
+}
+
+.lang-toggle:hover {
+	background: rgba(255, 255, 255, 0.1);
+
+	border-color: rgba(10, 132, 255, 0.4);
+
+	transform: translateY(-2px);
+}
+
+.globe {
+	font-size: 0.95rem;
+}
+</style>

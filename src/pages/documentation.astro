@@ -20,7 +20,7 @@ import Footer from "../components/Footer.astro";
 
 		<section class="cards">
 
-			<div class="card">
+			<div class="card reveal spotlight">
 				<h2>Getting Started</h2>
 				<p>
 					Learn how to install, configure and use
@@ -28,7 +28,7 @@ import Footer from "../components/Footer.astro";
 				</p>
 			</div>
 
-			<div class="card">
+			<div class="card reveal spotlight">
 				<h2>API Reference</h2>
 				<p>
 					Technical references, integrations and
@@ -36,7 +36,7 @@ import Footer from "../components/Footer.astro";
 				</p>
 			</div>
 
-			<div class="card">
+			<div class="card reveal spotlight">
 				<h2>Guides</h2>
 				<p>
 					Step-by-step tutorials and detailed
@@ -91,6 +91,9 @@ h1 {
 
 	gap: 25px;
 }
+
+.cards .card:nth-child(2) { transition-delay: .08s; }
+.cards .card:nth-child(3) { transition-delay: .16s; }
 
 .card {
 	padding: 30px;

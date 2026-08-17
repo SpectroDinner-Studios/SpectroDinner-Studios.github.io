@@ -1,0 +1,392 @@
+<section class="q-cta spotlight">
+
+	<div class="background-glow glow-left"></div>
+	<div class="background-glow glow-right"></div>
+
+
+	<div class="content reveal">
+
+		<span class="badge">
+			<span data-lang="es">EMPIEZA TU PROYECTO</span>
+			<span data-lang="en">START YOUR PROJECT</span>
+		</span>
+
+
+		<h2>
+			<span data-lang="es">Cuéntanos tu visión</span>
+			<span data-lang="en">Tell us your vision</span>
+		</h2>
+
+
+		<p class="description" data-lang="es">
+			Rellena nuestro cuestionario y cuéntanos el diseño, la temática,
+			el propósito y todo lo que necesitas para tu servidor de
+			Discord. Con esa información preparamos una propuesta a tu medida.
+		</p>
+
+		<p class="description" data-lang="en">
+			Fill out our questionnaire and tell us the design, theme,
+			purpose and everything you need for your Discord server.
+			With that information we put together a proposal made for you.
+		</p>
+
+
+		<div class="points">
+
+			<div class="point">
+				<span class="dot">🎯</span>
+				<span data-lang="es">Para qué es tu servidor</span>
+				<span data-lang="en">What your server is for</span>
+			</div>
+
+			<div class="point">
+				<span class="dot">🎨</span>
+				<span data-lang="es">Diseño y temática</span>
+				<span data-lang="en">Design and theme</span>
+			</div>
+
+			<div class="point">
+				<span class="dot">🧩</span>
+				<span data-lang="es">Estructura, roles y bots</span>
+				<span data-lang="en">Structure, roles and bots</span>
+			</div>
+
+			<div class="point">
+				<span class="dot">💸</span>
+				<span data-lang="es">100% gratis, sin sorpresas</span>
+				<span data-lang="en">100% free, no surprises</span>
+			</div>
+
+		</div>
+
+
+		<a href="/cuestionario" class="primary">
+			<span data-lang="es">Rellenar el cuestionario →</span>
+			<span data-lang="en">Fill out the questionnaire →</span>
+		</a>
+
+	</div>
+
+</section>
+
+
+
+<style>
+
+.q-cta {
+
+	position:relative;
+
+	margin:0 32px 60px;
+
+	padding:90px 60px;
+
+	border-radius:36px;
+
+	overflow:hidden;
+
+
+	background:
+
+		rgba(255,255,255,.04);
+
+
+	border:
+
+		1px solid
+
+		rgba(255,255,255,.10);
+
+
+	backdrop-filter:
+
+		blur(22px);
+
+}
+
+
+
+.content {
+
+	position:relative;
+
+	z-index:2;
+
+	max-width:800px;
+
+	margin:auto;
+
+	text-align:center;
+
+}
+
+
+
+.badge {
+
+	display:inline-flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+	padding:10px 22px;
+
+	border-radius:999px;
+
+	background:
+
+		rgba(10,132,255,.12);
+
+	border:
+
+		1px solid
+
+		rgba(10,132,255,.35);
+
+	color:#0A84FF;
+
+	font-size:.82rem;
+
+	font-weight:700;
+
+	letter-spacing:3px;
+
+}
+
+
+
+h2 {
+
+	margin-top:28px;
+
+	margin-bottom:0;
+
+	font-size:
+
+		clamp(2.5rem,5vw,3.6rem);
+
+	font-weight:800;
+
+	letter-spacing:-2px;
+
+	color:white;
+
+}
+
+
+
+.description {
+
+	max-width:680px;
+
+	margin:28px auto 0;
+
+	color:#B7C0CB;
+
+	line-height:1.9;
+
+	font-size:1.05rem;
+
+}
+
+
+
+.points {
+
+	margin-top:45px;
+
+	display:flex;
+
+	justify-content:center;
+
+	flex-wrap:wrap;
+
+	gap:16px;
+
+}
+
+
+
+.point {
+
+	display:flex;
+
+	align-items:center;
+
+	gap:10px;
+
+	padding:12px 20px;
+
+	border-radius:999px;
+
+	background:
+
+		rgba(255,255,255,.05);
+
+	border:
+
+		1px solid
+
+		rgba(255,255,255,.1);
+
+	color:#D6DBE2;
+
+	font-size:.95rem;
+
+	font-weight:600;
+
+}
+
+
+
+.dot {
+
+	font-size:1.1rem;
+
+}
+
+
+
+.primary {
+
+	display:inline-flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+	margin-top:50px;
+
+	padding:18px 40px;
+
+	border-radius:16px;
+
+	text-decoration:none;
+
+	font-weight:700;
+
+	font-size:1.05rem;
+
+	background:#0A84FF;
+
+	color:white;
+
+	transition:.3s ease;
+
+}
+
+
+
+.primary:hover {
+
+	transform:
+
+		translateY(-4px);
+
+	box-shadow:
+
+		0 20px 45px
+
+		rgba(10,132,255,.35);
+
+}
+
+
+
+.background-glow {
+
+	position:absolute;
+
+	width:550px;
+
+	height:550px;
+
+	border-radius:50%;
+
+	filter:blur(90px);
+
+	pointer-events:none;
+
+}
+
+
+
+.glow-left {
+
+	top:-220px;
+
+	left:-220px;
+
+	background:
+
+		radial-gradient(
+
+			circle,
+
+			rgba(10,132,255,.18),
+
+			transparent 70%
+
+		);
+
+}
+
+
+
+.glow-right {
+
+	right:-220px;
+
+	bottom:-220px;
+
+	background:
+
+		radial-gradient(
+
+			circle,
+
+			rgba(10,132,255,.14),
+
+			transparent 70%
+
+		);
+
+}
+
+
+
+@media (max-width:700px) {
+
+	.q-cta {
+
+		margin:0 16px 40px;
+
+		padding:60px 28px;
+
+	}
+
+
+	h2 {
+
+		font-size:2.2rem;
+
+	}
+
+
+	.description {
+
+		font-size:1rem;
+
+	}
+
+
+	.primary {
+
+		width:100%;
+
+	}
+
+}
+
+</style>

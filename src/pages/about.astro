@@ -22,7 +22,7 @@ import Footer from "../components/Footer.astro";
 
 		<section class="content">
 
-			<div class="card">
+			<div class="card reveal spotlight">
 				<h2>Who We Are</h2>
 
 				<p>
@@ -33,7 +33,7 @@ import Footer from "../components/Footer.astro";
 			</div>
 
 
-			<div class="card">
+			<div class="card reveal spotlight">
 				<h2>Our Vision</h2>
 
 				<p>
@@ -43,7 +43,7 @@ import Footer from "../components/Footer.astro";
 			</div>
 
 
-			<div class="card">
+			<div class="card reveal spotlight">
 				<h2>Technology</h2>
 
 				<p>
@@ -104,6 +104,9 @@ h1 {
 
 	gap:25px;
 }
+
+.content .card:nth-child(2) { transition-delay: .08s; }
+.content .card:nth-child(3) { transition-delay: .16s; }
 
 
 .card {

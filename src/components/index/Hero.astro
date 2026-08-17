@@ -12,32 +12,45 @@
 			SpectroDinner™
 		</h1>
 
+		<div class="free-badge">
+			<span data-lang="es">✨ Servicio 100% gratuito</span>
+			<span data-lang="en">✨ 100% free service</span>
+		</div>
+
 		<h2>
-			Building software, games and digital experiences.
+			<span data-lang="es">Creamos, configuramos y rediseñamos tu servidor de Discord</span>
+			<span data-lang="en">We create, configure and redesign your Discord server</span>
 		</h2>
 
-		<p class="description">
-			SpectroDinner is an independent software and game development studio focused on creating modern applications, immersive experiences and innovative technologies. Every project is designed with performance, quality and long-term maintainability in mind.
+		<p class="description" data-lang="es">
+			Diseñamos servidores de Discord a la medida de cada cliente: desde cero, mejorando uno ya existente o rediseñándolo por completo, sin ningún coste. Todo empieza con un cuestionario donde nos cuentas el diseño, la temática y para qué quieres tu servidor, para entregarte exactamente lo que imaginas.
+		</p>
+
+		<p class="description" data-lang="en">
+			We design Discord servers tailored to each client: from scratch, improving an existing one, or redesigning it completely, at no cost. It all starts with a questionnaire where you tell us the design, theme and purpose of your server, so we deliver exactly what you imagine.
 		</p>
 
 		<div class="buttons">
 			<a
-				href="/projects"
+				href="/cuestionario"
 				class="primary"
 			>
-				Explore Projects →
+				<span data-lang="es">Rellenar el cuestionario →</span>
+				<span data-lang="en">Fill out the questionnaire →</span>
 			</a>
 
 			<a
-				href="/documentation"
+				href="#servicios"
 				class="secondary"
 			>
-				Documentation
+				<span data-lang="es">Ver servicios</span>
+				<span data-lang="en">View services</span>
 			</a>
 		</div>
 
 		<div class="hero-tags">
-			SOFTWARE ENGINEERING • GAME DEVELOPMENT • OPEN SOURCE
+			<span data-lang="es">CREACIÓN • CONFIGURACIÓN • REDISEÑO • 100% GRATIS</span>
+			<span data-lang="en">CREATION • CONFIGURATION • REDESIGN • 100% FREE</span>
 		</div>
 	</div>
 </section>
@@ -74,6 +87,18 @@
 	filter: blur(70px);
 
 	z-index: -1;
+
+	animation: glowFloat 8s ease-in-out infinite;
+}
+
+@keyframes glowFloat {
+	0%, 100% {
+		transform: translate(0, 0) scale(1);
+	}
+
+	50% {
+		transform: translate(0, -20px) scale(1.06);
+	}
 }
 
 .content {
@@ -85,6 +110,31 @@
 	align-items: center;
 
 	text-align: center;
+}
+
+.content > * {
+	animation: heroFadeUp .8s cubic-bezier(.16,1,.3,1) both;
+}
+
+.content > *:nth-child(1) { animation-delay: .05s; }
+.content > *:nth-child(2) { animation-delay: .18s; }
+.content > *:nth-child(3) { animation-delay: .30s; }
+.content > *:nth-child(4) { animation-delay: .42s; }
+.content > *:nth-child(5) { animation-delay: .52s; }
+.content > *:nth-child(6) { animation-delay: .52s; }
+.content > *:nth-child(7) { animation-delay: .64s; }
+.content > *:nth-child(8) { animation-delay: .76s; }
+
+@keyframes heroFadeUp {
+	from {
+		opacity: 0;
+		transform: translateY(26px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
 }
 
 .logo-container {
@@ -137,6 +187,29 @@ h1 {
 	letter-spacing: -3px;
 
 	color: white;
+}
+
+.free-badge {
+	margin-top: 22px;
+
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	padding: 10px 20px;
+
+	border-radius: 999px;
+
+	background: rgba(10,132,255,.12);
+
+	border: 1px solid rgba(10,132,255,.35);
+
+	color: #0A84FF;
+
+	font-size: .85rem;
+	font-weight: 700;
+
+	letter-spacing: .5px;
 }
 
 h2 {

@@ -1,0 +1,663 @@
+---
+/*
+	Añade aquí las valoraciones reales de tus clientes.
+	Ejemplo:
+
+	{ name: "Usuario#0000", rating: 5, service: "Creación de servidor", text: "Quedó genial, muy profesionales." }
+*/
+const reviews: {
+	name: string;
+	rating: number;
+	service?: string;
+	text: string;
+}[] = [];
+
+const count = reviews.length;
+
+const average =
+	count > 0
+		? reviews.reduce((sum, r) => sum + r.rating, 0) / count
+		: 0;
+
+const stars = (rating: number) =>
+	"★".repeat(rating) + "☆".repeat(5 - rating);
+---
+
+<section class="reviews" id="valoraciones">
+
+	<div class="container">
+
+
+		<div class="header reveal">
+
+			<span>
+				<span data-lang="es">VALORACIONES</span>
+				<span data-lang="en">REVIEWS</span>
+			</span>
+
+			<h2>
+				<span data-lang="es">Lo que opinan nuestros clientes</span>
+				<span data-lang="en">What our clients say</span>
+			</h2>
+
+			<p data-lang="es">
+				Cada valoración es de un cliente real que ha usado nuestro
+				servicio. Si ya trabajamos juntos, ¡nos encantaría leer tu opinión!
+			</p>
+
+			<p data-lang="en">
+				Every review comes from a real client who used our service.
+				If we've already worked together, we'd love to hear your feedback!
+			</p>
+
+		</div>
+
+
+		{
+			count > 0 ? (
+				<>
+					<div class="summary reveal">
+						<span class="score-stars">{stars(Math.round(average))}</span>
+						<span class="score-number">{average.toFixed(1)} / 5</span>
+						<span class="score-count">
+							<span data-lang="es">basado en {count} valoraciones</span>
+							<span data-lang="en">based on {count} reviews</span>
+						</span>
+					</div>
+
+					<div class="grid">
+						{reviews.map((review) => (
+							<div class="card reveal spotlight">
+								<span class="card-stars">{stars(review.rating)}</span>
+								<p class="text">"{review.text}"</p>
+								<div class="author">
+									<strong>{review.name}</strong>
+									{review.service && <span>{review.service}</span>}
+								</div>
+							</div>
+						))}
+					</div>
+				</>
+			) : (
+				<div class="empty reveal">
+					<p data-lang="es">
+						Todavía no tenemos valoraciones publicadas —
+						¡sé el primero en dejar la tuya!
+					</p>
+					<p data-lang="en">
+						We don't have any published reviews yet —
+						be the first to leave one!
+					</p>
+				</div>
+			)
+		}
+
+
+		<div class="form-card reveal">
+
+			<h3>
+				<span data-lang="es">Deja tu valoración</span>
+				<span data-lang="en">Leave your review</span>
+			</h3>
+
+			<form id="review-form">
+
+				<div class="grid-fields">
+
+					<label>
+						<span data-lang="es">Nombre / usuario de Discord *</span>
+						<span data-lang="en">Name / Discord username *</span>
+						<input type="text" name="nombre" required />
+					</label>
+
+					<label>
+						<span data-lang="es">Servicio recibido</span>
+						<span data-lang="en">Service received</span>
+						<input type="text" name="servicio" placeholder="Ej. Creación de servidor" />
+					</label>
+
+				</div>
+
+				<label>
+					<span data-lang="es">Valoración *</span>
+					<span data-lang="en">Rating *</span>
+
+					<select name="rating" required>
+						<option value="" disabled selected>-- </option>
+						<option value="5">★★★★★ (5/5)</option>
+						<option value="4">★★★★☆ (4/5)</option>
+						<option value="3">★★★☆☆ (3/5)</option>
+						<option value="2">★★☆☆☆ (2/5)</option>
+						<option value="1">★☆☆☆☆ (1/5)</option>
+					</select>
+				</label>
+
+				<label>
+					<span data-lang="es">Tu comentario *</span>
+					<span data-lang="en">Your comment *</span>
+					<textarea name="comentario" rows="4" required></textarea>
+				</label>
+
+				<button type="submit" class="submit">
+					<span data-lang="es">Enviar valoración →</span>
+					<span data-lang="en">Submit review →</span>
+				</button>
+
+				<p class="hint">
+					<span data-lang="es">
+						Se abrirá tu programa de correo con tu valoración
+						lista para enviar — la publicaremos en cuanto la revisemos.
+					</span>
+					<span data-lang="en">
+						This will open your email app with your review ready
+						to send — we'll publish it once we review it.
+					</span>
+				</p>
+
+				<p id="review-status" class="status" hidden>
+					<span data-lang="es">
+						✅ Hemos abierto tu cliente de correo. ¡Gracias por tu valoración!
+					</span>
+					<span data-lang="en">
+						✅ We opened your email client. Thanks for your review!
+					</span>
+				</p>
+
+			</form>
+
+		</div>
+
+	</div>
+
+</section>
+
+
+<script>
+	const form = document.getElementById("review-form") as HTMLFormElement | null;
+	const status = document.getElementById("review-status");
+
+	form?.addEventListener("submit", (e) => {
+		e.preventDefault();
+
+		const data = new FormData(form);
+		const get = (name: string) => (data.get(name) || "").toString().trim();
+
+		const rating = get("rating");
+		const stars = "★".repeat(Number(rating) || 0);
+
+		const lines = [
+			"NUEVA VALORACIÓN",
+			"",
+			`Nombre: ${get("nombre")}`,
+			`Servicio recibido: ${get("servicio")}`,
+			`Valoración: ${rating}/5 ${stars}`,
+			"",
+			`Comentario: ${get("comentario")}`,
+		];
+
+		const subject = `Nueva valoración - ${get("nombre") || "Cliente"} - ${rating}/5`;
+		const body = lines.join("\n");
+
+		const mailto = `mailto:oierps8@gmail.com?subject=${encodeURIComponent(
+			subject
+		)}&body=${encodeURIComponent(body)}`;
+
+		window.location.href = mailto;
+
+		if (status) status.hidden = false;
+	});
+</script>
+
+
+<style>
+
+.reviews {
+
+	padding:120px 32px;
+
+}
+
+
+.container {
+
+	max-width:1100px;
+
+	margin:auto;
+
+}
+
+
+.header {
+
+	text-align:center;
+
+	margin-bottom:60px;
+
+}
+
+
+.header span:first-child {
+
+	font-size:.85rem;
+
+	font-weight:700;
+
+	letter-spacing:3px;
+
+	color:#0A84FF;
+
+}
+
+
+.header h2 {
+
+	margin-top:20px;
+
+	font-size:clamp(2.5rem,5vw,4rem);
+
+	color:white;
+
+	letter-spacing:-2px;
+
+}
+
+
+.header p {
+
+	max-width:650px;
+
+	margin:20px auto 0;
+
+	color:#9CA3AF;
+
+	line-height:1.8;
+
+	font-size:1.05rem;
+
+}
+
+
+.summary {
+
+	display:flex;
+
+	flex-direction:column;
+
+	align-items:center;
+
+	gap:8px;
+
+	margin-bottom:50px;
+
+}
+
+
+.score-stars {
+
+	font-size:2.2rem;
+
+	color:#FFC94A;
+
+	letter-spacing:4px;
+
+}
+
+
+.score-number {
+
+	font-size:1.3rem;
+
+	font-weight:800;
+
+	color:white;
+
+}
+
+
+.score-count {
+
+	color:#9CA3AF;
+
+	font-size:.95rem;
+
+}
+
+
+.empty {
+
+	text-align:center;
+
+	padding:40px;
+
+	margin-bottom:50px;
+
+	border-radius:22px;
+
+	background:rgba(255,255,255,.04);
+
+	border:1px solid rgba(255,255,255,.1);
+
+	color:#9CA3AF;
+
+	font-size:1.05rem;
+
+}
+
+
+.grid {
+
+	display:grid;
+
+	grid-template-columns:repeat(3,1fr);
+
+	gap:24px;
+
+	margin-bottom:50px;
+
+}
+
+
+.card {
+
+	padding:30px;
+
+	border-radius:22px;
+
+	background:rgba(255,255,255,.04);
+
+	border:1px solid rgba(255,255,255,.1);
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:16px;
+
+	transition:.3s ease;
+
+}
+
+
+.card:hover {
+
+	transform:translateY(-6px);
+
+	border-color:rgba(10,132,255,.35);
+
+	box-shadow:0 20px 45px rgba(10,132,255,.15);
+
+}
+
+
+.grid .card:nth-child(2) { transition-delay: .08s; }
+.grid .card:nth-child(3) { transition-delay: .16s; }
+
+
+.card-stars {
+
+	color:#FFC94A;
+
+	font-size:1.2rem;
+
+	letter-spacing:2px;
+
+}
+
+
+.card .text {
+
+	color:#D6DBE2;
+
+	line-height:1.8;
+
+	font-size:.95rem;
+
+	flex-grow:1;
+
+}
+
+
+.author {
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:2px;
+
+}
+
+
+.author strong {
+
+	color:white;
+
+	font-size:.95rem;
+
+}
+
+
+.author span {
+
+	color:#7DB7FF;
+
+	font-size:.85rem;
+
+}
+
+
+.form-card {
+
+	padding:44px;
+
+	border-radius:28px;
+
+	background:rgba(255,255,255,.04);
+
+	border:1px solid rgba(255,255,255,.1);
+
+	backdrop-filter:blur(15px);
+
+}
+
+
+.form-card h3 {
+
+	margin:0 0 26px;
+
+	color:white;
+
+	font-size:1.5rem;
+
+}
+
+
+#review-form {
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:20px;
+
+}
+
+
+.grid-fields {
+
+	display:grid;
+
+	grid-template-columns:1fr 1fr;
+
+	gap:20px;
+
+}
+
+
+label {
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:8px;
+
+	color:#D6DBE2;
+
+	font-size:.95rem;
+
+	font-weight:600;
+
+}
+
+
+input[type="text"],
+select,
+textarea {
+
+	padding:12px 14px;
+
+	border-radius:12px;
+
+	background:rgba(255,255,255,0.05);
+
+	border:1px solid rgba(255,255,255,0.12);
+
+	color:white;
+
+	font-family:inherit;
+
+	font-size:.95rem;
+
+	font-weight:400;
+
+	transition:.2s ease;
+
+}
+
+
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+
+	outline:none;
+
+	border-color:rgba(10,132,255,.6);
+
+	background:rgba(255,255,255,0.07);
+
+}
+
+
+textarea {
+
+	resize:vertical;
+
+}
+
+
+.submit {
+
+	align-self:flex-start;
+
+	padding:15px 32px;
+
+	border-radius:14px;
+
+	border:none;
+
+	background:#0A84FF;
+
+	color:white;
+
+	font-weight:700;
+
+	font-size:1rem;
+
+	cursor:pointer;
+
+	transition:.25s ease;
+
+}
+
+
+.submit:hover {
+
+	transform:translateY(-3px);
+
+	box-shadow:0 15px 40px rgba(10,132,255,.35);
+
+}
+
+
+.hint {
+
+	color:#9CA3AF;
+
+	font-size:.88rem;
+
+	line-height:1.6;
+
+}
+
+
+.status {
+
+	padding:14px 18px;
+
+	border-radius:14px;
+
+	background:rgba(10,132,255,.1);
+
+	border:1px solid rgba(10,132,255,.3);
+
+	color:#D6E8FF;
+
+	font-size:.92rem;
+
+}
+
+
+@media (max-width:900px) {
+
+	.grid {
+
+		grid-template-columns:1fr;
+
+	}
+
+}
+
+
+@media (max-width:700px) {
+
+	.reviews {
+
+		padding:90px 20px;
+
+	}
+
+
+	.form-card {
+
+		padding:28px;
+
+	}
+
+
+	.grid-fields {
+
+		grid-template-columns:1fr;
+
+	}
+
+
+	.submit {
+
+		width:100%;
+
+	}
+
+}
+
+</style>

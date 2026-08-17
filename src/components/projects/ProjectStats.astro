@@ -3,9 +3,9 @@
 	<div class="stats">
 
 
-		<div class="card">
+		<div class="card reveal spotlight">
 
-			<h3>
+			<h3 data-counter="2024">
 				2024
 			</h3>
 
@@ -17,9 +17,9 @@
 
 
 
-		<div class="card">
+		<div class="card reveal spotlight">
 
-			<h3>
+			<h3 data-counter="1" data-counter-suffix="+">
 				1+
 			</h3>
 
@@ -31,9 +31,9 @@
 
 
 
-		<div class="card">
+		<div class="card reveal spotlight">
 
-			<h3>
+			<h3 data-counter="5" data-counter-suffix="+">
 				5+
 			</h3>
 
@@ -45,7 +45,7 @@
 
 
 
-		<div class="card">
+		<div class="card reveal spotlight">
 
 			<h3>
 				Open
@@ -93,6 +93,11 @@
 	gap:25px;
 
 }
+
+
+.stats .card:nth-child(2) { transition-delay: .08s; }
+.stats .card:nth-child(3) { transition-delay: .16s; }
+.stats .card:nth-child(4) { transition-delay: .24s; }
 
 
 

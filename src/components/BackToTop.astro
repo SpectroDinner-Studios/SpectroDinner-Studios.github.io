@@ -1,0 +1,21 @@
+<button type="button" class="back-to-top" aria-label="Back to top / Volver arriba">
+	↑
+</button>
+
+<script>
+	const btn = document.querySelector(".back-to-top");
+
+	if (btn) {
+		window.addEventListener(
+			"scroll",
+			() => {
+				btn.classList.toggle("is-visible", window.scrollY > 500);
+			},
+			{ passive: true }
+		);
+
+		btn.addEventListener("click", () => {
+			window.scrollTo({ top: 0, behavior: "smooth" });
+		});
+	}
+</script>
