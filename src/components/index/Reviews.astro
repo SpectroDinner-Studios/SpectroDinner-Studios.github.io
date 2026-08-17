@@ -145,21 +145,30 @@ const stars = (rating: number) =>
 
 				<p class="hint">
 					<span data-lang="es">
-						Se abrirá tu programa de correo con tu valoración
-						lista para enviar — la publicaremos en cuanto la revisemos.
+						Tu valoración se envía directamente a nuestro equipo —
+						la publicaremos en cuanto la revisemos.
 					</span>
 					<span data-lang="en">
-						This will open your email app with your review ready
-						to send — we'll publish it once we review it.
+						Your review is sent straight to our team —
+						we'll publish it once we review it.
 					</span>
 				</p>
 
 				<p id="review-status" class="status" hidden>
 					<span data-lang="es">
-						✅ Hemos abierto tu cliente de correo. ¡Gracias por tu valoración!
+						✅ ¡Gracias! Hemos recibido tu valoración.
 					</span>
 					<span data-lang="en">
-						✅ We opened your email client. Thanks for your review!
+						✅ Thanks! We received your review.
+					</span>
+				</p>
+
+				<p id="review-error" class="status error" hidden>
+					<span data-lang="es">
+						⚠️ No hemos podido enviar tu valoración. Inténtalo de nuevo en unos segundos.
+					</span>
+					<span data-lang="en">
+						⚠️ We couldn't send your review. Please try again in a moment.
 					</span>
 				</p>
 
@@ -175,36 +184,43 @@ const stars = (rating: number) =>
 <script>
 	const form = document.getElementById("review-form") as HTMLFormElement | null;
 	const status = document.getElementById("review-status");
+	const error = document.getElementById("review-error");
+	const submitBtn = form?.querySelector<HTMLButtonElement>(".submit");
 
-	form?.addEventListener("submit", (e) => {
+	form?.addEventListener("submit", async (e) => {
 		e.preventDefault();
+
+		status?.setAttribute("hidden", "");
+		error?.setAttribute("hidden", "");
 
 		const data = new FormData(form);
 		const get = (name: string) => (data.get(name) || "").toString().trim();
 
-		const rating = get("rating");
-		const stars = "★".repeat(Number(rating) || 0);
+		const payload = {
+			discordUser: get("nombre"),
+			service: get("servicio"),
+			rating: Number(get("rating")),
+			comment: get("comentario"),
+		};
 
-		const lines = [
-			"NUEVA VALORACIÓN",
-			"",
-			`Nombre: ${get("nombre")}`,
-			`Servicio recibido: ${get("servicio")}`,
-			`Valoración: ${rating}/5 ${stars}`,
-			"",
-			`Comentario: ${get("comentario")}`,
-		];
+		submitBtn?.setAttribute("disabled", "");
 
-		const subject = `Nueva valoración - ${get("nombre") || "Cliente"} - ${rating}/5`;
-		const body = lines.join("\n");
+		try {
+			const response = await fetch("/api/reviews", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(payload),
+			});
 
-		const mailto = `mailto:oierps8@gmail.com?subject=${encodeURIComponent(
-			subject
-		)}&body=${encodeURIComponent(body)}`;
+			if (!response.ok) throw new Error("Request failed");
 
-		window.location.href = mailto;
-
-		if (status) status.hidden = false;
+			form.reset();
+			status?.removeAttribute("hidden");
+		} catch (err) {
+			error?.removeAttribute("hidden");
+		} finally {
+			submitBtn?.removeAttribute("disabled");
+		}
 	});
 </script>
 
@@ -614,6 +630,28 @@ textarea {
 	color:#D6E8FF;
 
 	font-size:.92rem;
+
+}
+
+
+.status.error {
+
+	background:rgba(255,69,58,.1);
+
+	border-color:rgba(255,69,58,.35);
+
+	color:#FFD4D1;
+
+}
+
+
+.submit:disabled {
+
+	opacity:.6;
+
+	cursor:not-allowed;
+
+	transform:none;
 
 }
 
