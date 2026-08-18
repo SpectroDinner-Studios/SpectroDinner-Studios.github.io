@@ -105,9 +105,9 @@ const {
 
 			to bottom,
 
-			#0A84FF,
+			var(--primary),
 
-			rgba(10,132,255,.15)
+			color-mix(in srgb, var(--primary) 15%, transparent)
 
 		);
 
@@ -116,7 +116,7 @@ const {
 
 		0 0 20px
 
-		rgba(10,132,255,.45);
+		color-mix(in srgb, var(--primary) 45%, transparent);
 
 }
 
@@ -146,14 +146,14 @@ const {
 	border-radius:50%;
 
 
-	background:#0A84FF;
+	background:var(--primary);
 
 
 	box-shadow:
 
 		0 0 25px
 
-		rgba(10,132,255,.8);
+		color-mix(in srgb, var(--primary) 80%, transparent);
 
 }
 
@@ -187,7 +187,7 @@ const {
 	letter-spacing:-1.5px;
 
 
-	color:white;
+	color:var(--text);
 
 }
 
@@ -201,7 +201,7 @@ const {
 	max-width:720px;
 
 
-	color:#AEB6C2;
+	color:var(--text-muted);
 
 
 	font-size:1rem;

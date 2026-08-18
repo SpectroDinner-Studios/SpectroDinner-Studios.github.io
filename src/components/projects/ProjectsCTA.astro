@@ -105,15 +105,15 @@
 
 	background:
 
-		rgba(10,132,255,.12);
+		var(--primary-bg);
 
 	border:
 
 		1px solid
 
-		rgba(10,132,255,.35);
+		var(--primary-border);
 
-	color:#0A84FF;
+	color:var(--primary);
 
 	font-size:.85rem;
 
@@ -141,7 +141,7 @@ h2 {
 
 	letter-spacing:-2px;
 
-	color:white;
+	color:var(--text);
 
 }
 
@@ -151,7 +151,7 @@ h2 {
 
 	margin-top:28px;
 
-	color:#AEB6C2;
+	color:var(--text-muted);
 
 	font-size:1.05rem;
 
@@ -193,7 +193,7 @@ h2 {
 
 .github {
 
-	background:#0A84FF;
+	background:var(--primary);
 
 	color:white;
 
@@ -209,7 +209,7 @@ h2 {
 
 		0 15px 40px
 
-		rgba(10,132,255,.35);
+		var(--primary-glow);
 
 }
 
@@ -221,9 +221,9 @@ h2 {
 
 		1px solid
 
-		rgba(255,255,255,.15);
+		var(--border-2);
 
-	color:white;
+	color:var(--text);
 
 }
 
@@ -233,7 +233,7 @@ h2 {
 
 	background:
 
-		rgba(255,255,255,.08);
+		var(--surface-3);
 
 	transform:translateY(-3px);
 
@@ -273,7 +273,7 @@ h2 {
 
 			circle,
 
-			rgba(10,132,255,.18),
+			color-mix(in srgb, var(--primary) 18%, transparent),
 
 			transparent 70%
 
@@ -295,7 +295,7 @@ h2 {
 
 			circle,
 
-			rgba(10,132,255,.12),
+			color-mix(in srgb, var(--primary) 12%, transparent),
 
 			transparent 70%
 

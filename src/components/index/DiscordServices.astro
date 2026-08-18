@@ -279,7 +279,7 @@
 
 	letter-spacing:3px;
 
-	color:#0A84FF;
+	color:var(--primary);
 
 }
 
@@ -294,7 +294,7 @@
 		clamp(2.5rem,5vw,4rem);
 
 
-	color:white;
+	color:var(--text);
 
 	letter-spacing:-2px;
 
@@ -308,7 +308,7 @@
 
 	margin:20px auto 0;
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	line-height:1.8;
 
@@ -342,14 +342,14 @@
 
 	background:
 
-		rgba(255,255,255,.04);
+		var(--surface-1);
 
 
 	border:
 
 		1px solid
 
-		rgba(255,255,255,.1);
+		var(--border-1);
 
 
 	transition:.3s ease;
@@ -379,7 +379,7 @@
 
 			circle at top right,
 
-			rgba(10,132,255,.15),
+			color-mix(in srgb, var(--primary) 15%, transparent),
 
 			transparent 45%
 
@@ -411,7 +411,7 @@
 
 	border-color:
 
-		rgba(10,132,255,.4);
+		color-mix(in srgb, var(--primary) 40%, transparent);
 
 }
 
@@ -437,7 +437,7 @@
 
 	margin:0 0 15px;
 
-	color:white;
+	color:var(--text);
 
 	font-size:1.6rem;
 
@@ -447,7 +447,7 @@
 
 .card p {
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	line-height:1.8;
 
@@ -478,10 +478,10 @@
 
 	background:
 
-		rgba(10,132,255,.12);
+		var(--primary-bg);
 
 
-	color:#7DB7FF;
+	color:var(--primary-light);
 
 	font-size:.85rem;
 

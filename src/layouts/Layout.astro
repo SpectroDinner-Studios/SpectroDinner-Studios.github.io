@@ -28,6 +28,26 @@ const { title = "SpectroDinner™" } = Astro.props;
 
 					document.documentElement.setAttribute("lang", lang);
 				} catch (e) {}
+
+				try {
+					var storedTheme = localStorage.getItem("sd-theme");
+					var theme =
+						storedTheme === "light" || storedTheme === "dark"
+							? storedTheme
+							: window.matchMedia &&
+							  window.matchMedia("(prefers-color-scheme: light)").matches
+							? "light"
+							: "dark";
+
+					document.documentElement.setAttribute("data-theme", theme);
+				} catch (e) {}
+
+				try {
+					var accent = localStorage.getItem("sd-accent");
+					if (accent) {
+						document.documentElement.style.setProperty("--primary", accent);
+					}
+				} catch (e) {}
 			})();
 		</script>
 
@@ -204,9 +224,9 @@ const { title = "SpectroDinner™" } = Astro.props;
 
 				padding:0;
 
-				background:#050505;
+				background:var(--background);
 
-				color:white;
+				color:var(--text);
 
 
 				font-family:
@@ -216,6 +236,13 @@ const { title = "SpectroDinner™" } = Astro.props;
 					system-ui,
 
 					sans-serif;
+
+
+				transition:
+
+					background-color .3s ease,
+
+					color .3s ease;
 
 			}
 
@@ -238,7 +265,7 @@ const { title = "SpectroDinner™" } = Astro.props;
 
 						circle at 50% -20%,
 
-						rgba(10,132,255,.35),
+						color-mix(in srgb, var(--primary) 35%, transparent),
 
 						transparent 40%
 
@@ -248,7 +275,7 @@ const { title = "SpectroDinner™" } = Astro.props;
 
 						circle at 10% 80%,
 
-						rgba(10,132,255,.12),
+						color-mix(in srgb, var(--primary) 12%, transparent),
 
 						transparent 35%
 
@@ -258,13 +285,16 @@ const { title = "SpectroDinner™" } = Astro.props;
 
 						circle at 90% 70%,
 
-						rgba(10,132,255,.10),
+						color-mix(in srgb, var(--primary) 10%, transparent),
 
 						transparent 40%
 
 					),
 
-					#050505;
+					var(--background);
+
+
+				transition: background .3s ease;
 
 			}
 
@@ -284,7 +314,7 @@ const { title = "SpectroDinner™" } = Astro.props;
 
 					radial-gradient(
 
-						rgba(255,255,255,.08) 1px,
+						color-mix(in srgb, var(--text) 8%, transparent) 1px,
 
 						transparent 1px
 
@@ -320,7 +350,7 @@ const { title = "SpectroDinner™" } = Astro.props;
 
 						transparent 40%,
 
-						rgba(10,132,255,.05),
+						color-mix(in srgb, var(--primary) 5%, transparent),
 
 						transparent 60%
 

@@ -433,11 +433,11 @@ import Footer from "../components/Footer.astro";
 
 	border-radius:999px;
 
-	background:rgba(10,132,255,.12);
+	background:var(--primary-bg);
 
-	border:1px solid rgba(10,132,255,.35);
+	border:1px solid var(--primary-border);
 
-	color:#0A84FF;
+	color:var(--primary);
 
 	font-size:.85rem;
 
@@ -456,7 +456,7 @@ h1 {
 
 	letter-spacing:-2px;
 
-	background:linear-gradient(90deg,#ffffff,#0a84ff);
+	background:linear-gradient(90deg,var(--text),var(--primary));
 
 	-webkit-background-clip:text;
 
@@ -471,7 +471,7 @@ h1 {
 
 	margin:22px auto 0;
 
-	color:#9ca3af;
+	color:var(--text-muted);
 
 	font-size:1.08rem;
 
@@ -494,11 +494,11 @@ h1 {
 
 	border-radius:999px;
 
-	background:rgba(10,132,255,.12);
+	background:var(--primary-bg);
 
-	border:1px solid rgba(10,132,255,.35);
+	border:1px solid var(--primary-border);
 
-	color:#0A84FF;
+	color:var(--primary);
 
 	font-size:.85rem;
 
@@ -522,11 +522,11 @@ h1 {
 
 	padding:34px;
 
-	border:1px solid rgba(255,255,255,0.1);
+	border:1px solid var(--border-1);
 
 	border-radius:22px;
 
-	background:rgba(255,255,255,0.04);
+	background:var(--surface-1);
 
 	backdrop-filter:blur(15px);
 
@@ -547,7 +547,7 @@ legend {
 
 	font-weight:700;
 
-	color:white;
+	color:var(--text);
 
 }
 
@@ -560,7 +560,7 @@ label {
 
 	gap:8px;
 
-	color:#D6DBE2;
+	color:var(--text-muted);
 
 	font-size:.95rem;
 
@@ -572,7 +572,7 @@ label {
 
 	display:block;
 
-	color:#D6DBE2;
+	color:var(--text-muted);
 
 	font-size:.95rem;
 
@@ -590,11 +590,11 @@ textarea {
 
 	border-radius:12px;
 
-	background:rgba(255,255,255,0.05);
+	background:var(--surface-2);
 
-	border:1px solid rgba(255,255,255,0.12);
+	border:1px solid var(--border-2);
 
-	color:white;
+	color:var(--text);
 
 	font-family:inherit;
 
@@ -614,9 +614,9 @@ textarea:focus {
 
 	outline:none;
 
-	border-color:rgba(10,132,255,.6);
+	border-color:color-mix(in srgb, var(--primary) 60%, transparent);
 
-	background:rgba(255,255,255,0.07);
+	background:var(--surface-3);
 
 }
 
@@ -664,9 +664,9 @@ textarea {
 
 	border-radius:999px;
 
-	background:rgba(255,255,255,0.05);
+	background:var(--surface-2);
 
-	border:1px solid rgba(255,255,255,0.1);
+	border:1px solid var(--border-1);
 
 	font-weight:500;
 
@@ -678,7 +678,7 @@ textarea {
 .radio input,
 .checkbox input {
 
-	accent-color:#0A84FF;
+	accent-color:var(--primary);
 
 	width:16px;
 
@@ -697,7 +697,7 @@ textarea {
 
 	border:none;
 
-	background:#0A84FF;
+	background:var(--primary);
 
 	color:white;
 
@@ -716,14 +716,14 @@ textarea {
 
 	transform:translateY(-3px);
 
-	box-shadow:0 15px 40px rgba(10,132,255,.35);
+	box-shadow:0 15px 40px var(--primary-glow);
 
 }
 
 
 .hint {
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	font-size:.9rem;
 
@@ -738,11 +738,11 @@ textarea {
 
 	border-radius:14px;
 
-	background:rgba(10,132,255,.1);
+	background:var(--primary-bg);
 
-	border:1px solid rgba(10,132,255,.3);
+	border:1px solid var(--primary-border);
 
-	color:#D6E8FF;
+	color:var(--primary-light);
 
 	font-size:.95rem;
 
@@ -753,7 +753,7 @@ textarea {
 
 .status a {
 
-	color:#7DB7FF;
+	color:var(--primary-light);
 
 }
 

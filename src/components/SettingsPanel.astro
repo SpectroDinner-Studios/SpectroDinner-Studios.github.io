@@ -1,0 +1,375 @@
+---
+const accents = [
+	{ id: "blue", value: "#0A84FF" },
+	{ id: "purple", value: "#8B5CF6" },
+	{ id: "green", value: "#22C55E" },
+	{ id: "pink", value: "#EC4899" },
+	{ id: "orange", value: "#F97316" },
+	{ id: "red", value: "#EF4444" },
+];
+---
+
+<div class="settings">
+
+	<button type="button" class="settings-toggle" aria-label="Settings / Configuración" aria-expanded="false">
+		⚙️
+	</button>
+
+	<div class="settings-panel">
+
+		<div class="settings-section">
+			<span class="settings-label">
+				<span data-lang="es">Tema</span>
+				<span data-lang="en">Theme</span>
+			</span>
+
+			<div class="theme-switch">
+				<button type="button" class="theme-btn" data-theme-choice="dark">
+					<span data-lang="es">🌙 Oscuro</span>
+					<span data-lang="en">🌙 Dark</span>
+				</button>
+				<button type="button" class="theme-btn" data-theme-choice="light">
+					<span data-lang="es">☀️ Claro</span>
+					<span data-lang="en">☀️ Light</span>
+				</button>
+			</div>
+		</div>
+
+		<div class="settings-section">
+			<span class="settings-label">
+				<span data-lang="es">Color de acento</span>
+				<span data-lang="en">Accent color</span>
+			</span>
+
+			<div class="swatches">
+				{accents.map((accent) => (
+					<button
+						type="button"
+						class="swatch"
+						data-accent={accent.value}
+						style={`--swatch-color: ${accent.value}`}
+						aria-label={accent.id}
+					/>
+				))}
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+
+<script>
+	const wrapper = document.querySelector(".settings");
+	const toggle = wrapper?.querySelector<HTMLButtonElement>(".settings-toggle");
+	const panel = wrapper?.querySelector<HTMLElement>(".settings-panel");
+
+	const closePanel = () => {
+		panel?.classList.remove("open");
+		toggle?.setAttribute("aria-expanded", "false");
+	};
+
+	toggle?.addEventListener("click", (e) => {
+		e.stopPropagation();
+		const isOpen = panel?.classList.toggle("open");
+		toggle.setAttribute("aria-expanded", String(!!isOpen));
+	});
+
+	document.addEventListener("click", (e) => {
+		if (wrapper && !wrapper.contains(e.target as Node)) closePanel();
+	});
+
+	const updateActiveStates = () => {
+		const theme = document.documentElement.getAttribute("data-theme") || "dark";
+		const accent = getComputedStyle(document.documentElement)
+			.getPropertyValue("--primary")
+			.trim();
+
+		wrapper?.querySelectorAll<HTMLButtonElement>(".theme-btn").forEach((btn) => {
+			btn.classList.toggle("active", btn.dataset.themeChoice === theme);
+		});
+
+		wrapper?.querySelectorAll<HTMLButtonElement>(".swatch").forEach((btn) => {
+			const isActive =
+				btn.dataset.accent?.toLowerCase() === accent.toLowerCase();
+			btn.classList.toggle("active", isActive);
+		});
+	};
+
+	wrapper?.querySelectorAll<HTMLButtonElement>(".theme-btn").forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const theme = btn.dataset.themeChoice as string;
+			document.documentElement.setAttribute("data-theme", theme);
+			try {
+				localStorage.setItem("sd-theme", theme);
+			} catch (err) {}
+			updateActiveStates();
+		});
+	});
+
+	wrapper?.querySelectorAll<HTMLButtonElement>(".swatch").forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const accent = btn.dataset.accent as string;
+			document.documentElement.style.setProperty("--primary", accent);
+			try {
+				localStorage.setItem("sd-accent", accent);
+			} catch (err) {}
+			updateActiveStates();
+		});
+	});
+
+	updateActiveStates();
+</script>
+
+
+<style>
+
+.settings {
+
+	position: relative;
+
+}
+
+
+.settings-toggle {
+
+	display: flex;
+
+	align-items: center;
+
+	justify-content: center;
+
+	width: 38px;
+
+	height: 38px;
+
+	padding: 0;
+
+	border-radius: 12px;
+
+	background: var(--surface-2);
+
+	border: 1px solid var(--border-2);
+
+	font-size: 1.05rem;
+
+	cursor: pointer;
+
+	transition: .25s ease;
+
+}
+
+
+.settings-toggle:hover {
+
+	background: var(--surface-hover);
+
+	border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+
+}
+
+
+.settings-panel {
+
+	position: absolute;
+
+	top: calc(100% + 12px);
+
+	right: 0;
+
+	width: 260px;
+
+	padding: 20px;
+
+	display: flex;
+
+	flex-direction: column;
+
+	gap: 18px;
+
+	border-radius: 18px;
+
+	background: var(--bg-elevated);
+
+	border: 1px solid var(--border-2);
+
+	backdrop-filter: blur(20px);
+
+	box-shadow: 0 20px 50px var(--shadow-color);
+
+	opacity: 0;
+
+	visibility: hidden;
+
+	transform: translateY(-8px);
+
+	transition: opacity .25s ease, transform .25s ease, visibility .25s;
+
+	pointer-events: none;
+
+	z-index: 200;
+
+}
+
+
+.settings-panel.open {
+
+	opacity: 1;
+
+	visibility: visible;
+
+	transform: none;
+
+	pointer-events: auto;
+
+}
+
+
+.settings-section {
+
+	display: flex;
+
+	flex-direction: column;
+
+	gap: 10px;
+
+}
+
+
+.settings-label {
+
+	font-size: .78rem;
+
+	font-weight: 700;
+
+	letter-spacing: 1px;
+
+	text-transform: uppercase;
+
+	color: var(--text-muted);
+
+}
+
+
+.theme-switch {
+
+	display: flex;
+
+	gap: 8px;
+
+}
+
+
+.theme-btn {
+
+	flex: 1;
+
+	padding: 10px 8px;
+
+	border-radius: 10px;
+
+	background: var(--surface-1);
+
+	border: 1px solid var(--border-1);
+
+	color: var(--text);
+
+	font-size: .85rem;
+
+	font-weight: 600;
+
+	cursor: pointer;
+
+	transition: .2s ease;
+
+}
+
+
+.theme-btn:hover {
+
+	background: var(--surface-hover);
+
+}
+
+
+.theme-btn.active {
+
+	background: var(--primary-bg);
+
+	border-color: var(--primary-border);
+
+	color: var(--primary);
+
+}
+
+
+.swatches {
+
+	display: flex;
+
+	flex-wrap: wrap;
+
+	gap: 10px;
+
+}
+
+
+.swatch {
+
+	width: 32px;
+
+	height: 32px;
+
+	border-radius: 50%;
+
+	background: var(--swatch-color);
+
+	border: 2px solid transparent;
+
+	cursor: pointer;
+
+	transition: .2s ease;
+
+	padding: 0;
+
+}
+
+
+.swatch:hover {
+
+	transform: scale(1.12);
+
+}
+
+
+.swatch.active {
+
+	border-color: var(--text);
+
+	box-shadow: 0 0 0 2px var(--bg-elevated);
+
+}
+
+
+@media (max-width: 768px) {
+
+	.settings-panel {
+
+		right: auto;
+
+		left: 50%;
+
+		transform: translate(-50%, -8px);
+
+	}
+
+
+	.settings-panel.open {
+
+		transform: translate(-50%, 0);
+
+	}
+
+}
+
+</style>

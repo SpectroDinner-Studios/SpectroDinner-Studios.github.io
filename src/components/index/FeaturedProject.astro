@@ -132,7 +132,7 @@
 
 	letter-spacing:3px;
 
-	color:#0A84FF;
+	color:var(--primary);
 
 	font-weight:700;
 
@@ -146,7 +146,7 @@ h2 {
 
 	font-size:clamp(2.5rem,5vw,4rem);
 
-	color:white;
+	color:var(--text);
 
 	letter-spacing:-2px;
 
@@ -160,7 +160,7 @@ h2 {
 
 	margin:20px auto 0;
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	font-size:1.1rem;
 
@@ -185,14 +185,14 @@ h2 {
 
 	background:
 
-		rgba(255,255,255,.04);
+		var(--surface-1);
 
 
 	border:
 
 		1px solid
 
-		rgba(255,255,255,.1);
+		var(--border-1);
 
 
 	backdrop-filter:
@@ -207,7 +207,7 @@ h2 {
 
 	font-size:2rem;
 
-	color:white;
+	color:var(--text);
 
 	margin:0 0 20px;
 
@@ -217,7 +217,7 @@ h2 {
 
 .info p {
 
-	color:#B6BDC9;
+	color:var(--text-muted);
 
 	line-height:1.8;
 
@@ -248,10 +248,10 @@ h2 {
 
 	background:
 
-		rgba(10,132,255,.12);
+		var(--primary-bg);
 
 
-	color:#7DB7FF;
+	color:var(--primary-light);
 
 	font-size:.9rem;
 
@@ -289,7 +289,7 @@ h2 {
 
 .primary {
 
-	background:#0A84FF;
+	background:var(--primary);
 
 	color:white;
 
@@ -305,7 +305,7 @@ h2 {
 
 		0 15px 40px
 
-		rgba(10,132,255,.35);
+		var(--primary-glow);
 
 }
 
@@ -317,10 +317,10 @@ h2 {
 
 		1px solid
 
-		rgba(255,255,255,.15);
+		var(--border-2);
 
 
-	color:white;
+	color:var(--text);
 
 }
 
@@ -330,7 +330,7 @@ h2 {
 
 	background:
 
-		rgba(255,255,255,.08);
+		var(--surface-3);
 
 
 	transform:
@@ -368,7 +368,7 @@ h2 {
 
 		0 15px 40px
 
-		rgba(0,0,0,.35);
+		var(--shadow-color);
 
 }
 

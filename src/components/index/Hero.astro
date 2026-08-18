@@ -80,7 +80,7 @@
 	background:
 		radial-gradient(
 			circle,
-			rgba(10,132,255,.15),
+			color-mix(in srgb, var(--primary) 15%, transparent),
 			transparent 70%
 		);
 
@@ -159,7 +159,7 @@
 	filter:
 		drop-shadow(
 			0 0 20px
-			rgba(10,132,255,.35)
+			var(--primary-glow)
 		);
 
 	transform-style: preserve-3d;
@@ -186,7 +186,7 @@ h1 {
 
 	letter-spacing: -3px;
 
-	color: white;
+	color: var(--text);
 }
 
 .free-badge {
@@ -200,11 +200,11 @@ h1 {
 
 	border-radius: 999px;
 
-	background: rgba(10,132,255,.12);
+	background: var(--primary-bg);
 
-	border: 1px solid rgba(10,132,255,.35);
+	border: 1px solid var(--primary-border);
 
-	color: #0A84FF;
+	color: var(--primary);
 
 	font-size: .85rem;
 	font-weight: 700;
@@ -218,7 +218,7 @@ h2 {
 	font-size: clamp(1.8rem,4vw,3rem);
 	font-weight: 500;
 
-	color: #9CA3AF;
+	color: var(--text-muted);
 
 	letter-spacing: -1px;
 }
@@ -231,7 +231,7 @@ h2 {
 	font-size: 1.15rem;
 	line-height: 1.8;
 
-	color: #B6BDC9;
+	color: var(--text-muted);
 
 	letter-spacing: -.2px;
 }
@@ -257,7 +257,7 @@ h2 {
 }
 
 .primary {
-	background: #0A84FF;
+	background: var(--primary);
 	color: white;
 }
 
@@ -266,23 +266,23 @@ h2 {
 
 	box-shadow:
 		0 15px 40px
-		rgba(10,132,255,.35);
+		var(--primary-glow);
 }
 
 .secondary {
 	background:
-		rgba(255,255,255,.05);
+		var(--surface-2);
 
 	border:
 		1px solid
-		rgba(255,255,255,.12);
+		var(--border-2);
 
-	color: white;
+	color: var(--text);
 }
 
 .secondary:hover {
 	background:
-		rgba(255,255,255,.1);
+		var(--surface-hover);
 
 	transform: translateY(-3px);
 }
@@ -296,7 +296,7 @@ h2 {
 	letter-spacing: 2px;
 	text-transform: uppercase;
 
-	color: #7C8593;
+	color: var(--text-dim);
 }
 
 @media (max-width: 768px) {

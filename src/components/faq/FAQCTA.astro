@@ -144,14 +144,14 @@
 
 	background:
 
-		rgba(255,255,255,.04);
+		var(--surface-1);
 
 
 	border:
 
 		1px solid
 
-		rgba(255,255,255,.10);
+		var(--border-1);
 
 
 	backdrop-filter:
@@ -188,15 +188,15 @@
 
 	background:
 
-		rgba(10,132,255,.12);
+		var(--primary-bg);
 
 	border:
 
 		1px solid
 
-		rgba(10,132,255,.35);
+		var(--primary-border);
 
-	color:#0A84FF;
+	color:var(--primary);
 
 	font-size:.82rem;
 
@@ -222,7 +222,7 @@ h2 {
 
 	letter-spacing:-2px;
 
-	color:white;
+	color:var(--text);
 
 }
 
@@ -234,7 +234,7 @@ h2 {
 
 	margin:30px auto 0;
 
-	color:#B7C0CB;
+	color:var(--text-muted);
 
 	line-height:2;
 
@@ -282,15 +282,15 @@ h2 {
 
 	background:
 
-		rgba(255,255,255,.06);
+		var(--surface-2);
 
 	border:
 
 		1px solid
 
-		rgba(255,255,255,.12);
+		var(--border-2);
 
-	color:white;
+	color:var(--text);
 
 }
 
@@ -304,17 +304,17 @@ h2 {
 
 	background:
 
-		rgba(255,255,255,.10);
+		var(--surface-hover);
 
 	border-color:
 
-		rgba(10,132,255,.35);
+		var(--primary-border);
 
 	box-shadow:
 
 		0 15px 35px
 
-		rgba(10,132,255,.15);
+		color-mix(in srgb, var(--primary) 15%, transparent);
 
 }
 
@@ -322,7 +322,7 @@ h2 {
 
 .documentation {
 
-	background:#0A84FF;
+	background:var(--primary);
 
 	color:white;
 
@@ -330,7 +330,7 @@ h2 {
 
 		0 15px 35px
 
-		rgba(10,132,255,.22);
+		color-mix(in srgb, var(--primary) 22%, transparent);
 
 }
 
@@ -342,13 +342,13 @@ h2 {
 
 		translateY(-4px);
 
-	background:#2994FF;
+	background:var(--primary-hover);
 
 	box-shadow:
 
 		0 20px 45px
 
-		rgba(10,132,255,.35);
+		var(--primary-glow);
 
 }
 
@@ -364,7 +364,7 @@ h2 {
 
 		1px solid
 
-		rgba(255,255,255,.08);
+		var(--border-1);
 
 	display:flex;
 
@@ -394,7 +394,7 @@ h2 {
 
 	font-weight:800;
 
-	color:white;
+	color:var(--text);
 
 }
 
@@ -406,7 +406,7 @@ h2 {
 
 	margin-top:10px;
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	line-height:1.8;
 
@@ -436,7 +436,7 @@ h2 {
 
 	display:block;
 
-	color:white;
+	color:var(--text);
 
 	font-size:1.4rem;
 
@@ -452,7 +452,7 @@ h2 {
 
 	margin-top:8px;
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	font-size:.9rem;
 
@@ -490,7 +490,7 @@ h2 {
 
 			circle,
 
-			rgba(10,132,255,.18),
+			color-mix(in srgb, var(--primary) 18%, transparent),
 
 			transparent 70%
 
@@ -512,7 +512,7 @@ h2 {
 
 			circle,
 
-			rgba(10,132,255,.14),
+			color-mix(in srgb, var(--primary) 14%, transparent),
 
 			transparent 70%
 

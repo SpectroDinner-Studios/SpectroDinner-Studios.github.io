@@ -4,31 +4,46 @@
 
 :root {
 
-	/* Colors */
+	/* Colors — dark theme (default) */
 
 	--background: #050505;
+	--bg-elevated: #0c0d11;
 
-	--surface:
-		rgba(255, 255, 255, 0.05);
+	--surface-1: rgba(255, 255, 255, .04);
+	--surface-2: rgba(255, 255, 255, .06);
+	--surface-3: rgba(255, 255, 255, .08);
+	--surface-hover: rgba(255, 255, 255, .1);
 
-	--surface-hover:
-		rgba(255, 255, 255, 0.08);
+	/* kept for backwards-compat with older rules */
+	--surface: var(--surface-2);
 
-	--border:
-		rgba(255, 255, 255, 0.1);
+	--border-1: rgba(255, 255, 255, .1);
+	--border-2: rgba(255, 255, 255, .12);
+	--border-3: rgba(255, 255, 255, .16);
+	--border: var(--border-1);
 
+	--text: #FFFFFF;
+	--text-muted: #9CA3AF;
+	--text-dim: #7C8593;
+
+	--shadow-color: rgba(0, 0, 0, .3);
 
 	--primary: #0A84FF;
 
 	--primary-glow:
-		rgba(10, 132, 255, 0.35);
+		color-mix(in srgb, var(--primary) 35%, transparent);
 
+	--primary-bg:
+		color-mix(in srgb, var(--primary) 12%, transparent);
 
-	--text:
-		#FFFFFF;
+	--primary-border:
+		color-mix(in srgb, var(--primary) 35%, transparent);
 
-	--text-muted:
-		#9CA3AF;
+	--primary-hover:
+		color-mix(in srgb, var(--primary) 85%, white 15%);
+
+	--primary-light:
+		color-mix(in srgb, var(--primary) 65%, white 35%);
 
 
 	/* Typography */
@@ -64,6 +79,36 @@
 
 	--transition:
 		0.25s ease;
+}
+
+
+
+/* =========================
+   Light theme
+   ========================= */
+
+[data-theme="light"] {
+
+	--background: #F3F5F9;
+	--bg-elevated: #FFFFFF;
+
+	--surface-1: rgba(15, 23, 42, .035);
+	--surface-2: rgba(15, 23, 42, .05);
+	--surface-3: rgba(15, 23, 42, .07);
+	--surface-hover: rgba(15, 23, 42, .09);
+	--surface: var(--surface-2);
+
+	--border-1: rgba(15, 23, 42, .1);
+	--border-2: rgba(15, 23, 42, .14);
+	--border-3: rgba(15, 23, 42, .18);
+	--border: var(--border-1);
+
+	--text: #10131A;
+	--text-muted: #4B5768;
+	--text-dim: #6B7684;
+
+	--shadow-color: rgba(20, 30, 60, .1);
+
 }
 
 
@@ -106,6 +151,11 @@ body {
 
 
 	overflow-x:hidden;
+
+
+	transition:
+		background-color .3s ease,
+		color .3s ease;
 
 }
 
@@ -261,7 +311,7 @@ a {
 		1px solid var(--border);
 
 
-	color:white;
+	color:var(--text);
 
 }
 
@@ -339,6 +389,19 @@ a {
 
 
 /* =========================
+   Native select dropdowns
+   (fixes white-on-white options in
+   the browser's native popup)
+   ========================= */
+
+select option {
+	background: var(--bg-elevated);
+	color: var(--text);
+}
+
+
+
+/* =========================
    Language toggle (ES / EN)
    ========================= */
 
@@ -387,7 +450,7 @@ html:not([lang="es"]) [data-lang="es"] {
 
 	background: radial-gradient(
 		480px circle at var(--mx, 50%) var(--my, 50%),
-		rgba(10, 132, 255, .16),
+		color-mix(in srgb, var(--primary) 16%, transparent),
 		transparent 45%
 	);
 
@@ -428,11 +491,11 @@ html:not([lang="es"]) [data-lang="es"] {
 
 	border-radius: 50%;
 
-	background: rgba(255, 255, 255, .06);
-	border: 1px solid rgba(255, 255, 255, .14);
+	background: var(--surface-2);
+	border: 1px solid var(--border-2);
 	backdrop-filter: blur(15px);
 
-	color: white;
+	color: var(--text);
 	font-size: 1.2rem;
 
 	cursor: pointer;
@@ -453,8 +516,8 @@ html:not([lang="es"]) [data-lang="es"] {
 }
 
 .back-to-top:hover {
-	background: rgba(10, 132, 255, .18);
-	border-color: rgba(10, 132, 255, .5);
+	background: var(--primary-bg);
+	border-color: color-mix(in srgb, var(--primary) 50%, transparent);
 	transform: translateY(-3px);
 }
 
@@ -465,7 +528,7 @@ html:not([lang="es"]) [data-lang="es"] {
    ========================= */
 
 * {
-	scrollbar-color: rgba(10, 132, 255, .5) rgba(255, 255, 255, .05);
+	scrollbar-color: color-mix(in srgb, var(--primary) 50%, transparent) var(--surface-1);
 	scrollbar-width: thin;
 }
 
@@ -475,16 +538,16 @@ html:not([lang="es"]) [data-lang="es"] {
 }
 
 ::-webkit-scrollbar-track {
-	background: rgba(255, 255, 255, .03);
+	background: var(--surface-1);
 }
 
 ::-webkit-scrollbar-thumb {
-	background: rgba(10, 132, 255, .45);
+	background: color-mix(in srgb, var(--primary) 45%, transparent);
 	border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: rgba(10, 132, 255, .7);
+	background: color-mix(in srgb, var(--primary) 70%, transparent);
 }
 
 

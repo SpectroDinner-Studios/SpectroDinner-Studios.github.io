@@ -88,14 +88,14 @@
 
 	background:
 
-		rgba(255,255,255,.04);
+		var(--surface-1);
 
 
 	border:
 
 		1px solid
 
-		rgba(255,255,255,.10);
+		var(--border-1);
 
 
 	backdrop-filter:
@@ -136,15 +136,15 @@
 
 	background:
 
-		rgba(10,132,255,.12);
+		var(--primary-bg);
 
 	border:
 
 		1px solid
 
-		rgba(10,132,255,.35);
+		var(--primary-border);
 
-	color:#0A84FF;
+	color:var(--primary);
 
 	font-size:.82rem;
 
@@ -170,7 +170,7 @@ h2 {
 
 	letter-spacing:-2px;
 
-	color:white;
+	color:var(--text);
 
 }
 
@@ -182,7 +182,7 @@ h2 {
 
 	margin:28px auto 0;
 
-	color:#B7C0CB;
+	color:var(--text-muted);
 
 	line-height:1.9;
 
@@ -222,15 +222,15 @@ h2 {
 
 	background:
 
-		rgba(255,255,255,.05);
+		var(--surface-2);
 
 	border:
 
 		1px solid
 
-		rgba(255,255,255,.1);
+		var(--border-1);
 
-	color:#D6DBE2;
+	color:var(--text-muted);
 
 	font-size:.95rem;
 
@@ -268,7 +268,7 @@ h2 {
 
 	font-size:1.05rem;
 
-	background:#0A84FF;
+	background:var(--primary);
 
 	color:white;
 
@@ -288,7 +288,7 @@ h2 {
 
 		0 20px 45px
 
-		rgba(10,132,255,.35);
+		var(--primary-glow);
 
 }
 
@@ -324,7 +324,7 @@ h2 {
 
 			circle,
 
-			rgba(10,132,255,.18),
+			color-mix(in srgb, var(--primary) 18%, transparent),
 
 			transparent 70%
 
@@ -346,7 +346,7 @@ h2 {
 
 			circle,
 
-			rgba(10,132,255,.14),
+			color-mix(in srgb, var(--primary) 14%, transparent),
 
 			transparent 70%
 

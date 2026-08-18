@@ -111,13 +111,13 @@
 
 	background:
 
-		rgba(255,255,255,.04);
+		var(--surface-1);
 
 	border:
 
 		1px solid
 
-		rgba(255,255,255,.10);
+		var(--border-1);
 
 	backdrop-filter:
 
@@ -145,7 +145,7 @@
 
 			135deg,
 
-			rgba(10,132,255,.10),
+			color-mix(in srgb, var(--primary) 10%, transparent),
 
 			transparent 60%
 
@@ -167,13 +167,13 @@
 
 	border-color:
 
-		rgba(10,132,255,.35);
+		var(--primary-border);
 
 	box-shadow:
 
 		0 20px 45px
 
-		rgba(10,132,255,.15);
+		color-mix(in srgb, var(--primary) 15%, transparent);
 
 }
 
@@ -195,7 +195,7 @@
 
 	font-weight:800;
 
-	color:white;
+	color:var(--text);
 
 }
 
@@ -207,7 +207,7 @@
 
 	margin-top:10px;
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	font-size:.95rem;
 
@@ -245,7 +245,7 @@
 
 			transparent,
 
-			#0A84FF,
+			var(--primary),
 
 			transparent
 
@@ -255,7 +255,7 @@
 
 		0 0 25px
 
-		rgba(10,132,255,.45);
+		color-mix(in srgb, var(--primary) 45%, transparent);
 
 }
 

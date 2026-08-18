@@ -244,7 +244,7 @@ const stars = (rating: number) =>
 
 	letter-spacing:3px;
 
-	color:#0A84FF;
+	color:var(--primary);
 
 }
 
@@ -255,7 +255,7 @@ const stars = (rating: number) =>
 
 	font-size:clamp(2.5rem,5vw,4rem);
 
-	color:white;
+	color:var(--text);
 
 	letter-spacing:-2px;
 
@@ -268,7 +268,7 @@ const stars = (rating: number) =>
 
 	margin:20px auto 0;
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	line-height:1.8;
 
@@ -309,14 +309,14 @@ const stars = (rating: number) =>
 
 	font-weight:800;
 
-	color:white;
+	color:var(--text);
 
 }
 
 
 .score-count {
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	font-size:.95rem;
 
@@ -333,11 +333,11 @@ const stars = (rating: number) =>
 
 	border-radius:22px;
 
-	background:rgba(255,255,255,.04);
+	background:var(--surface-1);
 
-	border:1px solid rgba(255,255,255,.1);
+	border:1px solid var(--border-1);
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	font-size:1.05rem;
 
@@ -363,9 +363,9 @@ const stars = (rating: number) =>
 
 	border-radius:22px;
 
-	background:rgba(255,255,255,.04);
+	background:var(--surface-1);
 
-	border:1px solid rgba(255,255,255,.1);
+	border:1px solid var(--border-1);
 
 	display:flex;
 
@@ -382,9 +382,9 @@ const stars = (rating: number) =>
 
 	transform:translateY(-6px);
 
-	border-color:rgba(10,132,255,.35);
+	border-color:var(--primary-border);
 
-	box-shadow:0 20px 45px rgba(10,132,255,.15);
+	box-shadow:0 20px 45px color-mix(in srgb, var(--primary) 15%, transparent);
 
 }
 
@@ -406,7 +406,7 @@ const stars = (rating: number) =>
 
 .card .text {
 
-	color:#D6DBE2;
+	color:var(--text-muted);
 
 	line-height:1.8;
 
@@ -430,7 +430,7 @@ const stars = (rating: number) =>
 
 .author strong {
 
-	color:white;
+	color:var(--text);
 
 	font-size:.95rem;
 
@@ -439,7 +439,7 @@ const stars = (rating: number) =>
 
 .author span {
 
-	color:#7DB7FF;
+	color:var(--primary-light);
 
 	font-size:.85rem;
 
@@ -452,9 +452,9 @@ const stars = (rating: number) =>
 
 	border-radius:28px;
 
-	background:rgba(255,255,255,.04);
+	background:var(--surface-1);
 
-	border:1px solid rgba(255,255,255,.1);
+	border:1px solid var(--border-1);
 
 	backdrop-filter:blur(15px);
 
@@ -465,7 +465,7 @@ const stars = (rating: number) =>
 
 	margin:0 0 26px;
 
-	color:white;
+	color:var(--text);
 
 	font-size:1.5rem;
 
@@ -502,7 +502,7 @@ label {
 
 	gap:8px;
 
-	color:#D6DBE2;
+	color:var(--text-muted);
 
 	font-size:.95rem;
 
@@ -519,11 +519,11 @@ textarea {
 
 	border-radius:12px;
 
-	background:rgba(255,255,255,0.05);
+	background:var(--surface-2);
 
-	border:1px solid rgba(255,255,255,0.12);
+	border:1px solid var(--border-2);
 
-	color:white;
+	color:var(--text);
 
 	font-family:inherit;
 
@@ -542,9 +542,9 @@ textarea:focus {
 
 	outline:none;
 
-	border-color:rgba(10,132,255,.6);
+	border-color:color-mix(in srgb, var(--primary) 60%, transparent);
 
-	background:rgba(255,255,255,0.07);
+	background:var(--surface-3);
 
 }
 
@@ -566,7 +566,7 @@ textarea {
 
 	border:none;
 
-	background:#0A84FF;
+	background:var(--primary);
 
 	color:white;
 
@@ -585,14 +585,14 @@ textarea {
 
 	transform:translateY(-3px);
 
-	box-shadow:0 15px 40px rgba(10,132,255,.35);
+	box-shadow:0 15px 40px var(--primary-glow);
 
 }
 
 
 .hint {
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	font-size:.88rem;
 
@@ -607,11 +607,11 @@ textarea {
 
 	border-radius:14px;
 
-	background:rgba(10,132,255,.1);
+	background:var(--primary-bg);
 
-	border:1px solid rgba(10,132,255,.3);
+	border:1px solid var(--primary-border);
 
-	color:#D6E8FF;
+	color:var(--primary-light);
 
 	font-size:.92rem;
 

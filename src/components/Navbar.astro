@@ -1,5 +1,6 @@
 ---
 import LangToggle from "./LangToggle.astro";
+import SettingsPanel from "./SettingsPanel.astro";
 ---
 
 <nav class="navbar">
@@ -66,6 +67,8 @@ import LangToggle from "./LangToggle.astro";
 
 		<LangToggle />
 
+		<SettingsPanel />
+
 	</div>
 
 </nav>
@@ -112,12 +115,12 @@ import LangToggle from "./LangToggle.astro";
 
 
 	background:
-		rgba(255,255,255,0.05);
+		var(--surface-2);
 
 
 	border:
 		1px solid
-		rgba(255,255,255,0.12);
+		var(--border-2);
 
 
 	border-radius:18px;
@@ -129,7 +132,7 @@ import LangToggle from "./LangToggle.astro";
 
 	box-shadow:
 		0 10px 40px
-		rgba(0,0,0,.25);
+		var(--shadow-color);
 
 
 	position:sticky;
@@ -151,16 +154,16 @@ import LangToggle from "./LangToggle.astro";
 .navbar.scrolled {
 
 	background:
-		rgba(10,10,14,0.75);
+		color-mix(in srgb, var(--bg-elevated) 75%, transparent);
 
 
 	border-color:
-		rgba(255,255,255,0.16);
+		var(--border-3);
 
 
 	box-shadow:
 		0 15px 45px
-		rgba(0,0,0,.4);
+		var(--shadow-color);
 
 }
 
@@ -175,7 +178,7 @@ import LangToggle from "./LangToggle.astro";
 	gap:14px;
 
 
-	color:white;
+	color:var(--text);
 
 	text-decoration:none;
 
@@ -224,7 +227,7 @@ import LangToggle from "./LangToggle.astro";
 	filter:
 		drop-shadow(
 			0 0 12px
-			rgba(10,132,255,.6)
+			color-mix(in srgb, var(--primary) 60%, transparent)
 		);
 
 }
@@ -247,7 +250,7 @@ import LangToggle from "./LangToggle.astro";
 
 	text-decoration:none;
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 
 	font-weight:500;
@@ -261,7 +264,7 @@ import LangToggle from "./LangToggle.astro";
 
 .links a:hover {
 
-	color:#0A84FF;
+	color:var(--primary);
 
 }
 
@@ -269,7 +272,7 @@ import LangToggle from "./LangToggle.astro";
 
 .github {
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 
 	font-weight:500;
@@ -280,7 +283,7 @@ import LangToggle from "./LangToggle.astro";
 
 .github:hover {
 
-	color:#0A84FF;
+	color:var(--primary);
 
 }
 
@@ -293,7 +296,7 @@ import LangToggle from "./LangToggle.astro";
 
 
 	background:
-		#0A84FF;
+		var(--primary);
 
 
 	border-radius:
@@ -312,7 +315,7 @@ import LangToggle from "./LangToggle.astro";
 .cta:hover {
 
 	background:
-		#3399ff;
+		var(--primary-hover);
 
 
 	transform:
@@ -321,7 +324,7 @@ import LangToggle from "./LangToggle.astro";
 
 	box-shadow:
 		0 10px 25px
-		rgba(10,132,255,.35);
+		var(--primary-glow);
 
 }
 
@@ -346,12 +349,12 @@ import LangToggle from "./LangToggle.astro";
 
 
 	background:
-		rgba(255,255,255,.05);
+		var(--surface-2);
 
 
 	border:
 		1px solid
-		rgba(255,255,255,.12);
+		var(--border-2);
 
 
 	border-radius:10px;
@@ -371,7 +374,7 @@ import LangToggle from "./LangToggle.astro";
 
 	border-radius:999px;
 
-	background:white;
+	background:var(--text);
 
 	transition:.3s ease;
 
@@ -446,12 +449,12 @@ import LangToggle from "./LangToggle.astro";
 
 
 		background:
-			rgba(10,10,14,.95);
+			color-mix(in srgb, var(--bg-elevated) 95%, transparent);
 
 
 		border:
 			1px solid
-			rgba(255,255,255,.12);
+			var(--border-2);
 
 
 		border-radius:18px;

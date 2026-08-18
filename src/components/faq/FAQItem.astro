@@ -110,14 +110,14 @@ const {
 
 	background:
 
-		rgba(255,255,255,.04);
+		var(--surface-1);
 
 
 	border:
 
 		1px solid
 
-		rgba(255,255,255,.08);
+		color-mix(in srgb, var(--text) 8%, transparent);
 
 
 	backdrop-filter:
@@ -145,14 +145,14 @@ const {
 
 	border-color:
 
-		rgba(10,132,255,.30);
+		color-mix(in srgb, var(--primary) 30%, transparent);
 
 
 	box-shadow:
 
 		0 25px 60px
 
-		rgba(10,132,255,.15);
+		color-mix(in srgb, var(--primary) 15%, transparent);
 
 }
 
@@ -171,7 +171,7 @@ const {
 
 			circle at top,
 
-			rgba(10,132,255,.15),
+			color-mix(in srgb, var(--primary) 15%, transparent),
 
 			transparent 70%
 
@@ -263,14 +263,14 @@ summary::-webkit-details-marker {
 
 	background:
 
-		rgba(10,132,255,.12);
+		var(--primary-bg);
 
 
 	border:
 
 		1px solid
 
-		rgba(10,132,255,.25);
+		color-mix(in srgb, var(--primary) 25%, transparent);
 
 
 	flex-shrink:0;
@@ -290,7 +290,7 @@ summary::-webkit-details-marker {
 	font-weight:700;
 
 
-	color:white;
+	color:var(--text);
 
 
 	letter-spacing:-.5px;
@@ -336,7 +336,7 @@ summary::-webkit-details-marker {
 
 	border-radius:999px;
 
-	background:#0A84FF;
+	background:var(--primary);
 
 	transform:
 
@@ -380,14 +380,14 @@ summary::-webkit-details-marker {
 
 	border-color:
 
-		rgba(10,132,255,.35);
+		var(--primary-border);
 
 
 	box-shadow:
 
 		0 25px 70px
 
-		rgba(10,132,255,.18);
+		color-mix(in srgb, var(--primary) 18%, transparent);
 
 }
 
@@ -457,7 +457,7 @@ summary::-webkit-details-marker {
 	margin:18px 0;
 
 
-	color:#B9C0CB;
+	color:var(--text-muted);
 
 
 	font-size:1rem;
@@ -485,7 +485,7 @@ summary::-webkit-details-marker {
 
 	margin-bottom:10px;
 
-	color:#B9C0CB;
+	color:var(--text-muted);
 
 	line-height:1.8;
 
@@ -495,7 +495,7 @@ summary::-webkit-details-marker {
 
 .content-inner strong {
 
-	color:white;
+	color:var(--text);
 
 	font-weight:700;
 
@@ -519,15 +519,15 @@ summary::-webkit-details-marker {
 
 	background:
 
-		rgba(255,255,255,.06);
+		var(--surface-2);
 
 	border:
 
 		1px solid
 
-		rgba(255,255,255,.08);
+		var(--border-1);
 
-	color:#7CC6FF;
+	color:var(--primary-light);
 
 }
 
@@ -535,7 +535,7 @@ summary::-webkit-details-marker {
 
 .content-inner a {
 
-	color:#58AEFF;
+	color:var(--primary-light);
 
 	text-decoration:none;
 
@@ -547,7 +547,7 @@ summary::-webkit-details-marker {
 
 .content-inner a:hover {
 
-	color:white;
+	color:var(--text);
 
 }
 

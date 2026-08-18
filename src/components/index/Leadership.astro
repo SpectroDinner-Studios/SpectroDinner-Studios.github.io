@@ -192,7 +192,7 @@
 
 	letter-spacing:3px;
 
-	color:#0A84FF;
+	color:var(--primary);
 
 }
 
@@ -202,7 +202,7 @@
 
 	margin-top:25px;
 
-	color:white;
+	color:var(--text);
 
 	font-size:
 
@@ -221,7 +221,7 @@
 
 	margin:25px auto 0;
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	line-height:1.9;
 
@@ -248,14 +248,14 @@
 
 	background:
 
-		rgba(255,255,255,.04);
+		var(--surface-1);
 
 
 	border:
 
 		1px solid
 
-		rgba(255,255,255,.1);
+		var(--border-1);
 
 
 	backdrop-filter:
@@ -293,7 +293,7 @@
 
 			circle,
 
-			rgba(10,132,255,.18),
+			color-mix(in srgb, var(--primary) 18%, transparent),
 
 			transparent 70%
 
@@ -335,7 +335,7 @@
 
 			circle,
 
-			rgba(10,132,255,.45),
+			color-mix(in srgb, var(--primary) 45%, transparent),
 
 			transparent 70%
 
@@ -371,14 +371,14 @@
 
 		4px solid
 
-		rgba(255,255,255,.15);
+		var(--border-2);
 
 
 	box-shadow:
 
 		0 20px 60px
 
-		rgba(0,0,0,.4);
+		var(--shadow-color);
 
 }
 
@@ -392,7 +392,7 @@
 	font-size:3rem;
 
 
-	color:white;
+	color:var(--text);
 
 
 	letter-spacing:-2px;
@@ -408,7 +408,7 @@
 		15px 0 35px;
 
 
-	color:#0A84FF;
+	color:var(--primary);
 
 
 	font-size:1.2rem;
@@ -419,7 +419,7 @@
 
 .content p {
 
-	color:#B6BDC9;
+	color:var(--text-muted);
 
 
 	line-height:2;
@@ -464,14 +464,14 @@
 
 	background:
 
-		rgba(255,255,255,.05);
+		var(--surface-2);
 
 
 	border:
 
 		1px solid
 
-		rgba(255,255,255,.08);
+		var(--border-1);
 
 }
 
@@ -481,7 +481,7 @@
 
 	display:block;
 
-	color:white;
+	color:var(--text);
 
 	font-size:1.6rem;
 
@@ -493,7 +493,7 @@
 
 .stats span {
 
-	color:#9CA3AF;
+	color:var(--text-muted);
 
 	font-size:.9rem;
 
@@ -533,7 +533,7 @@
 
 .primary {
 
-	background:#0A84FF;
+	background:var(--primary);
 
 	color:white;
 
@@ -550,7 +550,7 @@
 
 		0 15px 40px
 
-		rgba(10,132,255,.35);
+		var(--primary-glow);
 
 }
 
@@ -558,14 +558,14 @@
 
 .secondary {
 
-	color:white;
+	color:var(--text);
 
 
 	border:
 
 		1px solid
 
-		rgba(255,255,255,.15);
+		var(--border-2);
 
 }
 
@@ -575,7 +575,7 @@
 
 	background:
 
-		rgba(255,255,255,.08);
+		var(--surface-3);
 
 
 	transform:
