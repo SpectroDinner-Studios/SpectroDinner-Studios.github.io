@@ -114,6 +114,66 @@
 
 
 /* =========================
+   AMOLED theme (true black)
+   ========================= */
+
+[data-theme="amoled"] {
+
+	--background: #000000;
+	--bg-elevated: #030303;
+
+	--surface-1: rgba(255, 255, 255, .035);
+	--surface-2: rgba(255, 255, 255, .055);
+	--surface-3: rgba(255, 255, 255, .075);
+	--surface-hover: rgba(255, 255, 255, .095);
+	--surface: var(--surface-2);
+
+	--border-1: rgba(255, 255, 255, .09);
+	--border-2: rgba(255, 255, 255, .12);
+	--border-3: rgba(255, 255, 255, .16);
+	--border: var(--border-1);
+
+	--text: #FFFFFF;
+	--text-muted: #9CA3AF;
+	--text-dim: #7C8593;
+
+	--shadow-color: rgba(0, 0, 0, .6);
+
+}
+
+
+
+/* =========================
+   High contrast theme
+   ========================= */
+
+[data-theme="contrast"] {
+
+	--background: #000000;
+	--bg-elevated: #000000;
+
+	--surface-1: rgba(255, 255, 255, .08);
+	--surface-2: rgba(255, 255, 255, .12);
+	--surface-3: rgba(255, 255, 255, .16);
+	--surface-hover: rgba(255, 255, 255, .22);
+	--surface: var(--surface-2);
+
+	--border-1: rgba(255, 255, 255, .4);
+	--border-2: rgba(255, 255, 255, .55);
+	--border-3: rgba(255, 255, 255, .75);
+	--border: var(--border-1);
+
+	--text: #FFFFFF;
+	--text-muted: #E5E7EB;
+	--text-dim: #D1D5DB;
+
+	--shadow-color: rgba(0, 0, 0, .7);
+
+}
+
+
+
+/* =========================
    Reset
    ========================= */
 

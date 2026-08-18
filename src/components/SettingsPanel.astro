@@ -24,6 +24,10 @@ const accents = [
 			</span>
 
 			<div class="theme-switch">
+				<button type="button" class="theme-btn" data-theme-choice="system">
+					<span data-lang="es">🖥️ Sistema</span>
+					<span data-lang="en">🖥️ System</span>
+				</button>
 				<button type="button" class="theme-btn" data-theme-choice="dark">
 					<span data-lang="es">🌙 Oscuro</span>
 					<span data-lang="en">🌙 Dark</span>
@@ -31,6 +35,14 @@ const accents = [
 				<button type="button" class="theme-btn" data-theme-choice="light">
 					<span data-lang="es">☀️ Claro</span>
 					<span data-lang="en">☀️ Light</span>
+				</button>
+				<button type="button" class="theme-btn" data-theme-choice="amoled">
+					<span data-lang="es">⚫ AMOLED</span>
+					<span data-lang="en">⚫ AMOLED</span>
+				</button>
+				<button type="button" class="theme-btn" data-theme-choice="contrast">
+					<span data-lang="es">◐ Alto contraste</span>
+					<span data-lang="en">◐ High contrast</span>
 				</button>
 			</div>
 		</div>
@@ -79,14 +91,22 @@ const accents = [
 		if (wrapper && !wrapper.contains(e.target as Node)) closePanel();
 	});
 
+	const FIXED_THEMES = ["light", "dark", "amoled", "contrast"];
+
 	const updateActiveStates = () => {
-		const theme = document.documentElement.getAttribute("data-theme") || "dark";
+		let stored: string | null = null;
+		try {
+			stored = localStorage.getItem("sd-theme");
+		} catch (err) {}
+
+		const activeChoice = FIXED_THEMES.includes(stored ?? "") ? stored : "system";
+
 		const accent = getComputedStyle(document.documentElement)
 			.getPropertyValue("--primary")
 			.trim();
 
 		wrapper?.querySelectorAll<HTMLButtonElement>(".theme-btn").forEach((btn) => {
-			btn.classList.toggle("active", btn.dataset.themeChoice === theme);
+			btn.classList.toggle("active", btn.dataset.themeChoice === activeChoice);
 		});
 
 		wrapper?.querySelectorAll<HTMLButtonElement>(".swatch").forEach((btn) => {
@@ -99,10 +119,10 @@ const accents = [
 	wrapper?.querySelectorAll<HTMLButtonElement>(".theme-btn").forEach((btn) => {
 		btn.addEventListener("click", () => {
 			const theme = btn.dataset.themeChoice as string;
-			document.documentElement.setAttribute("data-theme", theme);
 			try {
 				localStorage.setItem("sd-theme", theme);
 			} catch (err) {}
+			(window as any).__sdApplyTheme?.();
 			updateActiveStates();
 		});
 	});
@@ -177,7 +197,7 @@ const accents = [
 
 	right: 0;
 
-	width: 260px;
+	width: 290px;
 
 	padding: 20px;
 
@@ -253,7 +273,9 @@ const accents = [
 
 .theme-switch {
 
-	display: flex;
+	display: grid;
+
+	grid-template-columns: 1fr 1fr;
 
 	gap: 8px;
 
@@ -261,8 +283,6 @@ const accents = [
 
 
 .theme-btn {
-
-	flex: 1;
 
 	padding: 10px 8px;
 
@@ -274,9 +294,13 @@ const accents = [
 
 	color: var(--text);
 
-	font-size: .85rem;
+	font-size: .8rem;
 
 	font-weight: 600;
+
+	line-height: 1.3;
+
+	text-align: center;
 
 	cursor: pointer;
 

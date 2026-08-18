@@ -30,16 +30,35 @@ const { title = "SpectroDinner™" } = Astro.props;
 				} catch (e) {}
 
 				try {
-					var storedTheme = localStorage.getItem("sd-theme");
-					var theme =
-						storedTheme === "light" || storedTheme === "dark"
-							? storedTheme
-							: window.matchMedia &&
-							  window.matchMedia("(prefers-color-scheme: light)").matches
-							? "light"
-							: "dark";
+					var FIXED_THEMES = ["light", "dark", "amoled", "contrast"];
 
-					document.documentElement.setAttribute("data-theme", theme);
+					var applyTheme = function () {
+						var stored = localStorage.getItem("sd-theme");
+
+						if (FIXED_THEMES.indexOf(stored) !== -1) {
+							document.documentElement.setAttribute("data-theme", stored);
+							return;
+						}
+
+						// "system" or nothing saved yet: follow the OS preference live.
+						var isDark =
+							!window.matchMedia ||
+							window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+						document.documentElement.setAttribute(
+							"data-theme",
+							isDark ? "dark" : "light"
+						);
+					};
+
+					applyTheme();
+					window.__sdApplyTheme = applyTheme;
+
+					if (window.matchMedia) {
+						window
+							.matchMedia("(prefers-color-scheme: dark)")
+							.addEventListener("change", applyTheme);
+					}
 				} catch (e) {}
 
 				try {
