@@ -78,18 +78,45 @@ const stars = (rating: number) =>
 						</span>
 					</div>
 
-					<div class="grid">
-						{reviews.map((review) => (
-							<div class="card reveal spotlight">
-								<span class="card-stars">{stars(review.rating)}</span>
-								<p class="text">"{review.text}"</p>
-								<div class="author">
-									<strong>{review.name}</strong>
-									{review.service && <span>{review.service}</span>}
-								</div>
+					{count > 3 ? (
+						<div class="carousel reveal">
+							<div class="carousel-track">
+								{reviews.map((review) => (
+									<div class="card spotlight">
+										<span class="card-stars">{stars(review.rating)}</span>
+										<p class="text">"{review.text}"</p>
+										<div class="author">
+											<strong>{review.name}</strong>
+											{review.service && <span>{review.service}</span>}
+										</div>
+									</div>
+								))}
 							</div>
-						))}
-					</div>
+
+							<div class="carousel-dots">
+								{reviews.map((_, i) => (
+									<button
+										type="button"
+										class="dot"
+										aria-label={`Review ${i + 1}`}
+									/>
+								))}
+							</div>
+						</div>
+					) : (
+						<div class="grid">
+							{reviews.map((review) => (
+								<div class="card reveal spotlight">
+									<span class="card-stars">{stars(review.rating)}</span>
+									<p class="text">"{review.text}"</p>
+									<div class="author">
+										<strong>{review.name}</strong>
+										{review.service && <span>{review.service}</span>}
+									</div>
+								</div>
+							))}
+						</div>
+					)}
 				</>
 			) : (
 				<div class="empty reveal">
@@ -191,6 +218,65 @@ const stars = (rating: number) =>
 
 
 <script>
+	const prefersReducedMotion = window.matchMedia(
+		"(prefers-reduced-motion: reduce)"
+	).matches;
+
+	const track = document.querySelector<HTMLElement>(".carousel-track");
+
+	if (track) {
+		const cards = Array.from(track.querySelectorAll<HTMLElement>(".card"));
+		const dots = document.querySelectorAll<HTMLButtonElement>(".carousel-dots .dot");
+
+		if (dots.length) {
+			dots.forEach((dot, i) => {
+				dot.addEventListener("click", () => {
+					cards[i]?.scrollIntoView({
+						behavior: "smooth",
+						inline: "start",
+						block: "nearest",
+					});
+				});
+			});
+
+			const dotObserver = new IntersectionObserver(
+				(entries) => {
+					entries.forEach((entry) => {
+						if (!entry.isIntersecting) return;
+						const index = cards.indexOf(entry.target as HTMLElement);
+						dots.forEach((d, i) => d.classList.toggle("active", i === index));
+					});
+				},
+				{ root: track, threshold: 0.6 }
+			);
+
+			cards.forEach((card) => dotObserver.observe(card));
+		}
+
+		if (!prefersReducedMotion && cards.length > 1) {
+			let paused = false;
+
+			track.addEventListener("mouseenter", () => (paused = true));
+			track.addEventListener("mouseleave", () => (paused = false));
+
+			setInterval(() => {
+				if (paused) return;
+
+				const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 5;
+
+				if (atEnd) {
+					track.scrollTo({ left: 0, behavior: "smooth" });
+					return;
+				}
+
+				const next = cards.find((c) => c.offsetLeft > track.scrollLeft + 5);
+				if (next) {
+					track.scrollTo({ left: next.offsetLeft, behavior: "smooth" });
+				}
+			}, 3500);
+		}
+	}
+
 	const form = document.getElementById("review-form") as HTMLFormElement | null;
 	const status = document.getElementById("review-status");
 
@@ -409,6 +495,100 @@ const stars = (rating: number) =>
 
 .grid .card:nth-child(2) { transition-delay: .08s; }
 .grid .card:nth-child(3) { transition-delay: .16s; }
+
+
+.carousel {
+
+	margin-bottom:50px;
+
+}
+
+
+.carousel-track {
+
+	display:flex;
+
+	gap:24px;
+
+	overflow-x:auto;
+
+	scroll-snap-type:x mandatory;
+
+	scrollbar-width:none;
+
+	padding-bottom:4px;
+
+}
+
+
+.carousel-track::-webkit-scrollbar {
+
+	display:none;
+
+}
+
+
+.carousel-track .card {
+
+	scroll-snap-align:start;
+
+	flex:0 0 calc((100% - 48px) / 3);
+
+	min-width:260px;
+
+}
+
+
+.carousel-dots {
+
+	display:flex;
+
+	justify-content:center;
+
+	gap:10px;
+
+	margin-top:24px;
+
+}
+
+
+.dot {
+
+	width:9px;
+
+	height:9px;
+
+	padding:0;
+
+	border-radius:50%;
+
+	border:none;
+
+	background:var(--border-2);
+
+	cursor:pointer;
+
+	transition:.25s ease;
+
+}
+
+
+.dot:hover {
+
+	background:var(--primary-light);
+
+}
+
+
+.dot.active {
+
+	background:var(--primary);
+
+	width:22px;
+
+	border-radius:999px;
+
+}
 
 
 .card-stars {
@@ -644,6 +824,13 @@ textarea {
 
 	}
 
+
+	.carousel-track .card {
+
+		flex-basis:calc((100% - 24px) / 2);
+
+	}
+
 }
 
 
@@ -673,6 +860,15 @@ textarea {
 	.submit {
 
 		width:100%;
+
+	}
+
+
+	.carousel-track .card {
+
+		flex-basis:88%;
+
+		min-width:0;
 
 	}
 
