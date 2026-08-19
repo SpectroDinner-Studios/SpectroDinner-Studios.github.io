@@ -10,7 +10,14 @@ const reviews: {
 	rating: number;
 	service?: string;
 	text: string;
-}[] = [];
+}[] = [
+	{
+		name: "Eggchan00",
+		rating: 5,
+		service: "Helped redesign my discord and built it up",
+		text: "He was the best person to do it it literally took him less than a day and you guys should try it too",
+	},
+];
 
 const count = reviews.length;
 
@@ -105,9 +112,14 @@ const stars = (rating: number) =>
 				<div class="grid-fields">
 
 					<label>
-						<span data-lang="es">Nombre / usuario de Discord *</span>
-						<span data-lang="en">Name / Discord username *</span>
-						<input type="text" name="nombre" required />
+						<span data-lang="es">Apodo *</span>
+						<span data-lang="en">Nickname *</span>
+						<input
+							type="text"
+							name="nombre"
+							placeholder="Ej. Eggchan00 / e.g. Eggchan00"
+							required
+						/>
 					</label>
 
 					<label>
@@ -188,7 +200,7 @@ const stars = (rating: number) =>
 		const lines = [
 			"NUEVA VALORACIÓN",
 			"",
-			`Nombre: ${get("nombre")}`,
+			`Apodo: ${get("nombre")}`,
 			`Servicio recibido: ${get("servicio")}`,
 			`Valoración: ${rating}/5 ${stars}`,
 			"",
