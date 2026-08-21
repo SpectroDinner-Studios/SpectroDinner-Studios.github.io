@@ -19,15 +19,15 @@
 
 
 		<p class="description" data-lang="es">
-			Rellena nuestro cuestionario y cuéntanos el diseño, la temática,
-			el propósito y todo lo que necesitas para tu servidor de
-			Discord. Con esa información preparamos una propuesta a tu medida.
+			Elige tu servicio y rellena el cuestionario correspondiente:
+			cuéntanos el diseño, la temática, el propósito y todo lo que
+			necesitas. Con esa información preparamos una propuesta a tu medida.
 		</p>
 
 		<p class="description" data-lang="en">
-			Fill out our questionnaire and tell us the design, theme,
-			purpose and everything you need for your Discord server.
-			With that information we put together a proposal made for you.
+			Pick your service and fill out the matching questionnaire: tell
+			us the design, theme, purpose and everything you need. With
+			that information we put together a proposal made for you.
 		</p>
 
 
@@ -60,10 +60,21 @@
 		</div>
 
 
-		<a href="/cuestionario" class="primary">
-			<span data-lang="es">Rellenar el cuestionario →</span>
-			<span data-lang="en">Fill out the questionnaire →</span>
-		</a>
+		<div class="buttons">
+
+			<a href="/cuestionario" class="primary discord">
+				<span class="btn-icon">💬</span>
+				<span data-lang="es">Servicio de Discord →</span>
+				<span data-lang="en">Discord Service →</span>
+			</a>
+
+			<a href="/cuestionario-minecraft" class="primary minecraft">
+				<span class="btn-icon">⛏️</span>
+				<span data-lang="es">Servicio de Minecraft →</span>
+				<span data-lang="en">Minecraft Service →</span>
+			</a>
+
+		</div>
 
 	</div>
 
@@ -248,6 +259,22 @@ h2 {
 
 
 
+.buttons {
+
+	display:flex;
+
+	justify-content:center;
+
+	flex-wrap:wrap;
+
+	gap:18px;
+
+	margin-top:50px;
+
+}
+
+
+
 .primary {
 
 	display:inline-flex;
@@ -256,9 +283,9 @@ h2 {
 
 	justify-content:center;
 
-	margin-top:50px;
+	gap:10px;
 
-	padding:18px 40px;
+	padding:18px 36px;
 
 	border-radius:16px;
 
@@ -268,8 +295,6 @@ h2 {
 
 	font-size:1.05rem;
 
-	background:var(--primary);
-
 	color:white;
 
 	transition:.3s ease;
@@ -278,7 +303,23 @@ h2 {
 
 
 
-.primary:hover {
+.btn-icon {
+
+	font-size:1.15rem;
+
+}
+
+
+
+.primary.discord {
+
+	background:var(--primary);
+
+}
+
+
+
+.primary.discord:hover {
 
 	transform:
 
@@ -289,6 +330,30 @@ h2 {
 		0 20px 45px
 
 		var(--primary-glow);
+
+}
+
+
+
+.primary.minecraft {
+
+	background:linear-gradient(135deg, var(--primary), #8B5CF6);
+
+}
+
+
+
+.primary.minecraft:hover {
+
+	transform:
+
+		translateY(-4px);
+
+	box-shadow:
+
+		0 20px 45px
+
+		color-mix(in srgb, #8B5CF6 35%, transparent);
 
 }
 
@@ -377,6 +442,13 @@ h2 {
 	.description {
 
 		font-size:1rem;
+
+	}
+
+
+	.buttons {
+
+		flex-direction:column;
 
 	}
 
