@@ -59,10 +59,31 @@ import SettingsPanel from "./SettingsPanel.astro";
 		</a>
 
 
-		<a href="/cuestionario" class="cta">
-			<span data-lang="es">Cuestionario →</span>
-			<span data-lang="en">Questionnaire →</span>
-		</a>
+		<div class="cta-dropdown">
+
+			<button type="button" class="cta cta-toggle" aria-expanded="false">
+				<span data-lang="es">Cuestionario</span>
+				<span data-lang="en">Questionnaire</span>
+				<span class="caret">▾</span>
+			</button>
+
+			<div class="cta-panel">
+
+				<a href="/cuestionario">
+					<span class="cta-panel-icon">💬</span>
+					<span data-lang="es">Servicio de Discord</span>
+					<span data-lang="en">Discord Service</span>
+				</a>
+
+				<a href="/cuestionario-minecraft">
+					<span class="cta-panel-icon">⛏️</span>
+					<span data-lang="es">Servicio de Minecraft</span>
+					<span data-lang="en">Minecraft Service</span>
+				</a>
+
+			</div>
+
+		</div>
 
 
 		<LangToggle />
@@ -92,6 +113,31 @@ import SettingsPanel from "./SettingsPanel.astro";
 
 	links?.querySelectorAll("a").forEach((a) => {
 		a.addEventListener("click", closeMenu);
+	});
+
+
+	const ctaToggle = document.querySelector<HTMLButtonElement>(".cta-toggle");
+	const ctaPanel = document.querySelector<HTMLElement>(".cta-panel");
+
+	const closeCta = () => {
+		ctaPanel?.classList.remove("open");
+		ctaToggle?.setAttribute("aria-expanded", "false");
+	};
+
+	ctaToggle?.addEventListener("click", (e) => {
+		e.stopPropagation();
+		const isOpen = ctaPanel?.classList.toggle("open");
+		ctaToggle.setAttribute("aria-expanded", String(!!isOpen));
+	});
+
+	document.addEventListener("click", (e) => {
+		if (
+			ctaPanel &&
+			!ctaPanel.contains(e.target as Node) &&
+			!ctaToggle?.contains(e.target as Node)
+		) {
+			closeCta();
+		}
 	});
 </script>
 
@@ -289,7 +335,22 @@ import SettingsPanel from "./SettingsPanel.astro";
 
 
 
+.cta-dropdown {
+
+	position:relative;
+
+}
+
+
+
 .cta {
+
+	display:flex;
+
+	align-items:center;
+
+	gap:6px;
+
 
 	padding:
 		10px 18px;
@@ -297,6 +358,9 @@ import SettingsPanel from "./SettingsPanel.astro";
 
 	background:
 		var(--primary);
+
+
+	border:none;
 
 
 	border-radius:
@@ -307,6 +371,14 @@ import SettingsPanel from "./SettingsPanel.astro";
 
 
 	font-weight:600 !important;
+
+	font-family:inherit;
+
+	font-size:1rem;
+
+	cursor:pointer;
+
+	transition:.25s ease;
 
 }
 
@@ -325,6 +397,124 @@ import SettingsPanel from "./SettingsPanel.astro";
 	box-shadow:
 		0 10px 25px
 		var(--primary-glow);
+
+}
+
+
+
+.caret {
+
+	font-size:.75rem;
+
+	transition:transform .25s ease;
+
+}
+
+
+
+.cta-toggle[aria-expanded="true"] .caret {
+
+	transform:rotate(180deg);
+
+}
+
+
+
+.cta-panel {
+
+	position:absolute;
+
+	top:calc(100% + 12px);
+
+	right:0;
+
+	width:240px;
+
+	padding:10px;
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:6px;
+
+	border-radius:16px;
+
+	background:var(--bg-elevated);
+
+	border:1px solid var(--border-2);
+
+	backdrop-filter:blur(20px);
+
+	box-shadow:0 20px 50px var(--shadow-color);
+
+	opacity:0;
+
+	visibility:hidden;
+
+	transform:translateY(-8px);
+
+	transition:opacity .25s ease, transform .25s ease, visibility .25s;
+
+	pointer-events:none;
+
+	z-index:200;
+
+}
+
+
+
+.cta-panel.open {
+
+	opacity:1;
+
+	visibility:visible;
+
+	transform:none;
+
+	pointer-events:auto;
+
+}
+
+
+
+.cta-panel a {
+
+	display:flex;
+
+	align-items:center;
+
+	gap:10px;
+
+	padding:12px 14px;
+
+	border-radius:10px;
+
+	color:var(--text) !important;
+
+	font-weight:600 !important;
+
+	text-decoration:none;
+
+	transition:.2s ease;
+
+}
+
+
+
+.cta-panel a:hover {
+
+	background:var(--surface-hover);
+
+	color:var(--primary) !important;
+
+}
+
+
+
+.cta-panel-icon {
+
+	font-size:1.05rem;
 
 }
 
@@ -510,6 +700,26 @@ import SettingsPanel from "./SettingsPanel.astro";
 	.brand {
 
 		font-size:1.1rem;
+
+	}
+
+
+
+	.cta-panel {
+
+		right:auto;
+
+		left:50%;
+
+		transform:translate(-50%,-8px);
+
+	}
+
+
+
+	.cta-panel.open {
+
+		transform:translate(-50%,0);
 
 	}
 
