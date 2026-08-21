@@ -12,45 +12,46 @@
 			SpectroDinner™
 		</h1>
 
-		<div class="free-badge">
-			<span data-lang="es">✨ Servicio 100% gratuito</span>
-			<span data-lang="en">✨ 100% free service</span>
+		<div class="badge">
+			<span data-lang="es">ESTUDIO DE DESARROLLO INDEPENDIENTE</span>
+			<span data-lang="en">INDEPENDENT DEVELOPMENT STUDIO</span>
 		</div>
 
 		<h2>
-			<span data-lang="es">Creamos, configuramos y rediseñamos tu servidor de Discord</span>
-			<span data-lang="en">We create, configure and redesign your Discord server</span>
+			<span data-lang="es">Software · Juegos · Minecraft · Tecnología Experimental</span>
+			<span data-lang="en">Software · Games · Minecraft · Experimental Technology</span>
 		</h2>
 
 		<p class="description" data-lang="es">
-			Diseñamos servidores de Discord a la medida de cada cliente: desde cero, mejorando uno ya existente o rediseñándolo por completo, sin ningún coste. Todo empieza con un cuestionario donde nos cuentas el diseño, la temática y para qué quieres tu servidor, para entregarte exactamente lo que imaginas.
+			SpectroDinner Studios diseña y construye software, videojuegos
+			y proyectos de Minecraft, además de explorar tecnología
+			experimental. También ofrecemos un servicio gratuito de
+			configuración de servidores de Discord.
 		</p>
 
 		<p class="description" data-lang="en">
-			We design Discord servers tailored to each client: from scratch, improving an existing one, or redesigning it completely, at no cost. It all starts with a questionnaire where you tell us the design, theme and purpose of your server, so we deliver exactly what you imagine.
+			SpectroDinner Studios designs and builds software, games and
+			Minecraft projects, while also exploring experimental
+			technology. We also offer a free Discord server setup
+			service.
 		</p>
 
 		<div class="buttons">
 			<a
-				href="/cuestionario"
+				href="/projects"
 				class="primary"
 			>
-				<span data-lang="es">Rellenar el cuestionario →</span>
-				<span data-lang="en">Fill out the questionnaire →</span>
+				<span data-lang="es">Explorar Proyectos →</span>
+				<span data-lang="en">Explore Projects →</span>
 			</a>
 
 			<a
 				href="#servicios"
 				class="secondary"
 			>
-				<span data-lang="es">Ver servicios</span>
-				<span data-lang="en">View services</span>
+				<span data-lang="es">Trabaja con Nosotros</span>
+				<span data-lang="en">Work With Us</span>
 			</a>
-		</div>
-
-		<div class="hero-tags">
-			<span data-lang="es">CREACIÓN • CONFIGURACIÓN • REDISEÑO • 100% GRATIS</span>
-			<span data-lang="en">CREATION • CONFIGURATION • REDESIGN • 100% FREE</span>
 		</div>
 	</div>
 </section>
@@ -121,9 +122,7 @@
 .content > *:nth-child(3) { animation-delay: .30s; }
 .content > *:nth-child(4) { animation-delay: .42s; }
 .content > *:nth-child(5) { animation-delay: .52s; }
-.content > *:nth-child(6) { animation-delay: .52s; }
-.content > *:nth-child(7) { animation-delay: .64s; }
-.content > *:nth-child(8) { animation-delay: .76s; }
+.content > *:nth-child(6) { animation-delay: .64s; }
 
 @keyframes heroFadeUp {
 	from {
@@ -189,7 +188,7 @@ h1 {
 	color: var(--text);
 }
 
-.free-badge {
+.badge {
 	margin-top: 22px;
 
 	display: inline-flex;
@@ -206,29 +205,30 @@ h1 {
 
 	color: var(--primary);
 
-	font-size: .85rem;
+	font-size: .8rem;
 	font-weight: 700;
 
-	letter-spacing: .5px;
+	letter-spacing: 2px;
+	text-align: center;
 }
 
 h2 {
-	margin: 20px 0 0;
+	margin: 24px 0 0;
 
-	font-size: clamp(1.8rem,4vw,3rem);
+	font-size: clamp(1.4rem,3.4vw,2.2rem);
 	font-weight: 500;
 
 	color: var(--text-muted);
 
-	letter-spacing: -1px;
+	letter-spacing: -.5px;
 }
 
 .description {
-	margin-top: 32px;
+	margin-top: 28px;
 
-	max-width: 760px;
+	max-width: 700px;
 
-	font-size: 1.15rem;
+	font-size: 1.1rem;
 	line-height: 1.8;
 
 	color: var(--text-muted);
@@ -241,7 +241,7 @@ h2 {
 
 	gap: 20px;
 
-	margin-top: 50px;
+	margin-top: 46px;
 }
 
 .buttons a {
@@ -287,18 +287,6 @@ h2 {
 	transform: translateY(-3px);
 }
 
-.hero-tags {
-	margin-top: 48px;
-
-	font-size: .9rem;
-	font-weight: 600;
-
-	letter-spacing: 2px;
-	text-transform: uppercase;
-
-	color: var(--text-dim);
-}
-
 @media (max-width: 768px) {
 
 	.hero {
@@ -322,11 +310,6 @@ h2 {
 
 	.buttons a {
 		width: 100%;
-	}
-
-	.hero-tags {
-		font-size: .8rem;
-		line-height: 1.8;
 	}
 }
 

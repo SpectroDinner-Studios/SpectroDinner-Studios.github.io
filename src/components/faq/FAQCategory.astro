@@ -1,7 +1,7 @@
 ---
 interface Props {
 
-	title: string;
+	title: string | { es: string; en: string };
 
 	description?: string;
 
@@ -28,7 +28,14 @@ const {
 
 			<h2>
 
-				{title}
+				{typeof title === "string" ? (
+					title
+				) : (
+					<>
+						<span data-lang="es">{title.es}</span>
+						<span data-lang="en">{title.en}</span>
+					</>
+				)}
 
 			</h2>
 

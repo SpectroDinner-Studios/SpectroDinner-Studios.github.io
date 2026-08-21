@@ -4,7 +4,10 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 ---
 
-<Layout title="Cuestionario | SpectroDinner™">
+<Layout
+	title="Cuestionario | SpectroDinner™"
+	description="Cuéntanos qué necesitas para tu servidor de Discord — creación, configuración o rediseño, 100% gratis."
+>
 
 	<Navbar />
 
@@ -44,7 +47,7 @@ import Footer from "../components/Footer.astro";
 		</section>
 
 
-		<form id="quest-form" class="form">
+		<form id="quest-form" class="form" novalidate>
 
 
 			<fieldset class="card">
@@ -59,13 +62,27 @@ import Footer from "../components/Footer.astro";
 					<label>
 						<span data-lang="es">Nombre *</span>
 						<span data-lang="en">Name *</span>
-						<input type="text" name="nombre" required />
+						<input
+							type="text"
+							name="nombre"
+							autocomplete="name"
+							maxlength="80"
+							required
+							aria-describedby="err-nombre"
+						/>
+						<span id="err-nombre" class="field-error" aria-live="polite"></span>
 					</label>
 
 					<label>
-						<span data-lang="es">Usuario de Discord</span>
-						<span data-lang="en">Discord username</span>
-						<input type="text" name="discord" placeholder="usuario#0000" />
+						<span data-lang="es">Usuario de Discord (opcional)</span>
+						<span data-lang="en">Discord username (optional)</span>
+						<input
+							type="text"
+							name="discord"
+							placeholder="usuario#0000"
+							autocomplete="off"
+							maxlength="50"
+						/>
 					</label>
 
 				</div>
@@ -73,7 +90,15 @@ import Footer from "../components/Footer.astro";
 				<label>
 					<span data-lang="es">Email *</span>
 					<span data-lang="en">Email *</span>
-					<input type="email" name="email" required />
+					<input
+						type="email"
+						name="email"
+						autocomplete="email"
+						maxlength="120"
+						required
+						aria-describedby="err-email"
+					/>
+					<span id="err-email" class="field-error" aria-live="polite"></span>
 				</label>
 
 			</fieldset>
@@ -87,7 +112,7 @@ import Footer from "../components/Footer.astro";
 					<span data-lang="en">2. Type of service</span>
 				</legend>
 
-				<div class="radio-group">
+				<div class="radio-group" role="radiogroup" aria-describedby="err-tipo">
 
 					<label class="radio">
 						<input type="radio" name="tipo" value="Crear un servidor nuevo" required />
@@ -108,11 +133,18 @@ import Footer from "../components/Footer.astro";
 					</label>
 
 				</div>
+				<span id="err-tipo" class="field-error" aria-live="polite"></span>
 
 				<label>
-					<span data-lang="es">Enlace de invitación actual (si aplica)</span>
-					<span data-lang="en">Current invite link (if applicable)</span>
-					<input type="text" name="invite" placeholder="discord.gg/..." />
+					<span data-lang="es">Enlace de invitación actual (opcional, si aplica)</span>
+					<span data-lang="en">Current invite link (optional, if applicable)</span>
+					<input
+						type="text"
+						name="invite"
+						placeholder="discord.gg/..."
+						autocomplete="off"
+						maxlength="200"
+					/>
 				</label>
 
 			</fieldset>
@@ -130,7 +162,7 @@ import Footer from "../components/Footer.astro";
 					<span data-lang="es">¿Para qué es el servidor? *</span>
 					<span data-lang="en">What is the server for? *</span>
 
-					<select name="proposito" required>
+					<select name="proposito" required aria-describedby="err-proposito">
 						<option value="" disabled selected>-- </option>
 						<option value="Comunidad de gaming">Comunidad de gaming / Gaming community</option>
 						<option value="Marca o negocio">Marca o negocio / Brand or business</option>
@@ -139,17 +171,18 @@ import Footer from "../components/Footer.astro";
 						<option value="Educación / aprendizaje">Educación / aprendizaje / Education / learning</option>
 						<option value="Otro">Otro / Other</option>
 					</select>
+					<span id="err-proposito" class="field-error" aria-live="polite"></span>
 				</label>
 
 				<label>
-					<span data-lang="es">Cuéntanos más sobre el propósito</span>
-					<span data-lang="en">Tell us more about the purpose</span>
-					<textarea name="proposito_detalle" rows="3"></textarea>
+					<span data-lang="es">Cuéntanos más sobre el propósito (opcional)</span>
+					<span data-lang="en">Tell us more about the purpose (optional)</span>
+					<textarea name="proposito_detalle" rows="3" maxlength="1000"></textarea>
 				</label>
 
 				<label>
-					<span data-lang="es">Tamaño estimado de miembros</span>
-					<span data-lang="en">Estimated member size</span>
+					<span data-lang="es">Tamaño estimado de miembros (opcional)</span>
+					<span data-lang="en">Estimated member size (optional)</span>
 
 					<select name="tamano">
 						<option value="">-- </option>
@@ -172,8 +205,8 @@ import Footer from "../components/Footer.astro";
 				</legend>
 
 				<label>
-					<span data-lang="es">Estilo deseado</span>
-					<span data-lang="en">Desired style</span>
+					<span data-lang="es">Estilo deseado (opcional)</span>
+					<span data-lang="en">Desired style (optional)</span>
 
 					<select name="estilo">
 						<option value="">-- </option>
@@ -187,9 +220,9 @@ import Footer from "../components/Footer.astro";
 				</label>
 
 				<label>
-					<span data-lang="es">Colores, referencias, logos o servidores que te gusten (links)</span>
-					<span data-lang="en">Colors, references, logos or servers you like (links)</span>
-					<textarea name="referencias" rows="3"></textarea>
+					<span data-lang="es">Colores, referencias, logos o servidores que te gusten — links (opcional)</span>
+					<span data-lang="en">Colors, references, logos or servers you like — links (optional)</span>
+					<textarea name="referencias" rows="3" maxlength="1000"></textarea>
 				</label>
 
 			</fieldset>
@@ -204,20 +237,20 @@ import Footer from "../components/Footer.astro";
 				</legend>
 
 				<label>
-					<span data-lang="es">Canales y categorías que necesitas</span>
-					<span data-lang="en">Channels and categories you need</span>
-					<textarea name="canales" rows="3"></textarea>
+					<span data-lang="es">Canales y categorías que necesitas (opcional)</span>
+					<span data-lang="en">Channels and categories you need (optional)</span>
+					<textarea name="canales" rows="3" maxlength="1000"></textarea>
 				</label>
 
 				<label>
-					<span data-lang="es">Roles y permisos que necesitas</span>
-					<span data-lang="en">Roles and permissions you need</span>
-					<textarea name="roles" rows="3"></textarea>
+					<span data-lang="es">Roles y permisos que necesitas (opcional)</span>
+					<span data-lang="en">Roles and permissions you need (optional)</span>
+					<textarea name="roles" rows="3" maxlength="1000"></textarea>
 				</label>
 
 				<span class="label-heading">
-					<span data-lang="es">Bots y funciones necesarias</span>
-					<span data-lang="en">Bots and features needed</span>
+					<span data-lang="es">Bots y funciones necesarias (opcional)</span>
+					<span data-lang="en">Bots and features needed (optional)</span>
 				</span>
 
 				<div class="checkbox-group">
@@ -332,9 +365,15 @@ import Footer from "../components/Footer.astro";
 				</legend>
 
 				<label>
-					<span data-lang="es">Plazo deseado</span>
-					<span data-lang="en">Desired timeframe</span>
-					<input type="text" name="plazo" placeholder="Ej./e.g. 1 semana - 1 week" />
+					<span data-lang="es">Plazo deseado (opcional)</span>
+					<span data-lang="en">Desired timeframe (optional)</span>
+					<input
+						type="text"
+						name="plazo"
+						placeholder="Ej./e.g. 1 semana - 1 week"
+						autocomplete="off"
+						maxlength="100"
+					/>
 				</label>
 
 			</fieldset>
@@ -349,38 +388,72 @@ import Footer from "../components/Footer.astro";
 				</legend>
 
 				<label>
-					<span data-lang="es">¿Algo más que debamos saber?</span>
-					<span data-lang="en">Anything else we should know?</span>
-					<textarea name="comentarios" rows="4"></textarea>
+					<span data-lang="es">¿Algo más que debamos saber? (opcional)</span>
+					<span data-lang="en">Anything else we should know? (optional)</span>
+					<textarea name="comentarios" rows="4" maxlength="1000"></textarea>
 				</label>
 
 			</fieldset>
 
 
-			<button type="submit" class="submit">
-				<span data-lang="es">Enviar cuestionario →</span>
-				<span data-lang="en">Submit questionnaire →</span>
-			</button>
-
-			<p class="hint">
+			<div class="security-note" role="note">
 				<span data-lang="es">
-					Al enviar se abrirá tu programa de correo con un email
-					prellenado dirigido a nosotros — revisa y pulsa enviar.
+					🔒 <strong>Nunca envíes contraseñas, claves de API,
+					tokens ni ningún otro tipo de credencial secreta a
+					través de este formulario.</strong>
 				</span>
 				<span data-lang="en">
-					Submitting will open your email app with a pre-filled
-					message addressed to us — review it and hit send.
+					🔒 <strong>Never submit passwords, API keys, tokens
+					or other secrets through this form.</strong>
 				</span>
-			</p>
+			</div>
+
+
+			<div class="honeypot" aria-hidden="true">
+				<label for="quest-website">Website</label>
+				<input
+					type="text"
+					id="quest-website"
+					name="website"
+					tabindex="-1"
+					autocomplete="off"
+				/>
+			</div>
+
+
+			<p id="form-error-summary" class="status error" role="alert" hidden></p>
+
+
+			<button type="submit" class="submit">
+				<span class="submit-label">
+					<span data-lang="es">Enviar cuestionario →</span>
+					<span data-lang="en">Submit questionnaire →</span>
+				</span>
+				<span class="submit-label submit-loading" hidden>
+					<span data-lang="es">Enviando…</span>
+					<span data-lang="en">Sending…</span>
+				</span>
+			</button>
 
 			<p id="quest-status" class="status" hidden>
 				<span data-lang="es">
-					✅ Hemos abierto tu cliente de correo. Si no se ha abierto,
-					escríbenos directamente a
+					✅ ¡Gracias! Hemos recibido tu cuestionario y te
+					contactaremos pronto.
+				</span>
+				<span data-lang="en">
+					✅ Thanks! We've received your questionnaire and
+					will contact you soon.
+				</span>
+			</p>
+
+			<p id="quest-error" class="status error" hidden>
+				<span data-lang="es">
+					⚠️ Ha ocurrido un error al enviar el formulario.
+					Escríbenos directamente a
 					<a href="mailto:oierps8@gmail.com">oierps8@gmail.com</a>.
 				</span>
 				<span data-lang="en">
-					✅ We opened your email client. If nothing opened,
+					⚠️ Something went wrong submitting the form. Please
 					email us directly at
 					<a href="mailto:oierps8@gmail.com">oierps8@gmail.com</a>.
 				</span>
@@ -396,53 +469,169 @@ import Footer from "../components/Footer.astro";
 
 
 <script>
+	const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/0k965b8ykue9xfa4wuny31jj5w5liinb";
+
 	const form = document.getElementById("quest-form") as HTMLFormElement | null;
 	const status = document.getElementById("quest-status");
+	const error = document.getElementById("quest-error");
+	const errorSummary = document.getElementById("form-error-summary");
 
-	form?.addEventListener("submit", (e) => {
-		e.preventDefault();
+	const submitBtn = form?.querySelector<HTMLButtonElement>(".submit");
+	const submitLabel = submitBtn?.querySelector(".submit-label:not(.submit-loading)");
+	const submitLoading = submitBtn?.querySelector(".submit-loading");
 
-		const data = new FormData(form);
+	const messages = {
+		es: { required: "Este campo es obligatorio.", choose: "Elige una opción.", email: "Introduce un email válido." },
+		en: { required: "This field is required.", choose: "Please choose an option.", email: "Enter a valid email address." },
+	};
 
-		const get = (name: string) => (data.get(name) || "").toString().trim();
-		const getAll = (name: string) => data.getAll(name).join(", ") || "-";
+	const currentLang = () => (document.documentElement.lang === "en" ? "en" : "es");
 
-		const lines = [
-			"NUEVO CUESTIONARIO DE SERVIDOR DISCORD",
-			"",
-			`Nombre: ${get("nombre")}`,
-			`Discord: ${get("discord")}`,
-			`Email: ${get("email")}`,
-			"",
-			`Tipo de servicio: ${get("tipo")}`,
-			`Enlace de invitación actual: ${get("invite")}`,
-			"",
-			`Propósito: ${get("proposito")}`,
-			`Detalle del propósito: ${get("proposito_detalle")}`,
-			`Tamaño estimado de miembros: ${get("tamano")}`,
-			"",
-			`Estilo deseado: ${get("estilo")}`,
-			`Referencias / colores / links: ${get("referencias")}`,
-			"",
-			`Canales y categorías: ${get("canales")}`,
-			`Roles y permisos: ${get("roles")}`,
-			`Bots y funciones: ${getAll("bots")}`,
-			"",
-			`Plazo deseado: ${get("plazo")}`,
-			"",
-			`Comentarios adicionales: ${get("comentarios")}`,
+	const clearFieldError = (input: HTMLElement, errorId: string) => {
+		input.removeAttribute("aria-invalid");
+		const el = document.getElementById(errorId);
+		if (el) el.textContent = "";
+	};
+
+	const setFieldError = (input: HTMLElement, errorId: string, text: string) => {
+		input.setAttribute("aria-invalid", "true");
+		const el = document.getElementById(errorId);
+		if (el) el.textContent = text;
+	};
+
+	const validateForm = (): boolean => {
+		if (!form) return false;
+
+		let firstInvalid: HTMLElement | null = null;
+		const lang = currentLang();
+
+		const requiredTextFields = [
+			{ name: "nombre", errorId: "err-nombre" },
+			{ name: "email", errorId: "err-email" },
 		];
 
-		const subject = `Cuestionario Discord - ${get("nombre") || "Nuevo cliente"}`;
-		const body = lines.join("\n");
+		for (const { name, errorId } of requiredTextFields) {
+			const input = form.elements.namedItem(name) as HTMLInputElement | null;
+			if (!input) continue;
 
-		const mailto = `mailto:oierps8@gmail.com?subject=${encodeURIComponent(
-			subject
-		)}&body=${encodeURIComponent(body)}`;
+			if (!input.value.trim()) {
+				setFieldError(input, errorId, messages[lang].required);
+				firstInvalid ??= input;
+			} else if (name === "email" && !input.checkValidity()) {
+				setFieldError(input, errorId, messages[lang].email);
+				firstInvalid ??= input;
+			} else {
+				clearFieldError(input, errorId);
+			}
+		}
 
-		window.location.href = mailto;
+		const proposito = form.elements.namedItem("proposito") as HTMLSelectElement | null;
+		if (proposito) {
+			if (!proposito.value) {
+				setFieldError(proposito, "err-proposito", messages[lang].choose);
+				firstInvalid ??= proposito;
+			} else {
+				clearFieldError(proposito, "err-proposito");
+			}
+		}
 
-		if (status) status.hidden = false;
+		const tipoRadios = form.querySelectorAll<HTMLInputElement>('input[name="tipo"]');
+		const tipoChecked = Array.from(tipoRadios).some((r) => r.checked);
+		const tipoError = document.getElementById("err-tipo");
+		if (!tipoChecked) {
+			if (tipoError) tipoError.textContent = messages[lang].choose;
+			firstInvalid ??= tipoRadios[0];
+		} else if (tipoError) {
+			tipoError.textContent = "";
+		}
+
+		if (errorSummary) {
+			if (firstInvalid) {
+				errorSummary.textContent =
+					lang === "es"
+						? "Revisa los campos marcados en rojo antes de enviar."
+						: "Please check the fields highlighted in red before submitting.";
+				errorSummary.hidden = false;
+			} else {
+				errorSummary.hidden = true;
+				errorSummary.textContent = "";
+			}
+		}
+
+		firstInvalid?.focus();
+		return !firstInvalid;
+	};
+
+	const COOLDOWN_MS = 8000;
+	let cooling = false;
+
+	const setSubmitting = (submitting: boolean) => {
+		submitBtn?.toggleAttribute("disabled", submitting);
+		submitLabel?.toggleAttribute("hidden", submitting);
+		submitLoading?.toggleAttribute("hidden", !submitting);
+	};
+
+	form?.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		if (cooling) return;
+
+		status?.setAttribute("hidden", "");
+		error?.setAttribute("hidden", "");
+
+		const honeypot = form.elements.namedItem("website") as HTMLInputElement | null;
+		if (honeypot?.value) {
+			form.reset();
+			status?.removeAttribute("hidden");
+			return;
+		}
+
+		if (!validateForm()) return;
+
+		const data = new FormData(form);
+		const get = (name: string) => (data.get(name) || "").toString().trim();
+		const getAll = (name: string) => data.getAll(name).join(", ");
+
+		const payload = {
+			form: "discord",
+			nombre: get("nombre"),
+			discord: get("discord"),
+			email: get("email"),
+			tipo: get("tipo"),
+			invite: get("invite"),
+			proposito: get("proposito"),
+			proposito_detalle: get("proposito_detalle"),
+			tamano: get("tamano"),
+			estilo: get("estilo"),
+			referencias: get("referencias"),
+			canales: get("canales"),
+			roles: get("roles"),
+			bots: getAll("bots"),
+			plazo: get("plazo"),
+			comentarios: get("comentarios"),
+		};
+
+		setSubmitting(true);
+		cooling = true;
+
+		try {
+			const response = await fetch(MAKE_WEBHOOK_URL, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(payload),
+			});
+
+			if (!response.ok) throw new Error("Request failed");
+
+			form.reset();
+			status?.removeAttribute("hidden");
+		} catch (err) {
+			error?.removeAttribute("hidden");
+		} finally {
+			setSubmitting(false);
+			setTimeout(() => {
+				cooling = false;
+			}, COOLDOWN_MS);
+		}
 	});
 </script>
 
@@ -568,6 +757,8 @@ h1 {
 
 .card {
 
+	min-width:0;
+
 	padding:34px;
 
 	border:1px solid var(--border-1);
@@ -669,6 +860,51 @@ textarea:focus {
 }
 
 
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+
+	box-shadow:0 0 0 3px var(--primary-bg), 0 0 0 1px var(--primary);
+
+}
+
+
+.radio:focus-within,
+.checkbox:focus-within {
+
+	box-shadow:0 0 0 3px var(--primary-bg), 0 0 0 1px var(--primary);
+
+}
+
+
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+
+	border-color:var(--danger);
+
+}
+
+
+.field-error {
+
+	color:var(--danger);
+
+	font-size:.85rem;
+
+	font-weight:500;
+
+}
+
+
+.field-error:empty {
+
+	display:none;
+
+}
+
+
 textarea {
 
 	resize:vertical;
@@ -735,7 +971,45 @@ textarea {
 }
 
 
+.security-note {
+
+	padding:16px 20px;
+
+	border-radius:14px;
+
+	background:var(--surface-1);
+
+	border:1px solid var(--border-2);
+
+	color:var(--text-muted);
+
+	font-size:.9rem;
+
+	line-height:1.7;
+
+}
+
+
+.honeypot {
+
+	position:absolute;
+
+	width:1px;
+
+	height:1px;
+
+	overflow:hidden;
+
+	clip:rect(0 0 0 0);
+
+	white-space:nowrap;
+
+}
+
+
 .submit {
+
+	position:relative;
 
 	align-self:flex-start;
 
@@ -769,13 +1043,13 @@ textarea {
 }
 
 
-.hint {
+.submit:disabled {
 
-	color:var(--text-muted);
+	opacity:.7;
 
-	font-size:.9rem;
+	cursor:not-allowed;
 
-	line-height:1.7;
+	transform:none;
 
 }
 
@@ -802,6 +1076,17 @@ textarea {
 .status a {
 
 	color:var(--primary-light);
+
+}
+
+
+.status.error {
+
+	background:color-mix(in srgb, var(--danger) 12%, transparent);
+
+	border-color:color-mix(in srgb, var(--danger) 40%, transparent);
+
+	color:var(--danger);
 
 }
 

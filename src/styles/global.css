@@ -45,6 +45,8 @@
 	--primary-light:
 		color-mix(in srgb, var(--primary) 65%, white 35%);
 
+	--danger: #FF6B6B;
+
 
 	/* Typography */
 
@@ -91,6 +93,17 @@
 
 	--background: #F3F5F9;
 	--bg-elevated: #FFFFFF;
+
+	/*
+		Darker accent for light theme: the default --primary
+		(#0A84FF) only reaches ~2.9:1 contrast against the tinted
+		--primary-bg badges used sitewide (fails WCAG AA 4.5:1).
+		This value keeps the same hue but reaches ~5:1.
+	*/
+	--primary: #0B56CC;
+
+	/* Same contrast issue as --primary above, for error/invalid states */
+	--danger: #B00000;
 
 	--surface-1: rgba(15, 23, 42, .035);
 	--surface-2: rgba(15, 23, 42, .05);
@@ -466,11 +479,11 @@ select option {
    ========================= */
 
 html:not([lang="en"]) [data-lang="en"] {
-	display: none;
+	display: none !important;
 }
 
 html:not([lang="es"]) [data-lang="es"] {
-	display: none;
+	display: none !important;
 }
 
 
@@ -608,6 +621,31 @@ html:not([lang="es"]) [data-lang="es"] {
 
 ::-webkit-scrollbar-thumb:hover {
 	background: color-mix(in srgb, var(--primary) 70%, transparent);
+}
+
+
+
+/* =========================
+   Focus visible (keyboard navigation)
+   ========================= */
+
+:focus {
+	outline: none;
+}
+
+:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+	border-radius: 4px;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
 }
 
 

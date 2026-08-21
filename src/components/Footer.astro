@@ -9,11 +9,13 @@
 			</h2>
 
 			<p data-lang="es">
-				Creamos, configuramos y rediseñamos servidores de Discord a tu medida.
+				Estudio de desarrollo independiente — software, juegos,
+				Minecraft y tecnología experimental.
 			</p>
 
 			<p data-lang="en">
-				We create, configure and redesign Discord servers, tailored to you.
+				Independent development studio — software, games,
+				Minecraft and experimental technology.
 			</p>
 
 		</div>
@@ -26,14 +28,14 @@
 				<span data-lang="en">Home</span>
 			</a>
 
-			<a href="/cuestionario">
-				<span data-lang="es">Cuestionario</span>
-				<span data-lang="en">Questionnaire</span>
-			</a>
-
 			<a href="/projects">
 				<span data-lang="es">Proyectos</span>
 				<span data-lang="en">Projects</span>
+			</a>
+
+			<a href="/about">
+				<span data-lang="es">Sobre Nosotros</span>
+				<span data-lang="en">About</span>
 			</a>
 
 			<a href="/documentation">
@@ -41,9 +43,20 @@
 				<span data-lang="en">Documentation</span>
 			</a>
 
+			<a href="/cuestionario">
+				<span data-lang="es">Discord</span>
+				<span data-lang="en">Discord</span>
+			</a>
+
+			<a href="/cuestionario-minecraft">
+				<span data-lang="es">Minecraft</span>
+				<span data-lang="en">Minecraft</span>
+			</a>
+
 			<a
 				href="https://github.com/SpectroDinner-Studios"
 				target="_blank"
+				rel="noopener noreferrer"
 			>
 				GitHub
 			</a>
@@ -57,7 +70,8 @@
 	<div class="bottom">
 
 		<p>
-			© 2024 SpectroDinner™. All rights reserved.
+			<span data-lang="es">© 2024 SpectroDinner™. Todos los derechos reservados.</span>
+			<span data-lang="en">© 2024 SpectroDinner™. All rights reserved.</span>
 		</p>
 
 	</div>
@@ -121,7 +135,11 @@
 
 	display:flex;
 
-	gap:25px;
+	flex-wrap:wrap;
+
+	justify-content:flex-end;
+
+	gap:16px 25px;
 
 	align-items:center;
 

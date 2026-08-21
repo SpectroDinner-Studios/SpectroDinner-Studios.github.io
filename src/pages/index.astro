@@ -5,28 +5,35 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 
 import Hero from "../components/index/Hero.astro";
-import DiscordServices from "../components/index/DiscordServices.astro";
-import Reviews from "../components/index/Reviews.astro";
-import QuestionnaireCTA from "../components/index/QuestionnaireCTA.astro";
-import FeaturedProject from "../components/index/FeaturedProject.astro";
+import WhatIsSpectroDinner from "../components/index/WhatIsSpectroDinner.astro";
+import FeaturedProjectCard from "../components/projects/FeaturedProjectCard.astro";
 import WhatWeBuild from "../components/index/WhatWeBuild.astro";
+import DiscordServices from "../components/index/DiscordServices.astro";
+import QuestionnaireCTA from "../components/index/QuestionnaireCTA.astro";
+import ExperimentalWork from "../components/index/ExperimentalWork.astro";
+import Reviews from "../components/index/Reviews.astro";
 import Leadership from "../components/index/Leadership.astro";
 
 import FAQ from "../components/faq/FAQ.astro";
 ---
 
-<Layout>
+<Layout
+	title="SpectroDinner™ | Independent Development Studio"
+	description="SpectroDinner™ is an independent development studio building software, games, Minecraft plugins and Discord server setups."
+>
 	<Navbar />
 
 	<main>
 		<Hero />
-		<DiscordServices />
-		<Reviews />
-		<QuestionnaireCTA />
-		<FeaturedProject />
+		<WhatIsSpectroDinner />
+		<FeaturedProjectCard />
 		<WhatWeBuild />
-		<Leadership/>
-		<FAQ/>
+		<DiscordServices />
+		<QuestionnaireCTA />
+		<ExperimentalWork />
+		<Reviews />
+		<Leadership />
+		<FAQ />
 	</main>
 
 	<Footer />

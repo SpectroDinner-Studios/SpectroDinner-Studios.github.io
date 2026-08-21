@@ -4,7 +4,10 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 ---
 
-<Layout title="Cuestionario Minecraft | SpectroDinner™">
+<Layout
+	title="Cuestionario Minecraft | SpectroDinner™"
+	description="Cuéntanos sobre tu servidor de Minecraft para que podamos ayudarte con plugins, configuración y soporte técnico."
+>
 
 	<Navbar />
 
@@ -57,7 +60,7 @@ import Footer from "../components/Footer.astro";
 		</section>
 
 
-		<form id="mc-quest-form" class="form">
+		<form id="mc-quest-form" class="form" novalidate>
 
 
 			<!-- ===================== SECCIÓN 1 ===================== -->
@@ -89,6 +92,21 @@ import Footer from "../components/Footer.astro";
 				</div>
 
 
+				<div class="security-note top-note" role="note">
+					<span data-lang="es">
+						🔒 <strong>Nunca envíes contraseñas, claves de API,
+						tokens ni ningún otro tipo de credencial secreta en
+						este cuestionario</strong> — ni siquiera más abajo, en
+						los campos de texto libre.
+					</span>
+					<span data-lang="en">
+						🔒 <strong>Never submit passwords, API keys, tokens or
+						any other secrets anywhere in this questionnaire</strong>
+						— including the free-text fields further down.
+					</span>
+				</div>
+
+
 				<div class="field-group">
 
 					<div class="grid two">
@@ -96,13 +114,30 @@ import Footer from "../components/Footer.astro";
 						<label>
 							<span data-lang="es">Apodo / usuario de Discord *</span>
 							<span data-lang="en">Nickname / Discord username *</span>
-							<input type="text" name="nombre" placeholder="Ej. Elmoderador" required />
+							<input
+								type="text"
+								name="nombre"
+								placeholder="Ej. Elmoderador"
+								autocomplete="username"
+								maxlength="80"
+								required
+								aria-describedby="err-nombre"
+							/>
+							<span id="err-nombre" class="field-error" aria-live="polite"></span>
 						</label>
 
 						<label>
 							<span data-lang="es">Email *</span>
 							<span data-lang="en">Email *</span>
-							<input type="email" name="email" required />
+							<input
+								type="email"
+								name="email"
+								autocomplete="email"
+								maxlength="120"
+								required
+								aria-describedby="err-email"
+							/>
+							<span id="err-email" class="field-error" aria-live="polite"></span>
 						</label>
 
 					</div>
@@ -117,7 +152,8 @@ import Footer from "../components/Footer.astro";
 						<label>
 							<span data-lang="es">Nombre del servidor *</span>
 							<span data-lang="en">Server name *</span>
-							<input type="text" name="servidor_nombre" required />
+							<input type="text" name="servidor_nombre" maxlength="80" required aria-describedby="err-servidor_nombre" />
+							<span id="err-servidor_nombre" class="field-error" aria-live="polite"></span>
 						</label>
 
 						<label>
@@ -126,9 +162,12 @@ import Footer from "../components/Footer.astro";
 							<input
 								type="text"
 								name="version_software"
+								maxlength="120"
+								aria-describedby="err-version_software"
 								placeholder="Ej. Paper 1.20.4 / Purpur 1.21 / Fabric 1.20.1"
 								required
 							/>
+							<span id="err-version_software" class="field-error" aria-live="polite"></span>
 						</label>
 
 					</div>
@@ -143,7 +182,7 @@ import Footer from "../components/Footer.astro";
 						<span data-lang="en">Host type *</span>
 					</span>
 
-					<div class="radio-group">
+					<div class="radio-group" role="radiogroup" aria-describedby="err-tipo_host">
 
 						<label class="radio">
 							<input type="radio" name="tipo_host" value="Host gratuito (MCServerHost, Aternos, etc.)" required />
@@ -171,10 +210,12 @@ import Footer from "../components/Footer.astro";
 
 					</div>
 
+					<span id="err-tipo_host" class="field-error" aria-live="polite"></span>
+
 					<label>
 						<span data-lang="es">¿Cuál exactamente? (opcional)</span>
 						<span data-lang="en">Which one exactly? (optional)</span>
-						<input type="text" name="tipo_host_detalle" placeholder="Ej. MCServerHost, Shockbyte, Hetzner..." />
+						<input type="text" name="tipo_host_detalle" class="priority-field" maxlength="120" placeholder="Ej. MCServerHost, Shockbyte, Hetzner..." />
 					</label>
 
 				</div>
@@ -185,15 +226,15 @@ import Footer from "../components/Footer.astro";
 					<div class="grid two">
 
 						<label>
-							<span data-lang="es">Plugins instalados actualmente</span>
-							<span data-lang="en">Currently installed plugins</span>
-							<textarea name="plugins_instalados" rows="4" placeholder="Ej. LuckPerms, EssentialsX, WorldGuard..."></textarea>
+							<span data-lang="es">Plugins instalados actualmente (opcional)</span>
+							<span data-lang="en">Currently installed plugins (optional)</span>
+							<textarea name="plugins_instalados" class="priority-field" rows="4" maxlength="1000" placeholder="Ej. LuckPerms, EssentialsX, WorldGuard..."></textarea>
 						</label>
 
 						<label>
-							<span data-lang="es">Plugins que quieres instalar/añadir</span>
-							<span data-lang="en">Plugins you want to add</span>
-							<textarea name="plugins_deseados" rows="4"></textarea>
+							<span data-lang="es">Plugins que quieres instalar/añadir (opcional)</span>
+							<span data-lang="en">Plugins you want to add (optional)</span>
+							<textarea name="plugins_deseados" class="priority-field" rows="4" maxlength="1000"></textarea>
 						</label>
 
 					</div>
@@ -208,7 +249,7 @@ import Footer from "../components/Footer.astro";
 						<span data-lang="en">Access method *</span>
 					</span>
 
-					<div class="radio-group">
+					<div class="radio-group" role="radiogroup" aria-describedby="err-metodo_acceso">
 
 						<label class="radio">
 							<input type="radio" name="metodo_acceso" value="SFTP / FTP" required />
@@ -228,50 +269,56 @@ import Footer from "../components/Footer.astro";
 
 					</div>
 
-					<div class="security-note">
+					<span id="err-metodo_acceso" class="field-error" aria-live="polite"></span>
+
+					<div class="security-note" role="note">
 						<span data-lang="es">
-							🔒 <strong>Por tu seguridad, no nos compartas la
-							contraseña de tu cuenta principal.</strong> Crea un
-							usuario colaborador con permisos limitados (sub-user
-							en Pterodactyl, o un usuario FTP secundario) y
-							danos acceso a través de él. Si tu host no lo
-							permite, contáctanos por Discord y buscamos la
-							forma más segura entre los dos.
+							🔒 <strong>Nunca nos envíes contraseñas, claves de
+							API, tokens ni ningún otro tipo de credencial
+							secreta a través de este formulario.</strong> Crea
+							un usuario colaborador con permisos limitados
+							(sub-user en Pterodactyl, o un usuario FTP
+							secundario) y danos acceso a través de él. Si tu
+							host no lo permite, contáctanos por Discord y
+							buscamos la forma más segura entre los dos.
 						</span>
 						<span data-lang="en">
-							🔒 <strong>For your safety, don't share your main
-							account password with us.</strong> Create a
-							collaborator user with limited permissions
-							(sub-user in Pterodactyl, or a secondary FTP user)
-							and give us access through that instead. If your
-							host doesn't support that, message us on Discord
-							and we'll find the safest way together.
+							🔒 <strong>Never submit passwords, API keys,
+							tokens or any other secrets through this
+							form.</strong> Create a collaborator user with
+							limited permissions (sub-user in Pterodactyl, or a
+							secondary FTP user) and give us access through
+							that instead. If your host doesn't support that,
+							message us on Discord and we'll find the safest
+							way together.
 						</span>
 					</div>
 
 					<div class="grid two">
 
 						<label>
-							<span data-lang="es">URL del panel / host</span>
-							<span data-lang="en">Panel / host URL</span>
-							<input type="text" name="panel_url" placeholder="panel.tuhost.com" />
+							<span data-lang="es">URL del panel / host (opcional)</span>
+							<span data-lang="en">Panel / host URL (optional)</span>
+							<input type="url" name="panel_url" maxlength="200" placeholder="https://panel.tuhost.com" />
 						</label>
 
 						<label>
-							<span data-lang="es">Usuario colaborador ya creado (si aplica)</span>
-							<span data-lang="en">Collaborator username (if already created)</span>
-							<input type="text" name="usuario_colaborador" />
+							<span data-lang="es">Usuario colaborador ya creado (opcional)</span>
+							<span data-lang="en">Collaborator username (optional)</span>
+							<input type="text" name="usuario_colaborador" class="priority-field" maxlength="80" />
 						</label>
 
 					</div>
 
 					<label>
-						<span data-lang="es">Notas sobre el acceso</span>
-						<span data-lang="en">Access notes</span>
+						<span data-lang="es">Notas sobre el acceso (opcional)</span>
+						<span data-lang="en">Access notes (optional)</span>
 						<textarea
 							name="notas_acceso"
+							class="priority-field"
 							rows="3"
-							placeholder="Ej. Te añado como sub-user en cuanto confirmes / El puerto FTP es..."
+							maxlength="500"
+							placeholder="Ej. Puedo dar acceso a partir del sábado / Prefiero crear yo el sub-user, decidme qué permisos necesitáis..."
 						></textarea>
 					</label>
 
@@ -298,13 +345,14 @@ import Footer from "../components/Footer.astro";
 						<p>
 							<span data-lang="es">
 								Opcional, pero es lo que decide tu prioridad en
-								la cola — cuanto más completes, antes te
-								tocará el turno.
+								la cola — cuantos más de estos datos técnicos
+								nos des, antes te tocará el turno.
 							</span>
 							<span data-lang="en">
 								Optional, but this is what decides your
-								priority in the queue — the more you fill in,
-								the sooner your turn comes.
+								priority in the queue — the more of this
+								technical information you give us, the sooner
+								your turn comes.
 							</span>
 						</p>
 					</div>
@@ -327,16 +375,31 @@ import Footer from "../components/Footer.astro";
 						<div id="priority-fill" class="priority-fill"></div>
 					</div>
 
+					<p class="priority-explainer">
+						<span data-lang="es">
+							Se calcula por cuántos de los campos técnicos
+							opcionales rellenas (host exacto, plugins, acceso,
+							modalidad, rangos, bugs...) — no por lo largo que
+							escribas.
+						</span>
+						<span data-lang="en">
+							Calculated from how many of the optional technical
+							fields you fill in (exact host, plugins, access,
+							gamemode, ranks, bugs...) — not from how much you
+							write.
+						</span>
+					</p>
+
 				</div>
 
 
 				<div class="field-group">
 
 					<label>
-						<span data-lang="es">Modalidad</span>
-						<span data-lang="en">Gamemode</span>
+						<span data-lang="es">Modalidad (opcional)</span>
+						<span data-lang="en">Gamemode (optional)</span>
 
-						<select name="modalidad">
+						<select name="modalidad" class="priority-field">
 							<option value="">-- </option>
 							<option value="Survival">Survival</option>
 							<option value="SMP Vanilla+">SMP Vanilla+</option>
@@ -349,12 +412,13 @@ import Footer from "../components/Footer.astro";
 					</label>
 
 					<label>
-						<span data-lang="es">Descríbenos cómo quieres que funcione exactamente</span>
-						<span data-lang="en">Describe exactly how you want it to work</span>
+						<span data-lang="es">Descríbenos cómo quieres que funcione exactamente (opcional)</span>
+						<span data-lang="en">Describe exactly how you want it to work (optional)</span>
 						<textarea
 							class="priority-field"
 							name="modalidad_detalle"
 							rows="5"
+							maxlength="1500"
 							placeholder="Ej. Lifesteal con corazones limitados a 20, revivir con totem craftable, zona PvP obligatoria en el centro del mapa..."
 						></textarea>
 					</label>
@@ -365,12 +429,13 @@ import Footer from "../components/Footer.astro";
 				<div class="field-group">
 
 					<label>
-						<span data-lang="es">Estructura de rangos y permisos (LuckPerms)</span>
-						<span data-lang="en">Rank and permission structure (LuckPerms)</span>
+						<span data-lang="es">Estructura de rangos y permisos, LuckPerms (opcional)</span>
+						<span data-lang="en">Rank and permission structure, LuckPerms (optional)</span>
 						<textarea
 							class="priority-field"
 							name="rangos_permisos"
 							rows="6"
+							maxlength="2000"
 							placeholder="Ej. Default: comandos básicos, /spawn, /home 1. VIP: /fly en zona segura, /kit vip diario, 3 /home. Admin: acceso total y bypass de restricciones..."
 						></textarea>
 					</label>
@@ -381,12 +446,13 @@ import Footer from "../components/Footer.astro";
 				<div class="field-group">
 
 					<label>
-						<span data-lang="es">Errores, bugs o exploits que necesitas corregir</span>
-						<span data-lang="en">Bugs or exploits you need fixed</span>
+						<span data-lang="es">Errores, bugs o exploits que necesitas corregir (opcional)</span>
+						<span data-lang="en">Bugs or exploits you need fixed (optional)</span>
 						<textarea
 							class="priority-field"
 							name="bugs_exploits"
 							rows="5"
+							maxlength="1500"
 							placeholder="Ej. Lag al colocar carteles, caídas del nodo cada pocas horas, dupe de items con hoppers/carritos, exploit de crystal PvP..."
 						></textarea>
 					</label>
@@ -397,9 +463,9 @@ import Footer from "../components/Footer.astro";
 				<div class="field-group">
 
 					<label>
-						<span data-lang="es">Notas adicionales / comentarios extra</span>
-						<span data-lang="en">Additional notes / extra comments</span>
-						<textarea class="priority-field" name="notas_adicionales" rows="4"></textarea>
+						<span data-lang="es">Notas adicionales / comentarios extra (opcional)</span>
+						<span data-lang="en">Additional notes / extra comments (optional)</span>
+						<textarea class="priority-field" name="notas_adicionales" rows="4" maxlength="1000"></textarea>
 					</label>
 
 				</div>
@@ -407,9 +473,29 @@ import Footer from "../components/Footer.astro";
 			</section>
 
 
+			<div class="honeypot" aria-hidden="true">
+				<label for="mc-website">Website</label>
+				<input
+					type="text"
+					id="mc-website"
+					name="website"
+					tabindex="-1"
+					autocomplete="off"
+				/>
+			</div>
+
+
+			<p id="form-error-summary" class="status error" role="alert" hidden></p>
+
 			<button type="submit" class="submit">
-				<span data-lang="es">Enviar cuestionario →</span>
-				<span data-lang="en">Submit questionnaire →</span>
+				<span class="submit-label">
+					<span data-lang="es">Enviar cuestionario →</span>
+					<span data-lang="en">Submit questionnaire →</span>
+				</span>
+				<span class="submit-label submit-loading" hidden>
+					<span data-lang="es">Enviando…</span>
+					<span data-lang="en">Sending…</span>
+				</span>
 			</button>
 
 			<p class="hint">
@@ -451,29 +537,43 @@ import Footer from "../components/Footer.astro";
 
 
 <script>
-	const priorityFields = document.querySelectorAll<HTMLTextAreaElement>(".priority-field");
+	// --------------------------------------------------------------------
+	// Priority meter — based on how many of the OPTIONAL technical fields
+	// are filled in (completeness), not on how much text is written.
+	// --------------------------------------------------------------------
+	const priorityFields = document.querySelectorAll<
+		HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+	>(".priority-field");
+
 	const priorityFill = document.getElementById("priority-fill");
 	const priorityLabel = document.getElementById("priority-label");
 
 	const priorityLevels = [
 		{ min: 0, es: "Baja", en: "Low", emoji: "🔹" },
-		{ min: 80, es: "Media", en: "Media", emoji: "🔷" },
-		{ min: 250, es: "Alta", en: "High", emoji: "🔶" },
-		{ min: 500, es: "Máxima", en: "Maximum", emoji: "🔥" },
+		{ min: 25, es: "Media", en: "Medium", emoji: "🔷" },
+		{ min: 50, es: "Alta", en: "High", emoji: "🔶" },
+		{ min: 75, es: "Máxima", en: "Maximum", emoji: "🔥" },
 	];
 
+	const isFieldMeaningfullyFilled = (
+		field: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+	) => field.value.trim().length >= 3;
+
 	const updatePriority = () => {
-		if (!priorityFill || !priorityLabel) return;
+		if (!priorityFill || !priorityLabel || priorityFields.length === 0) return;
 
-		const total = Array.from(priorityFields).reduce(
-			(sum, field) => sum + field.value.trim().length,
-			0
-		);
+		const filledCount = Array.from(priorityFields).filter(
+			isFieldMeaningfullyFilled
+		).length;
 
-		const pct = Math.min(100, Math.round((total / 600) * 100));
+		const pct = Math.round((filledCount / priorityFields.length) * 100);
 		priorityFill.style.width = `${pct}%`;
+		priorityFill.parentElement?.setAttribute("role", "progressbar");
+		priorityFill.parentElement?.setAttribute("aria-valuenow", String(pct));
+		priorityFill.parentElement?.setAttribute("aria-valuemin", "0");
+		priorityFill.parentElement?.setAttribute("aria-valuemax", "100");
 
-		const level = [...priorityLevels].reverse().find((l) => total >= l.min)!;
+		const level = [...priorityLevels].reverse().find((l) => pct >= l.min)!;
 
 		priorityLabel.innerHTML = `
 			<span data-lang="es">${level.emoji} ${level.es}</span>
@@ -483,24 +583,153 @@ import Footer from "../components/Footer.astro";
 
 	priorityFields.forEach((field) => {
 		field.addEventListener("input", updatePriority);
+		field.addEventListener("change", updatePriority);
 	});
 
 	updatePriority();
 
 
+	// --------------------------------------------------------------------
+	// Accessible validation — required fields get aria-invalid,
+	// a field-level error message and focus moves to the first error.
+	// --------------------------------------------------------------------
+	const form = document.getElementById("mc-quest-form") as HTMLFormElement | null;
+	const errorSummary = document.getElementById("form-error-summary");
+
+	const messages = {
+		es: {
+			required: "Este campo es obligatorio.",
+			choose: "Elige una opción.",
+			email: "Introduce un email válido.",
+		},
+		en: {
+			required: "This field is required.",
+			choose: "Please choose an option.",
+			email: "Enter a valid email address.",
+		},
+	};
+
+	const currentLang = () =>
+		document.documentElement.lang === "en" ? "en" : "es";
+
+	const clearFieldError = (input: Element, errorId: string) => {
+		input.removeAttribute("aria-invalid");
+		const el = document.getElementById(errorId);
+		if (el) el.textContent = "";
+	};
+
+	const setFieldError = (input: Element, errorId: string, text: string) => {
+		input.setAttribute("aria-invalid", "true");
+		const el = document.getElementById(errorId);
+		if (el) el.textContent = text;
+	};
+
+	const validateForm = (): boolean => {
+		if (!form) return false;
+
+		let firstInvalid: HTMLElement | null = null;
+		const lang = currentLang();
+
+		const requiredTextFields = [
+			{ name: "nombre", errorId: "err-nombre" },
+			{ name: "email", errorId: "err-email" },
+			{ name: "servidor_nombre", errorId: "err-servidor_nombre" },
+			{ name: "version_software", errorId: "err-version_software" },
+		];
+
+		for (const { name, errorId } of requiredTextFields) {
+			const input = form.elements.namedItem(name) as HTMLInputElement | null;
+			if (!input) continue;
+
+			if (!input.value.trim()) {
+				setFieldError(input, errorId, messages[lang].required);
+				firstInvalid ??= input;
+			} else if (name === "email" && !input.checkValidity()) {
+				setFieldError(input, errorId, messages[lang].email);
+				firstInvalid ??= input;
+			} else {
+				clearFieldError(input, errorId);
+			}
+		}
+
+		const requiredRadioGroups = [
+			{ name: "tipo_host", errorId: "err-tipo_host" },
+			{ name: "metodo_acceso", errorId: "err-metodo_acceso" },
+		];
+
+		for (const { name, errorId } of requiredRadioGroups) {
+			const radios = form.querySelectorAll<HTMLInputElement>(
+				`input[name="${name}"]`
+			);
+			const checked = Array.from(radios).some((r) => r.checked);
+			const errorEl = document.getElementById(errorId);
+
+			if (!checked) {
+				if (errorEl) errorEl.textContent = messages[lang].choose;
+				firstInvalid ??= radios[0];
+			} else if (errorEl) {
+				errorEl.textContent = "";
+			}
+		}
+
+		if (errorSummary) {
+			if (firstInvalid) {
+				errorSummary.textContent =
+					lang === "es"
+						? "Revisa los campos marcados en rojo antes de enviar."
+						: "Please check the fields highlighted in red before submitting.";
+				errorSummary.hidden = false;
+			} else {
+				errorSummary.hidden = true;
+				errorSummary.textContent = "";
+			}
+		}
+
+		firstInvalid?.focus();
+
+		return !firstInvalid;
+	};
+
+
+	// --------------------------------------------------------------------
+	// Submit: honeypot check, validation, cooldown, fetch to the webhook.
+	// --------------------------------------------------------------------
 	const MAKE_WEBHOOK_URL =
 		"https://hook.eu1.make.com/0k965b8ykue9xfa4wuny31jj5w5liinb";
 
-	const form = document.getElementById("mc-quest-form") as HTMLFormElement | null;
 	const status = document.getElementById("quest-status");
 	const error = document.getElementById("quest-error");
 	const submitBtn = form?.querySelector<HTMLButtonElement>(".submit");
+	const submitLabel = submitBtn?.querySelector(".submit-label:not(.submit-loading)");
+	const submitLoading = submitBtn?.querySelector(".submit-loading");
+
+	const COOLDOWN_MS = 8000;
+	let cooling = false;
+
+	const setSubmitting = (submitting: boolean) => {
+		submitBtn?.toggleAttribute("disabled", submitting);
+		submitLabel?.toggleAttribute("hidden", submitting);
+		submitLoading?.toggleAttribute("hidden", !submitting);
+	};
 
 	form?.addEventListener("submit", async (e) => {
 		e.preventDefault();
 
+		if (cooling) return;
+
 		status?.setAttribute("hidden", "");
 		error?.setAttribute("hidden", "");
+
+		// Honeypot: real users never fill this field. If it has a value,
+		// silently pretend the submission worked and stop.
+		const honeypot = form.elements.namedItem("website") as HTMLInputElement | null;
+		if (honeypot?.value) {
+			form.reset();
+			status?.removeAttribute("hidden");
+			return;
+		}
+
+		if (!validateForm()) return;
 
 		const data = new FormData(form);
 		const get = (name: string) => (data.get(name) || "").toString().trim();
@@ -526,7 +755,8 @@ import Footer from "../components/Footer.astro";
 			notas_adicionales: get("notas_adicionales"),
 		};
 
-		submitBtn?.setAttribute("disabled", "");
+		setSubmitting(true);
+		cooling = true;
 
 		try {
 			const response = await fetch(MAKE_WEBHOOK_URL, {
@@ -543,7 +773,10 @@ import Footer from "../components/Footer.astro";
 		} catch (err) {
 			error?.removeAttribute("hidden");
 		} finally {
-			submitBtn?.removeAttribute("disabled");
+			setSubmitting(false);
+			setTimeout(() => {
+				cooling = false;
+			}, COOLDOWN_MS);
 		}
 	});
 </script>
@@ -880,6 +1113,81 @@ h1 {
 }
 
 
+.priority-explainer {
+
+	margin:12px 0 0;
+
+	color:var(--text-dim);
+
+	font-size:.8rem;
+
+	line-height:1.6;
+
+}
+
+
+.top-note {
+
+	margin-top:4px;
+
+}
+
+
+.field-error {
+
+	display:block;
+
+	min-height:1.1em;
+
+	color:var(--danger);
+
+	font-size:.82rem;
+
+	font-weight:600;
+
+}
+
+
+.field-error:empty {
+
+	display:none;
+
+}
+
+
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+
+	border-color:var(--danger);
+
+}
+
+
+.honeypot {
+
+	position:absolute;
+
+	width:1px;
+
+	height:1px;
+
+	overflow:hidden;
+
+	clip:rect(0 0 0 0);
+
+	white-space:nowrap;
+
+}
+
+
+.submit {
+
+	position:relative;
+
+}
+
+
 .label-heading {
 
 	display:block;
@@ -938,6 +1246,7 @@ textarea {
 
 input[type="text"]:focus,
 input[type="email"]:focus,
+input[type="url"]:focus,
 select:focus,
 textarea:focus {
 
@@ -946,6 +1255,24 @@ textarea:focus {
 	border-color:color-mix(in srgb, var(--primary) 60%, transparent);
 
 	background:var(--surface-3);
+
+}
+
+
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+input[type="url"]:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+
+	box-shadow:0 0 0 3px var(--primary-bg), 0 0 0 1px var(--primary);
+
+}
+
+
+.radio:focus-within {
+
+	box-shadow:0 0 0 3px var(--primary-bg), 0 0 0 1px var(--primary);
 
 }
 
@@ -1123,11 +1450,11 @@ textarea {
 
 .status.error {
 
-	background:rgba(255,69,58,.1);
+	background:color-mix(in srgb, var(--danger) 12%, transparent);
 
-	border-color:rgba(255,69,58,.35);
+	border-color:color-mix(in srgb, var(--danger) 40%, transparent);
 
-	color:#FFD4D1;
+	color:var(--danger);
 
 }
 

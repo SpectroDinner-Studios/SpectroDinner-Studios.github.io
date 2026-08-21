@@ -4,9 +4,16 @@ import BackToTop from "../components/BackToTop.astro";
 
 interface Props {
 	title?: string;
+	description?: string;
 }
 
-const { title = "SpectroDinner™" } = Astro.props;
+const {
+	title = "SpectroDinner™",
+	description = "SpectroDinner™ is an independent development studio working across software engineering, game development, Minecraft development and open source.",
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL("/logo.png", Astro.site);
 ---
 
 <!doctype html>
@@ -80,6 +87,20 @@ const { title = "SpectroDinner™" } = Astro.props;
 		<title>
 			{title}
 		</title>
+
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalURL} />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:image" content={ogImageURL} />
+
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImageURL} />
 
 
 		<link

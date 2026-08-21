@@ -146,7 +146,7 @@ const stars = (rating: number) =>
 				<span data-lang="en">Leave your review</span>
 			</h3>
 
-			<form id="review-form">
+			<form id="review-form" novalidate>
 
 				<div class="grid-fields">
 
@@ -157,14 +157,24 @@ const stars = (rating: number) =>
 							type="text"
 							name="nombre"
 							placeholder="Ej. Elmoderador / e.g. Elmoderador"
+							autocomplete="username"
+							maxlength="60"
 							required
+							aria-describedby="err-nombre"
 						/>
+						<span id="err-nombre" class="field-error" aria-live="polite"></span>
 					</label>
 
 					<label>
-						<span data-lang="es">Servicio recibido</span>
-						<span data-lang="en">Service received</span>
-						<input type="text" name="servicio" placeholder="Ej. Creación de servidor" />
+						<span data-lang="es">Servicio recibido (opcional)</span>
+						<span data-lang="en">Service received (optional)</span>
+						<input
+							type="text"
+							name="servicio"
+							placeholder="Ej. Creación de servidor"
+							autocomplete="off"
+							maxlength="120"
+						/>
 					</label>
 
 				</div>
@@ -173,7 +183,7 @@ const stars = (rating: number) =>
 					<span data-lang="es">Valoración *</span>
 					<span data-lang="en">Rating *</span>
 
-					<select name="rating" required>
+					<select name="rating" required aria-describedby="err-rating">
 						<option value="" disabled selected>-- </option>
 						<option value="5">★★★★★ (5/5)</option>
 						<option value="4">★★★★☆ (4/5)</option>
@@ -181,27 +191,56 @@ const stars = (rating: number) =>
 						<option value="2">★★☆☆☆ (2/5)</option>
 						<option value="1">★☆☆☆☆ (1/5)</option>
 					</select>
+					<span id="err-rating" class="field-error" aria-live="polite"></span>
 				</label>
 
 				<label>
 					<span data-lang="es">Tu comentario *</span>
 					<span data-lang="en">Your comment *</span>
-					<textarea name="comentario" rows="4" required></textarea>
+					<textarea
+						name="comentario"
+						rows="4"
+						maxlength="1000"
+						required
+						aria-describedby="err-comentario"
+					></textarea>
+					<span id="err-comentario" class="field-error" aria-live="polite"></span>
 				</label>
 
+				<div class="honeypot" aria-hidden="true">
+					<label for="review-website">Website</label>
+					<input
+						type="text"
+						id="review-website"
+						name="website"
+						tabindex="-1"
+						autocomplete="off"
+					/>
+				</div>
+
+				<p id="review-error-summary" class="status error" role="alert" hidden></p>
+
 				<button type="submit" class="submit">
-					<span data-lang="es">Enviar valoración →</span>
-					<span data-lang="en">Submit review →</span>
+					<span class="submit-label">
+						<span data-lang="es">Enviar valoración →</span>
+						<span data-lang="en">Submit review →</span>
+					</span>
+					<span class="submit-label submit-loading" hidden>
+						<span data-lang="es">Enviando…</span>
+						<span data-lang="en">Sending…</span>
+					</span>
 				</button>
 
 				<p class="hint">
 					<span data-lang="es">
 						Tu valoración se envía directamente a nuestro equipo —
-						la publicaremos en cuanto la revisemos.
+						la publicaremos en cuanto la revisemos. Nunca compartas
+						contraseñas, claves de API ni otros datos secretos aquí.
 					</span>
 					<span data-lang="en">
 						Your review is sent straight to our team —
-						we'll publish it once we review it.
+						we'll publish it once we review it. Never share
+						passwords, API keys or other secrets here.
 					</span>
 				</p>
 
@@ -298,25 +337,113 @@ const stars = (rating: number) =>
 	const form = document.getElementById("review-form") as HTMLFormElement | null;
 	const status = document.getElementById("review-status");
 	const error = document.getElementById("review-error");
+	const errorSummary = document.getElementById("review-error-summary");
 	const submitBtn = form?.querySelector<HTMLButtonElement>(".submit");
+	const submitLabel = submitBtn?.querySelector(".submit-label:not(.submit-loading)");
+	const submitLoading = submitBtn?.querySelector(".submit-loading");
+
+	const messages = {
+		es: { required: "Este campo es obligatorio.", choose: "Elige una valoración." },
+		en: { required: "This field is required.", choose: "Please choose a rating." },
+	};
+
+	const currentLang = () => (document.documentElement.lang === "en" ? "en" : "es");
+
+	const clearFieldError = (input: HTMLElement, errorId: string) => {
+		input.removeAttribute("aria-invalid");
+		const el = document.getElementById(errorId);
+		if (el) el.textContent = "";
+	};
+
+	const setFieldError = (input: HTMLElement, errorId: string, text: string) => {
+		input.setAttribute("aria-invalid", "true");
+		const el = document.getElementById(errorId);
+		if (el) el.textContent = text;
+	};
+
+	const validateForm = (): boolean => {
+		if (!form) return false;
+
+		let firstInvalid: HTMLElement | null = null;
+		const lang = currentLang();
+
+		const requiredFields = [
+			{ name: "nombre", errorId: "err-nombre" },
+			{ name: "rating", errorId: "err-rating", choose: true },
+			{ name: "comentario", errorId: "err-comentario" },
+		];
+
+		for (const { name, errorId, choose } of requiredFields) {
+			const input = form.elements.namedItem(name) as
+				| HTMLInputElement
+				| HTMLSelectElement
+				| HTMLTextAreaElement
+				| null;
+			if (!input) continue;
+
+			if (!input.value.trim()) {
+				setFieldError(input, errorId, choose ? messages[lang].choose : messages[lang].required);
+				firstInvalid ??= input;
+			} else {
+				clearFieldError(input, errorId);
+			}
+		}
+
+		if (errorSummary) {
+			if (firstInvalid) {
+				errorSummary.textContent =
+					lang === "es"
+						? "Revisa los campos marcados en rojo antes de enviar."
+						: "Please check the fields highlighted in red before submitting.";
+				errorSummary.hidden = false;
+			} else {
+				errorSummary.hidden = true;
+				errorSummary.textContent = "";
+			}
+		}
+
+		firstInvalid?.focus();
+		return !firstInvalid;
+	};
+
+	const COOLDOWN_MS = 8000;
+	let cooling = false;
+
+	const setSubmitting = (submitting: boolean) => {
+		submitBtn?.toggleAttribute("disabled", submitting);
+		submitLabel?.toggleAttribute("hidden", submitting);
+		submitLoading?.toggleAttribute("hidden", !submitting);
+	};
 
 	form?.addEventListener("submit", async (e) => {
 		e.preventDefault();
+		if (cooling) return;
 
 		status?.setAttribute("hidden", "");
 		error?.setAttribute("hidden", "");
+
+		const honeypot = form.elements.namedItem("website") as HTMLInputElement | null;
+		if (honeypot?.value) {
+			form.reset();
+			status?.removeAttribute("hidden");
+			return;
+		}
+
+		if (!validateForm()) return;
 
 		const data = new FormData(form);
 		const get = (name: string) => (data.get(name) || "").toString().trim();
 
 		const payload = {
+			form: "review",
 			nickname: get("nombre"),
 			service: get("servicio"),
 			rating: Number(get("rating")),
 			comment: get("comentario"),
 		};
 
-		submitBtn?.setAttribute("disabled", "");
+		setSubmitting(true);
+		cooling = true;
 
 		try {
 			const response = await fetch(MAKE_WEBHOOK_URL, {
@@ -332,7 +459,10 @@ const stars = (rating: number) =>
 		} catch (err) {
 			error?.removeAttribute("hidden");
 		} finally {
-			submitBtn?.removeAttribute("disabled");
+			setSubmitting(false);
+			setTimeout(() => {
+				cooling = false;
+			}, COOLDOWN_MS);
 		}
 	});
 </script>
@@ -772,6 +902,15 @@ textarea:focus {
 }
 
 
+input[type="text"]:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+
+	box-shadow:0 0 0 3px var(--primary-bg), 0 0 0 1px var(--primary);
+
+}
+
+
 textarea {
 
 	resize:vertical;
@@ -779,7 +918,53 @@ textarea {
 }
 
 
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+
+	border-color:var(--danger);
+
+}
+
+
+.field-error {
+
+	color:var(--danger);
+
+	font-size:.85rem;
+
+	font-weight:500;
+
+}
+
+
+.field-error:empty {
+
+	display:none;
+
+}
+
+
+.honeypot {
+
+	position:absolute;
+
+	width:1px;
+
+	height:1px;
+
+	overflow:hidden;
+
+	clip:rect(0 0 0 0);
+
+	white-space:nowrap;
+
+}
+
+
 .submit {
+
+	position:relative;
 
 	align-self:flex-start;
 
@@ -854,11 +1039,11 @@ textarea {
 
 .status.error {
 
-	background:rgba(255,69,58,.1);
+	background:color-mix(in srgb, var(--danger) 12%, transparent);
 
-	border-color:rgba(255,69,58,.35);
+	border-color:color-mix(in srgb, var(--danger) 40%, transparent);
 
-	color:#FFD4D1;
+	color:var(--danger);
 
 }
 
@@ -919,6 +1104,17 @@ textarea {
 
 	}
 
+}
+
+
+/*
+	#FFC94A only reaches ~1.4:1 contrast against the light theme's
+	near-white background (fails WCAG both for large and normal
+	text). Darker gold restores accessible contrast there.
+*/
+:global([data-theme="light"]) .score-stars,
+:global([data-theme="light"]) .card-stars {
+	color:#8C6600;
 }
 
 </style>

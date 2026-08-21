@@ -1,10 +1,15 @@
+---
+import ProjectStatus from "./ProjectStatus.astro";
+---
+
 <section class="flagship">
 
 	<div class="container">
 
 
 		<span class="eyebrow reveal">
-			FLAGSHIP PROJECT
+			<span data-lang="es">PROYECTO PRINCIPAL</span>
+			<span data-lang="en">FLAGSHIP PROJECT</span>
 		</span>
 
 
@@ -19,9 +24,9 @@
 					class="TEP"
 				/>
 
-				<span class="status">
-					● Active Development
-				</span>
+				<div class="status">
+					<ProjectStatus status="in-development" />
+				</div>
 
 			</div>
 
@@ -35,12 +40,23 @@
 
 
 				<p>
-					A large-scale Minecraft plugin built with the
-					Paper API, introducing a time-based economy and
-					progression system on top of custom gameplay
-					mechanics and advanced server-side features.
-					Designed for performance, scalability and
-					long-term maintainability.
+					<span data-lang="es">
+						Un plugin de Minecraft a gran escala construido
+						con la Paper API, que introduce una economía
+						basada en tiempo y un sistema de progresión
+						sobre mecánicas de juego personalizadas y
+						funciones avanzadas del lado del servidor.
+						Diseñado para el rendimiento, la escalabilidad
+						y el mantenimiento a largo plazo.
+					</span>
+					<span data-lang="en">
+						A large-scale Minecraft plugin built with the
+						Paper API, introducing a time-based economy and
+						progression system on top of custom gameplay
+						mechanics and advanced server-side features.
+						Designed for performance, scalability and
+						long-term maintainability.
+					</span>
 				</p>
 
 
@@ -65,14 +81,16 @@
 						rel="noopener noreferrer"
 						class="primary"
 					>
-						View on GitHub ↗
+						<span data-lang="es">Perfil de GitHub ↗</span>
+						<span data-lang="en">GitHub Profile ↗</span>
 					</a>
 
 					<a
 						href="/documentation"
 						class="secondary"
 					>
-						Documentation
+						<span data-lang="es">Documentación</span>
+						<span data-lang="en">Documentation</span>
 					</a>
 
 				</div>
@@ -167,6 +185,8 @@
 
 	justify-content:center;
 
+	min-width:0;
+
 }
 
 
@@ -201,31 +221,13 @@
 
 	transform:translateX(-50%);
 
-	padding:8px 16px;
+}
 
-	border-radius:999px;
 
-	background:
 
-		color-mix(in srgb, var(--bg-elevated) 75%, transparent);
+.info {
 
-	border:
-
-		1px solid
-
-		var(--border-2);
-
-	backdrop-filter:blur(10px);
-
-	color:#4ADE80;
-
-	font-size:.8rem;
-
-	font-weight:600;
-
-	letter-spacing:.5px;
-
-	white-space:nowrap;
+	min-width:0;
 
 }
 

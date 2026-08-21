@@ -4,18 +4,32 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 ---
 
-<Layout title="About | SpectroDinner™">
+<Layout
+	title="About | SpectroDinner™"
+	description="Learn about SpectroDinner™, an independent development studio, and the people behind it."
+>
 
 	<Navbar />
 
 	<main class="container">
 
 		<section class="hero">
-			<h1>About SpectroDinner™</h1>
+			<h1>
+				<span data-lang="es">Sobre SpectroDinner Studios</span>
+				<span data-lang="en">About SpectroDinner Studios</span>
+			</h1>
 
 			<p>
-				A creative technology studio focused on software,
-				games and digital experiences.
+				<span data-lang="es">
+					Un estudio de desarrollo independiente centrado
+					en software, videojuegos, Minecraft y tecnología
+					experimental.
+				</span>
+				<span data-lang="en">
+					An independent development studio focused on
+					software, games, Minecraft and experimental
+					technology.
+				</span>
 			</p>
 		</section>
 
@@ -23,35 +37,113 @@ import Footer from "../components/Footer.astro";
 		<section class="content">
 
 			<div class="card reveal spotlight">
-				<h2>Who We Are</h2>
+				<h2>
+					<span data-lang="es">Quiénes somos</span>
+					<span data-lang="en">Who We Are</span>
+				</h2>
 
 				<p>
-					SpectroDinner™ is an independent development
-					brand creating innovative projects through
-					code, creativity and technology.
+					<span data-lang="es">
+						SpectroDinner Studios es un estudio de
+						desarrollo independiente. No somos una gran
+						corporación — somos un equipo pequeño que crea
+						proyectos reales a través de código, creatividad
+						y tecnología.
+					</span>
+					<span data-lang="en">
+						SpectroDinner Studios is an independent
+						development studio. We're not a large
+						corporation — we're a small team building real
+						projects through code, creativity and
+						technology.
+					</span>
 				</p>
 			</div>
 
 
 			<div class="card reveal spotlight">
-				<h2>Our Vision</h2>
+				<h2>
+					<span data-lang="es">Qué desarrollamos</span>
+					<span data-lang="en">What We Develop</span>
+				</h2>
 
 				<p>
-					Building unique digital experiences that
-					combine engineering, design and imagination.
+					<span data-lang="es">
+						Trabajamos en cuatro áreas: ingeniería de
+						software, desarrollo de videojuegos, desarrollo
+						de Minecraft y tecnología experimental. También
+						ofrecemos un servicio de configuración de
+						servidores de Discord.
+					</span>
+					<span data-lang="en">
+						We work across four areas: software engineering,
+						game development, Minecraft development and
+						experimental technology. We also offer a Discord
+						server setup service.
+					</span>
 				</p>
 			</div>
 
 
 			<div class="card reveal spotlight">
-				<h2>Technology</h2>
+				<h2>
+					<span data-lang="es">Nuestro enfoque</span>
+					<span data-lang="en">Our Approach</span>
+				</h2>
 
 				<p>
-					Focused on modern development, game creation,
-					automation and experimental software.
+					<span data-lang="es">
+						Cada proyecto sigue los mismos principios:
+						arquitectura limpia, rendimiento y mantenibilidad
+						a largo plazo — ya sea un plugin de Minecraft,
+						una herramienta de software o la configuración
+						de un servidor de Discord.
+					</span>
+					<span data-lang="en">
+						Every project follows the same principles: clean
+						architecture, performance and long-term
+						maintainability — whether it's a Minecraft
+						plugin, a software tool, or a Discord server
+						setup.
+					</span>
 				</p>
 			</div>
 
+		</section>
+
+
+		<section class="founder-cta reveal">
+			<h2>
+				<span data-lang="es">Detrás del estudio</span>
+				<span data-lang="en">Behind the Studio</span>
+			</h2>
+
+			<p>
+				<span data-lang="es">
+					SpectroDinner Studios fue fundado en 2024 por
+					Elmoderador, Founder, CEO & Lead Developer.
+				</span>
+				<span data-lang="en">
+					SpectroDinner Studios was founded in 2024 by
+					Elmoderador, Founder, CEO & Lead Developer.
+				</span>
+			</p>
+
+			<div class="founder-links">
+				<a href="/projects">
+					<span data-lang="es">Ver Proyectos →</span>
+					<span data-lang="en">View Projects →</span>
+				</a>
+
+				<a
+					href="https://github.com/Elmoderador"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<span data-lang="es">Perfil de GitHub ↗</span>
+					<span data-lang="en">GitHub Profile ↗</span>
+				</a>
+			</div>
 		</section>
 
 	</main>
@@ -93,6 +185,9 @@ h1 {
 .hero p {
 	color:var(--text-muted);
 	font-size:1.2rem;
+	max-width:680px;
+	margin:0 auto;
+	line-height:1.8;
 }
 
 
@@ -140,5 +235,84 @@ h1 {
 .card p {
 	color:var(--text-muted);
 	line-height:1.6;
+}
+
+
+.founder-cta {
+	margin-top:60px;
+	padding:50px;
+
+	text-align:center;
+
+	background:var(--surface-1);
+
+	border:1px solid var(--border-1);
+
+	border-radius:28px;
+
+	backdrop-filter:blur(15px);
+}
+
+
+.founder-cta h2 {
+	margin:0 0 16px;
+	color:var(--text);
+}
+
+
+.founder-cta p {
+	color:var(--text-muted);
+	line-height:1.8;
+	max-width:600px;
+	margin:0 auto;
+}
+
+
+.founder-links {
+	display:flex;
+	justify-content:center;
+	gap:16px;
+	margin-top:32px;
+	flex-wrap:wrap;
+}
+
+
+.founder-links a {
+	padding:14px 28px;
+
+	border-radius:14px;
+
+	border:1px solid var(--border-2);
+
+	color:var(--text);
+
+	text-decoration:none;
+
+	font-weight:600;
+
+	transition:.25s ease;
+}
+
+
+.founder-links a:hover {
+	background:var(--surface-3);
+
+	transform:translateY(-3px);
+}
+
+
+@media (max-width:700px) {
+	.container {
+		margin:70px auto;
+		padding:0 20px;
+	}
+
+	h1 {
+		font-size:2.6rem;
+	}
+
+	.founder-cta {
+		padding:32px;
+	}
 }
 </style>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://spectrodinner-studios.github.io/sitemap.xml

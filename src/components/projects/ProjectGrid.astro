@@ -6,18 +6,28 @@
 		<div class="header reveal">
 
 			<span class="eyebrow">
-				IN THE PIPELINE
+				<span data-lang="es">ÁREAS DE DESARROLLO</span>
+				<span data-lang="en">DEVELOPMENT AREAS</span>
 			</span>
 
 			<h2>
-				Where we're headed next.
+				<span data-lang="es">En qué trabajamos.</span>
+				<span data-lang="en">What we work on.</span>
 			</h2>
 
 			<p>
-				Beyond our flagship release, these are the areas
-				SpectroDinner™ is actively investing in. Public
-				repositories go live as each project reaches a
-				stable milestone.
+				<span data-lang="es">
+					Estas no son proyectos individuales, sino las áreas
+					de desarrollo en las que trabaja SpectroDinner
+					Studios. Nuestros proyectos concretos, como
+					TimeEconomyPlugin, nacen dentro de estas áreas.
+				</span>
+				<span data-lang="en">
+					These aren't individual projects — they're the
+					development areas SpectroDinner Studios works in.
+					Our concrete projects, like TimeEconomyPlugin, are
+					built within these areas.
+				</span>
 			</p>
 
 		</div>
@@ -35,20 +45,22 @@
 						💻
 					</div>
 
-					<span class="status planning">
-						In Development
-					</span>
-
 				</div>
 
 				<h3>
-					Software Engineering
+					<span data-lang="es">Ingeniería de software</span>
+					<span data-lang="en">Software Engineering</span>
 				</h3>
 
 				<p>
-					Internal tools and applications built with
-					TypeScript and Python, focused on automation
-					and developer productivity.
+					<span data-lang="es">
+						Herramientas y aplicaciones internas, centradas
+						en automatización y productividad.
+					</span>
+					<span data-lang="en">
+						Internal tools and applications, focused on
+						automation and developer productivity.
+					</span>
 				</p>
 
 				<div class="tags">
@@ -68,23 +80,67 @@
 				<div class="top">
 
 					<div class="icon">
-						🎮
+						⛏️
 					</div>
-
-					<span class="status planned">
-						Planned
-					</span>
 
 				</div>
 
 				<h3>
-					Game Development
+					<span data-lang="es">Desarrollo de Minecraft</span>
+					<span data-lang="en">Minecraft Development</span>
 				</h3>
 
 				<p>
-					Early prototyping for an original game built
-					on Unity, exploring core mechanics before
-					full production begins.
+					<span data-lang="es">
+						Plugins, configuración de servidores y sistemas
+						a medida sobre la Paper API — la misma base con
+						la que construimos TimeEconomyPlugin.
+					</span>
+					<span data-lang="en">
+						Plugins, server setup and custom systems built
+						on the Paper API — the same foundation behind
+						TimeEconomyPlugin.
+					</span>
+				</p>
+
+				<div class="tags">
+
+					<span>Java</span>
+
+					<span>Paper API</span>
+
+				</div>
+
+			</div>
+
+
+
+			<div class="card reveal spotlight">
+
+				<div class="top">
+
+					<div class="icon">
+						🎮
+					</div>
+
+				</div>
+
+				<h3>
+					<span data-lang="es">Desarrollo de videojuegos</span>
+					<span data-lang="en">Game Development</span>
+				</h3>
+
+				<p>
+					<span data-lang="es">
+						Prototipado y experimentación con mecánicas de
+						juego, explorando ideas antes de convertirlas
+						en proyectos concretos.
+					</span>
+					<span data-lang="en">
+						Prototyping and experimenting with game
+						mechanics, exploring ideas before they become
+						concrete projects.
+					</span>
 				</p>
 
 				<div class="tags">
@@ -104,30 +160,39 @@
 				<div class="top">
 
 					<div class="icon">
-						🌐
+						🧪
 					</div>
-
-					<span class="status planning">
-						Ongoing
-					</span>
 
 				</div>
 
 				<h3>
-					Open Source
+					<span data-lang="es">Tecnología experimental</span>
+					<span data-lang="en">Experimental Technology</span>
 				</h3>
 
 				<p>
-					Publishing selected tools and libraries from
-					internal development as they mature, to give
-					back to the community.
+					<span data-lang="es">
+						Pruebas de nuevas ideas y enfoques técnicos que
+						pueden convertirse en proyectos concretos en el
+						futuro.
+					</span>
+					<span data-lang="en">
+						Testing new ideas and technical approaches that
+						may become concrete projects in the future.
+					</span>
 				</p>
 
 				<div class="tags">
 
-					<span>GitHub</span>
+					<span>
+						<span data-lang="es">Prototipos</span>
+						<span data-lang="en">Prototypes</span>
+					</span>
 
-					<span>Community</span>
+					<span>
+						<span data-lang="es">Investigación</span>
+						<span data-lang="en">R&D</span>
+					</span>
 
 				</div>
 
@@ -226,7 +291,7 @@
 
 	grid-template-columns:
 
-		repeat(3,1fr);
+		repeat(4,1fr);
 
 	gap:30px;
 
@@ -235,6 +300,7 @@
 
 .grid .card:nth-child(2) { transition-delay: .08s; }
 .grid .card:nth-child(3) { transition-delay: .16s; }
+.grid .card:nth-child(4) { transition-delay: .24s; }
 
 
 
@@ -280,8 +346,6 @@
 
 	align-items:center;
 
-	justify-content:space-between;
-
 	margin-bottom:22px;
 
 }
@@ -291,50 +355,6 @@
 .icon {
 
 	font-size:2.2rem;
-
-}
-
-
-
-.status {
-
-	padding:6px 14px;
-
-	border-radius:999px;
-
-	font-size:.75rem;
-
-	font-weight:700;
-
-	letter-spacing:.5px;
-
-	text-transform:uppercase;
-
-	white-space:nowrap;
-
-}
-
-
-
-.status.planning {
-
-	background:
-
-		var(--primary-bg);
-
-	color:var(--primary-light);
-
-}
-
-
-
-.status.planned {
-
-	background:
-
-		var(--surface-3);
-
-	color:var(--text-muted);
 
 }
 
@@ -396,7 +416,18 @@
 
 
 
-@media(max-width:900px) {
+@media(max-width:1100px) {
+
+	.grid {
+
+		grid-template-columns:repeat(2,1fr);
+
+	}
+
+}
+
+
+@media(max-width:600px) {
 
 	.grid {
 

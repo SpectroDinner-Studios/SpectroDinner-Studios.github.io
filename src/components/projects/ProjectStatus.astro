@@ -1,0 +1,122 @@
+---
+interface Props {
+	status: "active" | "in-development" | "experimental" | "planned" | "archived";
+}
+
+const { status } = Astro.props;
+
+const labels: Record<Props["status"], { es: string; en: string }> = {
+	active: { es: "Activo", en: "Active" },
+	"in-development": { es: "En desarrollo", en: "In Development" },
+	experimental: { es: "Experimental", en: "Experimental" },
+	planned: { es: "Planeado", en: "Planned" },
+	archived: { es: "Archivado", en: "Archived" },
+};
+
+const label = labels[status];
+---
+
+<span class={`project-status status-${status}`}>
+	<span class="dot" aria-hidden="true"></span>
+	<span data-lang="es">{label.es}</span>
+	<span data-lang="en">{label.en}</span>
+</span>
+
+<style>
+.project-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+
+	padding: 6px 14px;
+
+	border-radius: 999px;
+
+	font-size: .78rem;
+	font-weight: 700;
+	letter-spacing: .4px;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.status-active {
+	background: color-mix(in srgb, #4ADE80 15%, transparent);
+	border: 1px solid color-mix(in srgb, #4ADE80 40%, transparent);
+	color: #4ADE80;
+}
+
+.status-active .dot {
+	background: #4ADE80;
+	box-shadow: 0 0 8px color-mix(in srgb, #4ADE80 70%, transparent);
+}
+
+.status-in-development {
+	background: var(--primary-bg);
+	border: 1px solid var(--primary-border);
+	color: var(--primary);
+}
+
+.status-in-development .dot {
+	background: var(--primary);
+	box-shadow: 0 0 8px var(--primary-glow);
+}
+
+.status-experimental {
+	background: color-mix(in srgb, #FBBF24 15%, transparent);
+	border: 1px solid color-mix(in srgb, #FBBF24 40%, transparent);
+	color: #FBBF24;
+}
+
+.status-experimental .dot {
+	background: #FBBF24;
+}
+
+.status-planned {
+	background: var(--surface-3);
+	border: 1px solid var(--border-2);
+	color: var(--text-muted);
+}
+
+.status-planned .dot {
+	background: var(--text-dim);
+}
+
+.status-archived {
+	background: var(--surface-2);
+	border: 1px solid var(--border-1);
+	color: var(--text-dim);
+}
+
+.status-archived .dot {
+	background: var(--text-dim);
+}
+
+/*
+	The plain green/amber above only reach ~1.5:1 contrast against
+	their own tinted background on the light theme (fails WCAG AA
+	4.5:1). Darker variants restore accessible contrast there.
+*/
+:global([data-theme="light"]) .status-active {
+	color: #0E7C3C;
+}
+
+:global([data-theme="light"]) .status-active .dot {
+	background: #0E7C3C;
+	box-shadow: 0 0 8px color-mix(in srgb, #0E7C3C 70%, transparent);
+}
+
+:global([data-theme="light"]) .status-experimental {
+	color: #8C5F00;
+}
+
+:global([data-theme="light"]) .status-experimental .dot {
+	background: #8C5F00;
+}
+</style>

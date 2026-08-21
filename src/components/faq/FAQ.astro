@@ -122,37 +122,65 @@ import FAQCTA from "./FAQCTA.astro";
 		</FAQCategory>
 
 
-		<FAQCategory title="General">
+		<FAQCategory title={{ es: "General", en: "General" }}>
 
 			<FAQItem
 				icon="🚀"
-				question="What is SpectroDinner™?"
+				question={{
+					es: "¿Qué es SpectroDinner Studios?",
+					en: "What is SpectroDinner Studios?",
+				}}
 			>
-				<p>
-					SpectroDinner™ is an independent software and
-					game development studio focused on creating
-					digital products, interactive experiences and
-					innovative technologies.
+				<p data-lang="es">
+					SpectroDinner Studios es un estudio de desarrollo
+					independiente centrado en crear productos digitales,
+					experiencias interactivas y tecnologías propias.
+				</p>
+				<p data-lang="en">
+					SpectroDinner Studios is an independent development
+					studio focused on creating digital products,
+					interactive experiences and its own technologies.
 				</p>
 
-				<p>
-					The studio combines software engineering,
-					game development and experimental technologies
-					to build solutions designed with performance,
-					quality and long-term maintainability in mind.
+				<p data-lang="es">
+					El estudio combina ingeniería de software,
+					desarrollo de videojuegos, desarrollo de Minecraft
+					y tecnología experimental, construyendo soluciones
+					pensadas para el rendimiento, la calidad y la
+					mantenibilidad a largo plazo.
+				</p>
+				<p data-lang="en">
+					The studio combines software engineering, game
+					development, Minecraft development and
+					experimental technology to build solutions
+					designed with performance, quality and long-term
+					maintainability in mind.
 				</p>
 			</FAQItem>
 
 			<FAQItem
 				icon="👤"
-				question="Who is behind SpectroDinner™?"
+				question={{
+					es: "¿Quién está detrás de SpectroDinner Studios?",
+					en: "Who is behind SpectroDinner Studios?",
+				}}
 			>
-				<p>
-					SpectroDinner™ was founded and is led by
+				<p data-lang="es">
+					SpectroDinner Studios fue fundado y está liderado
+					por Elmoderador, Founder, CEO & Lead Developer.
+				</p>
+				<p data-lang="en">
+					SpectroDinner Studios was founded and is led by
 					Elmoderador, Founder, CEO & Lead Developer.
 				</p>
 
-				<p>
+				<p data-lang="es">
+					Es responsable de la visión del estudio, la
+					arquitectura de software y el proceso de
+					desarrollo, asegurando que cada proyecto siga los
+					mismos estándares de calidad.
+				</p>
+				<p data-lang="en">
 					He is responsible for the studio's vision,
 					software architecture and development process,
 					ensuring every project follows the same quality
@@ -162,13 +190,22 @@ import FAQCTA from "./FAQCTA.astro";
 
 			<FAQItem
 				icon="📅"
-				question="When was SpectroDinner™ founded?"
+				question={{
+					es: "¿Cuándo se fundó SpectroDinner Studios?",
+					en: "When was SpectroDinner Studios founded?",
+				}}
 			>
-				<p>
-					SpectroDinner™ was founded in 2024 with the
-					objective of creating software, games and
-					technology projects while continuously
-					improving development practices.
+				<p data-lang="es">
+					SpectroDinner Studios se fundó en 2024 con el
+					objetivo de crear proyectos de software, juegos y
+					tecnología, mejorando continuamente las prácticas
+					de desarrollo.
+				</p>
+				<p data-lang="en">
+					SpectroDinner Studios was founded in 2024 with
+					the objective of creating software, games and
+					technology projects while continuously improving
+					development practices.
 				</p>
 			</FAQItem>
 
@@ -176,57 +213,95 @@ import FAQCTA from "./FAQCTA.astro";
 
 
 
-		<FAQCategory title="Projects">
+		<FAQCategory title={{ es: "Proyectos", en: "Projects" }}>
 
 			<FAQItem
 				icon="🎮"
-				question="What kind of projects does SpectroDinner™ create?"
+				question={{
+					es: "¿Qué tipo de proyectos crea SpectroDinner Studios?",
+					en: "What kind of projects does SpectroDinner Studios create?",
+				}}
 			>
-				<p>
-					The studio develops software applications,
-					video games, Minecraft plugins, developer
-					tools and experimental technologies.
+				<p data-lang="es">
+					El estudio desarrolla aplicaciones de software,
+					videojuegos, plugins de Minecraft, herramientas
+					para desarrolladores y tecnologías experimentales.
+				</p>
+				<p data-lang="en">
+					The studio develops software applications, video
+					games, Minecraft plugins, developer tools and
+					experimental technologies.
 				</p>
 
-				<p>
+				<p data-lang="es">
+					Cada proyecto sigue los mismos principios:
+					rendimiento, mantenibilidad, arquitectura limpia
+					y soporte a largo plazo siempre que sea posible.
+				</p>
+				<p data-lang="en">
 					Every project follows the same principles:
-					performance, maintainability, clean
-					architecture and long-term support whenever
-					possible.
+					performance, maintainability, clean architecture
+					and long-term support whenever possible.
 				</p>
 			</FAQItem>
 
 			<FAQItem
 				icon="⛏️"
-				question="What is TimeEconomyPlugin?"
+				question={{
+					es: "¿Qué es TimeEconomyPlugin?",
+					en: "What is TimeEconomyPlugin?",
+				}}
 			>
-				<p>
-					TimeEconomyPlugin is one of
-					SpectroDinner™'s featured projects.
+				<p data-lang="es">
+					TimeEconomyPlugin es uno de los proyectos
+					destacados de SpectroDinner Studios.
+				</p>
+				<p data-lang="en">
+					TimeEconomyPlugin is one of SpectroDinner
+					Studios' featured projects.
 				</p>
 
-				<p>
-					It is a large-scale Minecraft plugin built
-					using Java and the Paper API, focused on
-					custom gameplay mechanics, progression
-					systems and advanced server features.
+				<p data-lang="es">
+					Es un plugin de Minecraft a gran escala construido
+					con Java y la Paper API, centrado en mecánicas de
+					juego personalizadas, sistemas de progresión y
+					funciones avanzadas de servidor.
+				</p>
+				<p data-lang="en">
+					It is a large-scale Minecraft plugin built using
+					Java and the Paper API, focused on custom gameplay
+					mechanics, progression systems and advanced
+					server features.
 				</p>
 			</FAQItem>
 
 			<FAQItem
 				icon="🌐"
-				question="Are your projects open source?"
+				question={{
+					es: "¿Vuestros proyectos son de código abierto?",
+					en: "Are your projects open source?",
+				}}
 			>
-				<p>
+				<p data-lang="es">
+					Algunos proyectos están disponibles públicamente
+					en GitHub, mientras que otros permanecen privados
+					hasta que alcanzan una versión estable.
+				</p>
+				<p data-lang="en">
 					Some projects are publicly available through
-					GitHub, while others remain private until
-					they reach a stable release.
+					GitHub, while others remain private until they
+					reach a stable release.
 				</p>
 
-				<p>
+				<p data-lang="es">
+					Los repositorios públicos buscan fomentar el
+					aprendizaje, la colaboración y la transparencia
+					dentro de la comunidad de desarrolladores.
+				</p>
+				<p data-lang="en">
 					Public repositories are intended to encourage
-					learning, collaboration and transparency
-					within the developer community.
+					learning, collaboration and transparency within
+					the developer community.
 				</p>
 			</FAQItem>
 
@@ -234,39 +309,60 @@ import FAQCTA from "./FAQCTA.astro";
 
 
 
-		<FAQCategory title="Development">
+		<FAQCategory title={{ es: "Desarrollo", en: "Development" }}>
 
 			<FAQItem
 				icon="🛠️"
-				question="What technologies does SpectroDinner™ use?"
+				question={{
+					es: "¿Qué tecnologías usa SpectroDinner Studios?",
+					en: "What technologies does SpectroDinner Studios use?",
+				}}
 			>
-				<p>
+				<p data-lang="es">
+					La tecnología depende de las necesidades de cada
+					proyecto. Los lenguajes más usados son Java,
+					TypeScript, JavaScript, Python y C++.
+				</p>
+				<p data-lang="en">
 					Technology depends on each project's needs.
-					Commonly used languages include Java,
-					TypeScript, JavaScript, Python and C++.
+					Commonly used languages include Java, TypeScript,
+					JavaScript, Python and C++.
 				</p>
 
-				<p>
-					Modern development workflows, Git,
-					documentation and quality standards are part
-					of every project.
+				<p data-lang="es">
+					Flujos de trabajo modernos, Git, documentación y
+					estándares de calidad forman parte de cada
+					proyecto.
+				</p>
+				<p data-lang="en">
+					Modern development workflows, Git, documentation
+					and quality standards are part of every project.
 				</p>
 			</FAQItem>
 
 			<FAQItem
 				icon="🤝"
-				question="Can I collaborate with SpectroDinner™?"
+				question={{
+					es: "¿Puedo colaborar con SpectroDinner Studios?",
+					en: "Can I collaborate with SpectroDinner Studios?",
+				}}
 			>
-				<p>
-					Collaboration opportunities may become
-					available depending on the project's
-					requirements.
+				<p data-lang="es">
+					Pueden surgir oportunidades de colaboración según
+					las necesidades de cada proyecto.
+				</p>
+				<p data-lang="en">
+					Collaboration opportunities may become available
+					depending on the project's requirements.
 				</p>
 
-				<p>
+				<p data-lang="es">
+					La mejor forma de estar al día es a través de
+					nuestros repositorios oficiales en GitHub.
+				</p>
+				<p data-lang="en">
 					The best way to stay informed is through our
-					official GitHub repositories and future
-					development updates.
+					official GitHub repositories.
 				</p>
 			</FAQItem>
 

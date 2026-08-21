@@ -4,46 +4,80 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 ---
 
-<Layout title="Documentation | SpectroDinner™">
+<Layout
+	title="Documentation | SpectroDinner™"
+	description="Documentation and resources for SpectroDinner™'s projects and services."
+>
 
 	<Navbar />
 
 	<main class="container">
 		<section class="hero">
-			<h1>Documentation</h1>
+			<h1>
+				<span data-lang="es">Documentación</span>
+				<span data-lang="en">Documentation</span>
+			</h1>
 
 			<p>
-				Technical documentation, guides and resources
-				for SpectroDinner™ projects.
+				<span data-lang="es">
+					Documentación técnica, guías y recursos para los
+					proyectos de SpectroDinner Studios.
+				</span>
+				<span data-lang="en">
+					Technical documentation, guides and resources
+					for SpectroDinner Studios' projects.
+				</span>
 			</p>
 		</section>
 
-		<section class="cards">
+		<section class="notice reveal">
+			<span class="badge">
+				<span data-lang="es">PRÓXIMAMENTE</span>
+				<span data-lang="en">COMING SOON</span>
+			</span>
 
-			<div class="card reveal spotlight">
-				<h2>Getting Started</h2>
-				<p>
-					Learn how to install, configure and use
-					our projects.
-				</p>
-			</div>
+			<h2>
+				<span data-lang="es">Todavía no hay documentación pública</span>
+				<span data-lang="en">No public documentation yet</span>
+			</h2>
 
-			<div class="card reveal spotlight">
-				<h2>API Reference</h2>
-				<p>
-					Technical references, integrations and
-					developer resources.
-				</p>
-			</div>
+			<p>
+				<span data-lang="es">
+					Estamos preparando documentación técnica para
+					nuestros proyectos, empezando por TimeEconomyPlugin.
+					De momento no hay guías, referencias de API ni
+					tutoriales publicados — no queremos mostrar
+					documentación que no existe todavía.
+				</span>
+				<span data-lang="en">
+					We're working on technical documentation for our
+					projects, starting with TimeEconomyPlugin. There
+					are no guides, API references or tutorials
+					published yet — we'd rather show nothing than
+					documentation that doesn't actually exist.
+				</span>
+			</p>
 
-			<div class="card reveal spotlight">
-				<h2>Guides</h2>
-				<p>
-					Step-by-step tutorials and detailed
-					explanations.
-				</p>
-			</div>
+			<p>
+				<span data-lang="es">
+					Mientras tanto, puedes seguir el desarrollo a
+					través de nuestro perfil de GitHub.
+				</span>
+				<span data-lang="en">
+					In the meantime, you can follow development
+					through our GitHub profile.
+				</span>
+			</p>
 
+			<a
+				href="https://github.com/elmoderador"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="github-link"
+			>
+				<span data-lang="es">Perfil de GitHub ↗</span>
+				<span data-lang="en">GitHub Profile ↗</span>
+			</a>
 		</section>
 	</main>
 
@@ -53,7 +87,7 @@ import Footer from "../components/Footer.astro";
 
 <style>
 .container {
-	max-width: 1200px;
+	max-width: 900px;
 	margin: 100px auto;
 	padding: 0 32px;
 }
@@ -80,46 +114,92 @@ h1 {
 .hero p {
 	color: var(--text-muted);
 	font-size: 1.2rem;
+	max-width: 640px;
+	margin: 0 auto;
+	line-height: 1.8;
 }
 
-.cards {
-	display: grid;
-	grid-template-columns: repeat(
-		auto-fit,
-		minmax(280px, 1fr)
-	);
+.notice {
+	text-align: center;
+	padding: 56px 48px;
 
-	gap: 25px;
-}
-
-.cards .card:nth-child(2) { transition-delay: .08s; }
-.cards .card:nth-child(3) { transition-delay: .16s; }
-
-.card {
-	padding: 30px;
-
-	background: var(--surface-2);
+	background: var(--surface-1);
 
 	border: 1px solid var(--border-1);
-	border-radius: 20px;
+	border-radius: 28px;
 
 	backdrop-filter: blur(15px);
+}
+
+.badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	padding: 8px 18px;
+
+	border-radius: 999px;
+
+	background: var(--primary-bg);
+	border: 1px solid var(--primary-border);
+
+	color: var(--primary);
+
+	font-size: .8rem;
+	font-weight: 700;
+	letter-spacing: 2px;
+}
+
+.notice h2 {
+	margin: 24px 0 0;
+	color: var(--text);
+	font-size: 1.7rem;
+}
+
+.notice p {
+	margin-top: 20px;
+	color: var(--text-muted);
+	line-height: 1.8;
+	max-width: 640px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.github-link {
+	display: inline-flex;
+	margin-top: 32px;
+
+	padding: 14px 30px;
+
+	border-radius: 14px;
+
+	background: var(--primary);
+	color: white;
+
+	text-decoration: none;
+	font-weight: 600;
 
 	transition: .25s ease;
 }
 
-.card:hover {
-	transform: translateY(-5px);
-	border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+.github-link:hover {
+	transform: translateY(-3px);
+
+	box-shadow: 0 15px 40px var(--primary-glow);
 }
 
-.card h2 {
-	margin-top:0;
-	color:var(--text);
-}
+@media (max-width: 700px) {
+	.container {
+		margin: 70px auto;
+		padding: 0 20px;
+	}
 
-.card p {
-	color:var(--text-muted);
-	line-height:1.6;
+	h1 {
+		font-size: 2.6rem;
+	}
+
+	.notice {
+		padding: 36px 24px;
+	}
 }
 </style>
