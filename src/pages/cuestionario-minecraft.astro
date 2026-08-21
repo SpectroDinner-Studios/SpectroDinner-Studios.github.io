@@ -1,0 +1,1168 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Cuestionario Minecraft | SpectroDinner™">
+
+	<Navbar />
+
+	<main class="container">
+
+		<section class="hero">
+
+			<span class="badge">
+				<span data-lang="es">⛏️ SERVICIO MINECRAFT</span>
+				<span data-lang="en">⛏️ MINECRAFT SERVICE</span>
+			</span>
+
+			<h1>
+				<span data-lang="es">Configuramos tu servidor de Minecraft</span>
+				<span data-lang="en">We'll set up your Minecraft server</span>
+			</h1>
+
+			<p data-lang="es">
+				Nos das acceso, nosotros nos encargamos de la parte técnica:
+				permisos, rangos, optimización de lag y parches de exploits.
+				Cuenta abajo cómo quieres tu servidor — cuanto más detalle nos
+				des, antes le llegará el turno a tu solicitud.
+			</p>
+
+			<p data-lang="en">
+				You give us access, we handle the technical side: permissions,
+				ranks, lag optimization and exploit patches. Tell us below how
+				you want your server — the more detail you give us, the sooner
+				your request gets its turn.
+			</p>
+
+			<div class="free-badge">
+				<span data-lang="es">✨ Servicio 100% gratuito</span>
+				<span data-lang="en">✨ 100% free service</span>
+			</div>
+
+			<div class="priority-callout">
+				<span data-lang="es">
+					📈 <strong>Regla de la cola de trabajo:</strong> cuanta más
+					información detallada nos des, más prioridad tendrá tu
+					solicitud frente al resto.
+				</span>
+				<span data-lang="en">
+					📈 <strong>Queue priority rule:</strong> the more detailed
+					information you give us, the higher priority your request
+					gets over the rest.
+				</span>
+			</div>
+
+		</section>
+
+
+		<form id="mc-quest-form" class="form">
+
+
+			<!-- ===================== SECCIÓN 1 ===================== -->
+
+			<section class="section-block">
+
+				<div class="section-heading">
+
+					<span class="section-number">1</span>
+
+					<div>
+						<h2>
+							<span data-lang="es">Datos técnicos y accesos</span>
+							<span data-lang="en">Technical details and access</span>
+						</h2>
+
+						<p>
+							<span data-lang="es">
+								Obligatoria — es lo mínimo que necesitamos para
+								poder empezar a trabajar en tu servidor.
+							</span>
+							<span data-lang="en">
+								Required — this is the minimum we need to
+								start working on your server.
+							</span>
+						</p>
+					</div>
+
+				</div>
+
+
+				<div class="field-group">
+
+					<div class="grid two">
+
+						<label>
+							<span data-lang="es">Apodo / usuario de Discord *</span>
+							<span data-lang="en">Nickname / Discord username *</span>
+							<input type="text" name="nombre" placeholder="Ej. Elmoderador" required />
+						</label>
+
+						<label>
+							<span data-lang="es">Email *</span>
+							<span data-lang="en">Email *</span>
+							<input type="email" name="email" required />
+						</label>
+
+					</div>
+
+				</div>
+
+
+				<div class="field-group">
+
+					<div class="grid two">
+
+						<label>
+							<span data-lang="es">Nombre del servidor *</span>
+							<span data-lang="en">Server name *</span>
+							<input type="text" name="servidor_nombre" required />
+						</label>
+
+						<label>
+							<span data-lang="es">Versión y software exactos *</span>
+							<span data-lang="en">Exact version and software *</span>
+							<input
+								type="text"
+								name="version_software"
+								placeholder="Ej. Paper 1.20.4 / Purpur 1.21 / Fabric 1.20.1"
+								required
+							/>
+						</label>
+
+					</div>
+
+				</div>
+
+
+				<div class="field-group">
+
+					<span class="label-heading">
+						<span data-lang="es">Tipo de host *</span>
+						<span data-lang="en">Host type *</span>
+					</span>
+
+					<div class="radio-group">
+
+						<label class="radio">
+							<input type="radio" name="tipo_host" value="Host gratuito (MCServerHost, Aternos, etc.)" required />
+							<span data-lang="es">Gratuito (MCServerHost, Aternos...)</span>
+							<span data-lang="en">Free host (MCServerHost, Aternos...)</span>
+						</label>
+
+						<label class="radio">
+							<input type="radio" name="tipo_host" value="VPS o host de pago" />
+							<span data-lang="es">VPS / host de pago</span>
+							<span data-lang="en">VPS / paid host</span>
+						</label>
+
+						<label class="radio">
+							<input type="radio" name="tipo_host" value="Servidor propio / dedicado" />
+							<span data-lang="es">Propio / dedicado</span>
+							<span data-lang="en">Own / dedicated machine</span>
+						</label>
+
+						<label class="radio">
+							<input type="radio" name="tipo_host" value="Otro" />
+							<span data-lang="es">Otro</span>
+							<span data-lang="en">Other</span>
+						</label>
+
+					</div>
+
+					<label>
+						<span data-lang="es">¿Cuál exactamente? (opcional)</span>
+						<span data-lang="en">Which one exactly? (optional)</span>
+						<input type="text" name="tipo_host_detalle" placeholder="Ej. MCServerHost, Shockbyte, Hetzner..." />
+					</label>
+
+				</div>
+
+
+				<div class="field-group">
+
+					<div class="grid two">
+
+						<label>
+							<span data-lang="es">Plugins instalados actualmente</span>
+							<span data-lang="en">Currently installed plugins</span>
+							<textarea name="plugins_instalados" rows="4" placeholder="Ej. LuckPerms, EssentialsX, WorldGuard..."></textarea>
+						</label>
+
+						<label>
+							<span data-lang="es">Plugins que quieres instalar/añadir</span>
+							<span data-lang="en">Plugins you want to add</span>
+							<textarea name="plugins_deseados" rows="4"></textarea>
+						</label>
+
+					</div>
+
+				</div>
+
+
+				<div class="field-group">
+
+					<span class="label-heading">
+						<span data-lang="es">Método de acceso *</span>
+						<span data-lang="en">Access method *</span>
+					</span>
+
+					<div class="radio-group">
+
+						<label class="radio">
+							<input type="radio" name="metodo_acceso" value="SFTP / FTP" required />
+							<span>SFTP / FTP</span>
+						</label>
+
+						<label class="radio">
+							<input type="radio" name="metodo_acceso" value="Panel Pterodactyl" />
+							<span>Panel Pterodactyl</span>
+						</label>
+
+						<label class="radio">
+							<input type="radio" name="metodo_acceso" value="Otro panel (Multicraft, AMP...)" />
+							<span data-lang="es">Otro panel (Multicraft, AMP...)</span>
+							<span data-lang="en">Other panel (Multicraft, AMP...)</span>
+						</label>
+
+					</div>
+
+					<div class="security-note">
+						<span data-lang="es">
+							🔒 <strong>Por tu seguridad, no nos compartas la
+							contraseña de tu cuenta principal.</strong> Crea un
+							usuario colaborador con permisos limitados (sub-user
+							en Pterodactyl, o un usuario FTP secundario) y
+							danos acceso a través de él. Si tu host no lo
+							permite, contáctanos por Discord y buscamos la
+							forma más segura entre los dos.
+						</span>
+						<span data-lang="en">
+							🔒 <strong>For your safety, don't share your main
+							account password with us.</strong> Create a
+							collaborator user with limited permissions
+							(sub-user in Pterodactyl, or a secondary FTP user)
+							and give us access through that instead. If your
+							host doesn't support that, message us on Discord
+							and we'll find the safest way together.
+						</span>
+					</div>
+
+					<div class="grid two">
+
+						<label>
+							<span data-lang="es">URL del panel / host</span>
+							<span data-lang="en">Panel / host URL</span>
+							<input type="text" name="panel_url" placeholder="panel.tuhost.com" />
+						</label>
+
+						<label>
+							<span data-lang="es">Usuario colaborador ya creado (si aplica)</span>
+							<span data-lang="en">Collaborator username (if already created)</span>
+							<input type="text" name="usuario_colaborador" />
+						</label>
+
+					</div>
+
+					<label>
+						<span data-lang="es">Notas sobre el acceso</span>
+						<span data-lang="en">Access notes</span>
+						<textarea
+							name="notas_acceso"
+							rows="3"
+							placeholder="Ej. Te añado como sub-user en cuanto confirmes / El puerto FTP es..."
+						></textarea>
+					</label>
+
+				</div>
+
+			</section>
+
+
+
+			<!-- ===================== SECCIÓN 2 ===================== -->
+
+			<section class="section-block priority-block">
+
+				<div class="section-heading">
+
+					<span class="section-number">2</span>
+
+					<div>
+						<h2>
+							<span data-lang="es">Planificación y diseño de la modalidad</span>
+							<span data-lang="en">Gamemode planning and design</span>
+						</h2>
+
+						<p>
+							<span data-lang="es">
+								Opcional, pero es lo que decide tu prioridad en
+								la cola — cuanto más completes, antes te
+								tocará el turno.
+							</span>
+							<span data-lang="en">
+								Optional, but this is what decides your
+								priority in the queue — the more you fill in,
+								the sooner your turn comes.
+							</span>
+						</p>
+					</div>
+
+				</div>
+
+
+				<div class="priority-meter">
+
+					<div class="priority-meter-top">
+						<span data-lang="es">Nivel de prioridad</span>
+						<span data-lang="en">Priority level</span>
+						<span id="priority-label">
+							<span data-lang="es">Baja</span>
+							<span data-lang="en">Low</span>
+						</span>
+					</div>
+
+					<div class="priority-bar">
+						<div id="priority-fill" class="priority-fill"></div>
+					</div>
+
+				</div>
+
+
+				<div class="field-group">
+
+					<label>
+						<span data-lang="es">Modalidad</span>
+						<span data-lang="en">Gamemode</span>
+
+						<select name="modalidad">
+							<option value="">-- </option>
+							<option value="Survival">Survival</option>
+							<option value="SMP Vanilla+">SMP Vanilla+</option>
+							<option value="Skyblock">Skyblock</option>
+							<option value="Lifesteal">Lifesteal</option>
+							<option value="Factions">Factions</option>
+							<option value="Prison">Prison</option>
+							<option value="Otro">Otro / Other</option>
+						</select>
+					</label>
+
+					<label>
+						<span data-lang="es">Descríbenos cómo quieres que funcione exactamente</span>
+						<span data-lang="en">Describe exactly how you want it to work</span>
+						<textarea
+							class="priority-field"
+							name="modalidad_detalle"
+							rows="5"
+							placeholder="Ej. Lifesteal con corazones limitados a 20, revivir con totem craftable, zona PvP obligatoria en el centro del mapa..."
+						></textarea>
+					</label>
+
+				</div>
+
+
+				<div class="field-group">
+
+					<label>
+						<span data-lang="es">Estructura de rangos y permisos (LuckPerms)</span>
+						<span data-lang="en">Rank and permission structure (LuckPerms)</span>
+						<textarea
+							class="priority-field"
+							name="rangos_permisos"
+							rows="6"
+							placeholder="Ej. Default: comandos básicos, /spawn, /home 1. VIP: /fly en zona segura, /kit vip diario, 3 /home. Admin: acceso total y bypass de restricciones..."
+						></textarea>
+					</label>
+
+				</div>
+
+
+				<div class="field-group">
+
+					<label>
+						<span data-lang="es">Errores, bugs o exploits que necesitas corregir</span>
+						<span data-lang="en">Bugs or exploits you need fixed</span>
+						<textarea
+							class="priority-field"
+							name="bugs_exploits"
+							rows="5"
+							placeholder="Ej. Lag al colocar carteles, caídas del nodo cada pocas horas, dupe de items con hoppers/carritos, exploit de crystal PvP..."
+						></textarea>
+					</label>
+
+				</div>
+
+
+				<div class="field-group">
+
+					<label>
+						<span data-lang="es">Notas adicionales / comentarios extra</span>
+						<span data-lang="en">Additional notes / extra comments</span>
+						<textarea class="priority-field" name="notas_adicionales" rows="4"></textarea>
+					</label>
+
+				</div>
+
+			</section>
+
+
+			<button type="submit" class="submit">
+				<span data-lang="es">Enviar cuestionario →</span>
+				<span data-lang="en">Submit questionnaire →</span>
+			</button>
+
+			<p class="hint">
+				<span data-lang="es">
+					Tu cuestionario se envía directamente a nuestro equipo —
+					no hace falta abrir el correo ni nada más.
+				</span>
+				<span data-lang="en">
+					Your questionnaire is sent straight to our team —
+					no email client or extra steps needed.
+				</span>
+			</p>
+
+			<p id="quest-status" class="status" hidden>
+				<span data-lang="es">
+					✅ ¡Recibido! Te contactaremos pronto para hablar de tu servidor.
+				</span>
+				<span data-lang="en">
+					✅ Received! We'll reach out soon to talk about your server.
+				</span>
+			</p>
+
+			<p id="quest-error" class="status error" hidden>
+				<span data-lang="es">
+					⚠️ No hemos podido enviar el cuestionario. Inténtalo de nuevo en unos segundos.
+				</span>
+				<span data-lang="en">
+					⚠️ We couldn't send the questionnaire. Please try again in a moment.
+				</span>
+			</p>
+
+		</form>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+
+<script>
+	const priorityFields = document.querySelectorAll<HTMLTextAreaElement>(".priority-field");
+	const priorityFill = document.getElementById("priority-fill");
+	const priorityLabel = document.getElementById("priority-label");
+
+	const priorityLevels = [
+		{ min: 0, es: "Baja", en: "Low", emoji: "🔹" },
+		{ min: 80, es: "Media", en: "Media", emoji: "🔷" },
+		{ min: 250, es: "Alta", en: "High", emoji: "🔶" },
+		{ min: 500, es: "Máxima", en: "Maximum", emoji: "🔥" },
+	];
+
+	const updatePriority = () => {
+		if (!priorityFill || !priorityLabel) return;
+
+		const total = Array.from(priorityFields).reduce(
+			(sum, field) => sum + field.value.trim().length,
+			0
+		);
+
+		const pct = Math.min(100, Math.round((total / 600) * 100));
+		priorityFill.style.width = `${pct}%`;
+
+		const level = [...priorityLevels].reverse().find((l) => total >= l.min)!;
+
+		priorityLabel.innerHTML = `
+			<span data-lang="es">${level.emoji} ${level.es}</span>
+			<span data-lang="en">${level.emoji} ${level.en}</span>
+		`;
+	};
+
+	priorityFields.forEach((field) => {
+		field.addEventListener("input", updatePriority);
+	});
+
+	updatePriority();
+
+
+	const MAKE_WEBHOOK_URL =
+		"https://hook.eu1.make.com/0k965b8ykue9xfa4wuny31jj5w5liinb";
+
+	const form = document.getElementById("mc-quest-form") as HTMLFormElement | null;
+	const status = document.getElementById("quest-status");
+	const error = document.getElementById("quest-error");
+	const submitBtn = form?.querySelector<HTMLButtonElement>(".submit");
+
+	form?.addEventListener("submit", async (e) => {
+		e.preventDefault();
+
+		status?.setAttribute("hidden", "");
+		error?.setAttribute("hidden", "");
+
+		const data = new FormData(form);
+		const get = (name: string) => (data.get(name) || "").toString().trim();
+
+		const payload = {
+			form: "minecraft",
+			nickname: get("nombre"),
+			email: get("email"),
+			servidor_nombre: get("servidor_nombre"),
+			version_software: get("version_software"),
+			tipo_host: get("tipo_host"),
+			tipo_host_detalle: get("tipo_host_detalle"),
+			plugins_instalados: get("plugins_instalados"),
+			plugins_deseados: get("plugins_deseados"),
+			metodo_acceso: get("metodo_acceso"),
+			panel_url: get("panel_url"),
+			usuario_colaborador: get("usuario_colaborador"),
+			notas_acceso: get("notas_acceso"),
+			modalidad: get("modalidad"),
+			modalidad_detalle: get("modalidad_detalle"),
+			rangos_permisos: get("rangos_permisos"),
+			bugs_exploits: get("bugs_exploits"),
+			notas_adicionales: get("notas_adicionales"),
+		};
+
+		submitBtn?.setAttribute("disabled", "");
+
+		try {
+			const response = await fetch(MAKE_WEBHOOK_URL, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(payload),
+			});
+
+			if (!response.ok) throw new Error("Request failed");
+
+			form.reset();
+			updatePriority();
+			status?.removeAttribute("hidden");
+		} catch (err) {
+			error?.removeAttribute("hidden");
+		} finally {
+			submitBtn?.removeAttribute("disabled");
+		}
+	});
+</script>
+
+
+<style>
+
+.container {
+
+	max-width:900px;
+
+	margin:100px auto;
+
+	padding:0 32px;
+
+}
+
+
+.hero {
+
+	text-align:center;
+
+	margin-bottom:60px;
+
+}
+
+
+.badge {
+
+	display:inline-flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+	padding:10px 20px;
+
+	border-radius:999px;
+
+	background:var(--primary-bg);
+
+	border:1px solid var(--primary-border);
+
+	color:var(--primary);
+
+	font-size:.85rem;
+
+	font-weight:700;
+
+	letter-spacing:3px;
+
+}
+
+
+h1 {
+
+	margin-top:26px;
+
+	font-size:clamp(2.4rem,5vw,3.6rem);
+
+	letter-spacing:-2px;
+
+	background:linear-gradient(90deg,var(--text),var(--primary) 55%,#8B5CF6);
+
+	-webkit-background-clip:text;
+
+	-webkit-text-fill-color:transparent;
+
+}
+
+
+.hero p {
+
+	max-width:700px;
+
+	margin:22px auto 0;
+
+	color:var(--text-muted);
+
+	font-size:1.08rem;
+
+	line-height:1.9;
+
+}
+
+
+.free-badge {
+
+	display:inline-flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+	margin-top:28px;
+
+	padding:10px 20px;
+
+	border-radius:999px;
+
+	background:var(--primary-bg);
+
+	border:1px solid var(--primary-border);
+
+	color:var(--primary);
+
+	font-size:.85rem;
+
+	font-weight:700;
+
+}
+
+
+.priority-callout {
+
+	max-width:640px;
+
+	margin:20px auto 0;
+
+	padding:16px 22px;
+
+	border-radius:16px;
+
+	background:linear-gradient(135deg, color-mix(in srgb, var(--primary) 12%, transparent), color-mix(in srgb, #8B5CF6 12%, transparent));
+
+	border:1px solid color-mix(in srgb, #8B5CF6 30%, transparent);
+
+	color:var(--text-muted);
+
+	font-size:.92rem;
+
+	line-height:1.7;
+
+}
+
+
+.priority-callout strong {
+
+	color:var(--text);
+
+}
+
+
+.form {
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:32px;
+
+}
+
+
+.section-block {
+
+	padding:36px;
+
+	border:1px solid var(--border-1);
+
+	border-radius:26px;
+
+	background:var(--surface-1);
+
+	backdrop-filter:blur(15px);
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:26px;
+
+}
+
+
+.section-heading {
+
+	display:flex;
+
+	align-items:flex-start;
+
+	gap:18px;
+
+	padding-bottom:22px;
+
+	border-bottom:1px solid var(--border-1);
+
+}
+
+
+.section-number {
+
+	flex-shrink:0;
+
+	width:38px;
+
+	height:38px;
+
+	display:flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+	border-radius:50%;
+
+	background:linear-gradient(135deg, var(--primary), #8B5CF6);
+
+	color:white;
+
+	font-weight:800;
+
+	font-size:1.1rem;
+
+}
+
+
+.section-heading h2 {
+
+	margin:0;
+
+	color:var(--text);
+
+	font-size:1.4rem;
+
+	letter-spacing:-.5px;
+
+}
+
+
+.section-heading p {
+
+	margin:8px 0 0;
+
+	color:var(--text-muted);
+
+	font-size:.92rem;
+
+	line-height:1.6;
+
+}
+
+
+.field-group {
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:18px;
+
+	padding-top:4px;
+
+}
+
+
+.field-group + .field-group {
+
+	padding-top:22px;
+
+	border-top:1px solid var(--border-1);
+
+}
+
+
+.priority-meter {
+
+	padding:18px 22px;
+
+	border-radius:16px;
+
+	background:var(--surface-2);
+
+	border:1px solid var(--border-1);
+
+}
+
+
+.priority-meter-top {
+
+	display:flex;
+
+	align-items:center;
+
+	justify-content:space-between;
+
+	gap:12px;
+
+	margin-bottom:10px;
+
+	font-size:.85rem;
+
+	font-weight:700;
+
+	color:var(--text-muted);
+
+}
+
+
+#priority-label {
+
+	color:var(--primary);
+
+}
+
+
+.priority-bar {
+
+	width:100%;
+
+	height:10px;
+
+	border-radius:999px;
+
+	background:var(--surface-3);
+
+	overflow:hidden;
+
+}
+
+
+.priority-fill {
+
+	height:100%;
+
+	width:0%;
+
+	border-radius:999px;
+
+	background:linear-gradient(90deg, var(--primary), #8B5CF6);
+
+	transition:width .3s ease;
+
+}
+
+
+.label-heading {
+
+	display:block;
+
+	color:var(--text-muted);
+
+	font-size:.95rem;
+
+	font-weight:600;
+
+}
+
+
+label {
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:8px;
+
+	color:var(--text-muted);
+
+	font-size:.95rem;
+
+	font-weight:600;
+
+}
+
+
+input[type="text"],
+input[type="email"],
+select,
+textarea {
+
+	padding:12px 14px;
+
+	border-radius:12px;
+
+	background:var(--surface-2);
+
+	border:1px solid var(--border-2);
+
+	color:var(--text);
+
+	font-family:inherit;
+
+	font-size:.95rem;
+
+	font-weight:400;
+
+	transition:.2s ease;
+
+}
+
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+select:focus,
+textarea:focus {
+
+	outline:none;
+
+	border-color:color-mix(in srgb, var(--primary) 60%, transparent);
+
+	background:var(--surface-3);
+
+}
+
+
+textarea {
+
+	resize:vertical;
+
+}
+
+
+.grid.two {
+
+	display:grid;
+
+	grid-template-columns:1fr 1fr;
+
+	gap:20px;
+
+}
+
+
+.radio-group {
+
+	display:flex;
+
+	flex-wrap:wrap;
+
+	gap:12px;
+
+}
+
+
+.radio {
+
+	flex-direction:row;
+
+	align-items:center;
+
+	gap:10px;
+
+	padding:10px 16px;
+
+	border-radius:999px;
+
+	background:var(--surface-2);
+
+	border:1px solid var(--border-1);
+
+	font-weight:500;
+
+	cursor:pointer;
+
+}
+
+
+.radio input {
+
+	accent-color:var(--primary);
+
+	width:16px;
+
+	height:16px;
+
+}
+
+
+.security-note {
+
+	padding:16px 20px;
+
+	border-radius:14px;
+
+	background:color-mix(in srgb, #8B5CF6 10%, transparent);
+
+	border:1px solid color-mix(in srgb, #8B5CF6 30%, transparent);
+
+	color:var(--text-muted);
+
+	font-size:.88rem;
+
+	line-height:1.7;
+
+}
+
+
+.security-note strong {
+
+	color:var(--text);
+
+}
+
+
+.submit {
+
+	align-self:flex-start;
+
+	padding:16px 40px;
+
+	border-radius:16px;
+
+	border:none;
+
+	background:linear-gradient(135deg, var(--primary), #8B5CF6);
+
+	color:white;
+
+	font-weight:700;
+
+	font-size:1rem;
+
+	cursor:pointer;
+
+	transition:.25s ease;
+
+}
+
+
+.submit:hover {
+
+	transform:translateY(-3px);
+
+	box-shadow:0 15px 40px color-mix(in srgb, #8B5CF6 35%, transparent);
+
+}
+
+
+.submit:disabled {
+
+	opacity:.6;
+
+	cursor:not-allowed;
+
+	transform:none;
+
+}
+
+
+.hint {
+
+	color:var(--text-muted);
+
+	font-size:.9rem;
+
+	line-height:1.7;
+
+}
+
+
+.status {
+
+	padding:16px 20px;
+
+	border-radius:14px;
+
+	background:var(--primary-bg);
+
+	border:1px solid var(--primary-border);
+
+	color:var(--primary-light);
+
+	font-size:.95rem;
+
+	line-height:1.7;
+
+}
+
+
+.status a {
+
+	color:var(--primary-light);
+
+}
+
+
+.status.error {
+
+	background:rgba(255,69,58,.1);
+
+	border-color:rgba(255,69,58,.35);
+
+	color:#FFD4D1;
+
+}
+
+
+@media (max-width:700px) {
+
+	.container {
+
+		margin:70px auto;
+
+		padding:0 20px;
+
+	}
+
+
+	.section-block {
+
+		padding:24px;
+
+	}
+
+
+	.grid.two {
+
+		grid-template-columns:1fr;
+
+	}
+
+
+	.submit {
+
+		width:100%;
+
+	}
+
+}
+
+</style>
