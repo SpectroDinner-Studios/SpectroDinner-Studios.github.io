@@ -1,57 +1,63 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import LangToggle from "../components/LangToggle.astro";
 ---
 
 <Layout
 	title="Mantenimiento | SpectroDinner™"
-	description="SpectroDinner™ is temporarily under maintenance."
+	description="SpectroDinner Studios is temporarily under maintenance."
 >
+
+	<div class="lang-toggle-wrap">
+		<LangToggle />
+	</div>
 
 	<main class="maintenance">
 
-		<div class="glow glow-a"></div>
-		<div class="glow glow-b"></div>
+		<div class="grid-glow" aria-hidden="true"></div>
 
-		<div class="card spotlight">
+		<div class="content reveal">
 
-			<div class="icon-wrap">
-				<span class="icon-glow"></span>
-				<img src="/logo.png" alt="SpectroDinner Logo" class="logo" />
-				<span class="gear">⚙️</span>
+			<div class="tag-row">
+
+				<span class="tag">
+					[SPECTRODINNER STUDIOS]
+				</span>
+
+				<span class="tag status">
+					<span class="dot" aria-hidden="true"></span>
+					<span data-lang="es">[MODO MANTENIMIENTO]</span>
+					<span data-lang="en">[MAINTENANCE MODE]</span>
+				</span>
+
 			</div>
 
-			<span class="badge">
-				<span class="dot"></span>
-				<span data-lang="es">MANTENIMIENTO</span>
-				<span data-lang="en">MAINTENANCE</span>
-			</span>
-
-			<h1>
-				<span data-lang="es">Volvemos enseguida</span>
-				<span data-lang="en">Back shortly</span>
+			<h1 class="wordmark">
+				SPECTRODINNER
+				<span>STUDIOS</span>
 			</h1>
 
+			<p class="status-line">
+				<span data-lang="es">LA COCINA ESTÁ CERRADA.</span>
+				<span data-lang="en">THE KITCHEN IS CLOSED.</span>
+				<span class="cursor" aria-hidden="true"></span>
+			</p>
+
 			<p class="tagline">
-				<span data-lang="es">Software · Juegos · Minecraft · Tecnología Experimental</span>
-				<span data-lang="en">Software · Games · Minecraft · Experimental Technology</span>
+				<span data-lang="es">Estamos cocinando algo nuevo.</span>
+				<span data-lang="en">We're cooking something new.</span>
 			</p>
 
 			<p class="description" data-lang="es">
 				SpectroDinner Studios no está disponible ahora mismo —
-				estamos haciendo cambios en el sitio. Vuelve a pasarte
-				en un rato.
+				estamos trabajando en el sitio. Vuelve a pasarte en un
+				rato.
 			</p>
 
 			<p class="description" data-lang="en">
 				SpectroDinner Studios isn't available right now — we're
-				making changes to the site. Please check back shortly.
+				working on the site. Please check back shortly.
 			</p>
-
-			<div class="working">
-				<span></span>
-				<span></span>
-				<span></span>
-			</div>
 
 			<div class="actions">
 
@@ -80,6 +86,18 @@ import Layout from "../layouts/Layout.astro";
 
 <style>
 
+.lang-toggle-wrap {
+
+	position:fixed;
+
+	top:24px;
+	right:24px;
+
+	z-index:50;
+
+}
+
+
 .maintenance {
 
 	min-height:100vh;
@@ -92,16 +110,23 @@ import Layout from "../layouts/Layout.astro";
 	position:relative;
 	overflow:hidden;
 
-	padding:32px;
+	padding:100px 32px;
 
 }
 
 
-.glow {
+.grid-glow {
 
 	position:absolute;
 
-	border-radius:50%;
+	inset:0;
+
+	background:
+		radial-gradient(
+			circle at 50% 35%,
+			color-mix(in srgb, var(--primary) 10%, transparent),
+			transparent 55%
+		);
 
 	pointer-events:none;
 
@@ -110,66 +135,10 @@ import Layout from "../layouts/Layout.astro";
 }
 
 
-.glow-a {
-
-	width:650px;
-	height:650px;
-
-	background:
-		radial-gradient(
-			circle,
-			color-mix(in srgb, var(--primary) 16%, transparent),
-			transparent 70%
-		);
-
-	filter:blur(70px);
-
-	animation:glowFloat 9s ease-in-out infinite;
-
-}
-
-
-.glow-b {
-
-	width:420px;
-	height:420px;
-
-	right:-120px;
-	bottom:-120px;
-
-	background:
-		radial-gradient(
-			circle,
-			color-mix(in srgb, var(--primary) 10%, transparent),
-			transparent 70%
-		);
-
-	filter:blur(60px);
-
-	animation:glowFloat 11s ease-in-out infinite reverse;
-
-}
-
-
-@keyframes glowFloat {
-
-	0%, 100% {
-		transform:translate(0,0) scale(1);
-	}
-
-	50% {
-		transform:translate(0,-20px) scale(1.06);
-	}
-
-}
-
-
-.card {
-
-	position:relative;
+.content {
 
 	width:100%;
-	max-width:560px;
+	max-width:600px;
 
 	display:flex;
 	flex-direction:column;
@@ -177,144 +146,67 @@ import Layout from "../layouts/Layout.astro";
 
 	text-align:center;
 
-	padding:64px 48px;
+	padding:56px 0;
 
-	border-radius:32px;
-
-	background:var(--surface-1);
-	border:1px solid var(--border-1);
-
-	backdrop-filter:blur(20px);
-
-	animation:cardFadeUp .8s cubic-bezier(.16,1,.3,1) both;
+	border-top:1px solid var(--border-1);
+	border-bottom:1px solid var(--border-1);
 
 }
 
 
-@keyframes cardFadeUp {
-
-	from {
-		opacity:0;
-		transform:translateY(20px);
-	}
-
-	to {
-		opacity:1;
-		transform:none;
-	}
-
-}
-
-
-.icon-wrap {
-
-	position:relative;
-
-	width:96px;
-	height:96px;
-
-	margin-bottom:28px;
+.tag-row {
 
 	display:flex;
+	flex-wrap:wrap;
+
 	align-items:center;
 	justify-content:center;
 
-}
-
-
-.icon-glow {
-
-	position:absolute;
-
-	inset:-14px;
-
-	border-radius:50%;
-
-	background:
-		radial-gradient(
-			circle,
-			color-mix(in srgb, var(--primary) 45%, transparent),
-			transparent 70%
-		);
-
-	filter:blur(20px);
+	gap:10px;
 
 }
 
 
-.logo {
-
-	position:relative;
-
-	width:80px;
-	height:80px;
-
-	object-fit:contain;
-
-	filter:
-		drop-shadow(
-			0 0 20px
-			var(--primary-glow)
-		);
-
-}
-
-
-.gear {
-
-	position:absolute;
-
-	bottom:-6px;
-	right:-10px;
-
-	font-size:1.7rem;
-
-	filter:drop-shadow(0 4px 10px var(--shadow-color));
-
-	animation:gearSpin 6s linear infinite;
-
-}
-
-
-@keyframes gearSpin {
-
-	from {
-		transform:rotate(0deg);
-	}
-
-	to {
-		transform:rotate(360deg);
-	}
-
-}
-
-
-.badge {
+.tag {
 
 	display:inline-flex;
 	align-items:center;
 	gap:8px;
 
-	padding:10px 20px;
+	padding:7px 12px;
 
-	border-radius:999px;
+	border-radius:8px;
 
-	background:var(--primary-bg);
-	border:1px solid var(--primary-border);
+	background:var(--surface-2);
+	border:1px solid var(--border-2);
 
-	color:var(--primary);
+	color:var(--text-dim);
 
-	font-size:.8rem;
-	font-weight:700;
-	letter-spacing:2.5px;
+	font-family:
+		ui-monospace, "SF Mono", "Cascadia Code",
+		"Roboto Mono", Menlo, Consolas, monospace;
+
+	font-size:.72rem;
+	font-weight:600;
+	letter-spacing:.5px;
 
 }
 
 
-.badge .dot {
+.tag.status {
 
-	width:7px;
-	height:7px;
+	color:var(--primary);
+
+	background:var(--primary-bg);
+	border-color:var(--primary-border);
+
+}
+
+
+.tag .dot {
+
+	width:6px;
+	height:6px;
 
 	border-radius:50%;
 
@@ -334,20 +226,21 @@ import Layout from "../layouts/Layout.astro";
 	}
 
 	50% {
-		opacity:.35;
+		opacity:.3;
 	}
 
 }
 
 
-h1 {
+.wordmark {
 
-	margin:24px 0 0;
+	margin:28px 0 0;
 
-	font-size:clamp(2.2rem,5vw,3.2rem);
+	font-size:clamp(2.4rem,7vw,4.2rem);
 	font-weight:800;
 
-	letter-spacing:-2px;
+	letter-spacing:-1px;
+	line-height:1;
 
 	background:linear-gradient(90deg,var(--text),var(--primary));
 
@@ -357,78 +250,96 @@ h1 {
 }
 
 
+.wordmark span {
+
+	display:block;
+
+	margin-top:10px;
+
+	font-size:clamp(1rem,2.4vw,1.3rem);
+	font-weight:700;
+
+	letter-spacing:8px;
+
+	background:none;
+
+	-webkit-text-fill-color:var(--text-muted);
+	color:var(--text-muted);
+
+}
+
+
+.status-line {
+
+	margin-top:34px;
+
+	font-family:
+		ui-monospace, "SF Mono", "Cascadia Code",
+		"Roboto Mono", Menlo, Consolas, monospace;
+
+	font-size:clamp(1.1rem,3vw,1.5rem);
+	font-weight:700;
+
+	letter-spacing:.5px;
+
+	color:var(--text);
+
+}
+
+
+.cursor {
+
+	display:inline-block;
+
+	width:.55em;
+	height:1em;
+
+	margin-left:4px;
+
+	background:var(--primary);
+
+	vertical-align:text-bottom;
+
+	animation:cursorBlink 1s step-end infinite;
+
+}
+
+
+@keyframes cursorBlink {
+
+	0%, 100% {
+		opacity:1;
+	}
+
+	50% {
+		opacity:0;
+	}
+
+}
+
+
 .tagline {
 
-	margin-top:14px;
+	margin-top:12px;
 
-	color:var(--text-dim);
+	color:var(--text-muted);
 
-	font-size:.85rem;
-	font-weight:600;
-
-	letter-spacing:1px;
+	font-size:1.05rem;
+	font-style:italic;
 
 }
 
 
 .description {
 
-	margin-top:22px;
+	margin-top:26px;
 
-	max-width:400px;
+	max-width:420px;
 
 	color:var(--text-muted);
 
-	font-size:1.02rem;
+	font-size:.98rem;
 	line-height:1.8;
-
-}
-
-
-.working {
-
-	display:flex;
-	gap:8px;
-
-	margin-top:30px;
-
-}
-
-
-.working span {
-
-	width:8px;
-	height:8px;
-
-	border-radius:50%;
-
-	background:var(--primary);
-
-	animation:workingBounce 1.2s ease-in-out infinite;
-
-}
-
-
-.working span:nth-child(2) {
-	animation-delay:.15s;
-}
-
-.working span:nth-child(3) {
-	animation-delay:.3s;
-}
-
-
-@keyframes workingBounce {
-
-	0%, 80%, 100% {
-		transform:translateY(0);
-		opacity:.4;
-	}
-
-	40% {
-		transform:translateY(-6px);
-		opacity:1;
-	}
 
 }
 
@@ -442,7 +353,7 @@ h1 {
 
 	gap:14px;
 
-	margin-top:38px;
+	margin-top:40px;
 
 }
 
@@ -504,9 +415,23 @@ h1 {
 
 @media (max-width:600px) {
 
-	.card {
+	.maintenance {
 
-		padding:48px 28px;
+		padding:70px 20px;
+
+	}
+
+
+	.content {
+
+		padding:40px 0;
+
+	}
+
+
+	.wordmark span {
+
+		letter-spacing:5px;
 
 	}
 

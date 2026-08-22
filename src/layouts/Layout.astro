@@ -23,12 +23,10 @@ const ogImageURL = new URL("/logo.png", Astro.site);
 
 		<script is:inline>
 			(function () {
-				var path = location.pathname.replace(/\/$/, "");
-				if (path === "/mantenimiento") return;
+				var onMaintenancePage =
+					location.pathname.replace(/\/$/, "") === "/mantenimiento";
 
 				try {
-					var params = new URLSearchParams(location.search);
-					var bypassAttempt = params.get("bypass");
 					var settled = false;
 
 					var reveal = function () {
@@ -41,11 +39,38 @@ const ogImageURL = new URL("/logo.png", Astro.site);
 					// even if /config.json is slow or unreachable.
 					setTimeout(reveal, 2500);
 
+					// Only a same-site relative path is a safe redirect target
+					// (never an absolute/protocol URL - avoids an open redirect
+					// via ?from=).
+					var isSafePath = function (value) {
+						return (
+							!!value &&
+							value.charAt(0) === "/" &&
+							value.charAt(1) !== "/" &&
+							value.indexOf("://") === -1
+						);
+					};
+
 					fetch("/config.json", { cache: "no-store" })
 						.then(function (r) {
 							return r.json();
 						})
 						.then(function (cfg) {
+							if (onMaintenancePage) {
+								if (cfg && cfg.maintenance === true) {
+									reveal();
+									return;
+								}
+
+								settled = true;
+								var from = new URLSearchParams(location.search).get("from");
+								location.replace(isSafePath(from) ? from : "/");
+								return;
+							}
+
+							var params = new URLSearchParams(location.search);
+							var bypassAttempt = params.get("bypass");
+
 							if (bypassAttempt && cfg && bypassAttempt === cfg.bypassKey) {
 								localStorage.setItem("sd-maintenance-bypass", "true");
 							}
@@ -55,7 +80,10 @@ const ogImageURL = new URL("/logo.png", Astro.site);
 
 							if (cfg && cfg.maintenance === true && !bypassed) {
 								settled = true;
-								location.replace("/mantenimiento");
+								var from = encodeURIComponent(
+									location.pathname + location.search + location.hash
+								);
+								location.replace("/mantenimiento?from=" + from);
 							} else {
 								reveal();
 							}
