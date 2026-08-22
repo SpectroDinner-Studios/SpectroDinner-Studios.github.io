@@ -1,0 +1,194 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+	title="Mantenimiento | SpectroDinner™"
+	description="SpectroDinner™ is temporarily under maintenance."
+>
+
+	<main class="maintenance">
+
+		<div class="glow"></div>
+
+		<div class="content">
+
+			<img src="/logo.png" alt="SpectroDinner Logo" class="logo" />
+
+			<span class="badge">
+				<span data-lang="es">MANTENIMIENTO</span>
+				<span data-lang="en">MAINTENANCE</span>
+			</span>
+
+			<h1>
+				<span data-lang="es">Volvemos enseguida</span>
+				<span data-lang="en">Back shortly</span>
+			</h1>
+
+			<p data-lang="es">
+				SpectroDinner Studios no está disponible ahora mismo —
+				estamos haciendo cambios en el sitio. Vuelve a pasarte
+				en un rato.
+			</p>
+
+			<p data-lang="en">
+				SpectroDinner Studios isn't available right now — we're
+				making changes to the site. Please check back shortly.
+			</p>
+
+			<a href="mailto:oierps8@gmail.com" class="contact">
+				<span data-lang="es">oierps8@gmail.com</span>
+				<span data-lang="en">oierps8@gmail.com</span>
+			</a>
+
+		</div>
+
+	</main>
+
+</Layout>
+
+
+<style>
+
+.maintenance {
+
+	min-height:100vh;
+	width:100%;
+
+	display:flex;
+	align-items:center;
+	justify-content:center;
+
+	position:relative;
+	overflow:hidden;
+
+	padding:32px;
+
+}
+
+
+.glow {
+
+	position:absolute;
+
+	width:650px;
+	height:650px;
+
+	background:
+		radial-gradient(
+			circle,
+			color-mix(in srgb, var(--primary) 15%, transparent),
+			transparent 70%
+		);
+
+	filter:blur(70px);
+
+	z-index:-1;
+
+}
+
+
+.content {
+
+	max-width:520px;
+
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+
+	text-align:center;
+
+}
+
+
+.logo {
+
+	width:80px;
+	height:80px;
+
+	object-fit:contain;
+
+	margin-bottom:28px;
+
+	filter:
+		drop-shadow(
+			0 0 20px
+			var(--primary-glow)
+		);
+
+}
+
+
+.badge {
+
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+
+	padding:10px 20px;
+
+	border-radius:999px;
+
+	background:var(--primary-bg);
+	border:1px solid var(--primary-border);
+
+	color:var(--primary);
+
+	font-size:.85rem;
+	font-weight:700;
+	letter-spacing:3px;
+
+}
+
+
+h1 {
+
+	margin:22px 0 0;
+
+	font-size:clamp(2.2rem,5vw,3.2rem);
+	font-weight:800;
+
+	letter-spacing:-2px;
+
+	background:linear-gradient(90deg,var(--text),var(--primary));
+
+	-webkit-background-clip:text;
+	-webkit-text-fill-color:transparent;
+
+}
+
+
+p {
+
+	margin-top:24px;
+
+	color:var(--text-muted);
+
+	font-size:1.05rem;
+	line-height:1.8;
+
+}
+
+
+.contact {
+
+	margin-top:36px;
+
+	color:var(--primary-light);
+
+	text-decoration:none;
+
+	font-weight:600;
+
+	transition:.2s ease;
+
+}
+
+
+.contact:hover {
+
+	color:var(--text);
+
+}
+
+</style>

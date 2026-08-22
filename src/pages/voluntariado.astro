@@ -1,0 +1,905 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout
+	title="Voluntariado | SpectroDinner™"
+	description="Postúlate como voluntario en SpectroDinner Studios y ayuda en software, videojuegos, Minecraft, Discord o tecnología experimental."
+>
+
+	<Navbar />
+
+	<main class="container">
+
+		<section class="hero">
+
+			<span class="badge">
+				<span data-lang="es">PRÓXIMAMENTE</span>
+				<span data-lang="en">COMING SOON</span>
+			</span>
+
+			<h1>
+				<span data-lang="es">Postúlate como voluntario</span>
+				<span data-lang="en">Apply to volunteer</span>
+			</h1>
+
+			<p data-lang="es">
+				Dentro de poco vamos a empezar a buscar gente que nos
+				ayude en SpectroDinner Studios — en software, desarrollo
+				de videojuegos, Minecraft, Discord o tecnología
+				experimental. El programa todavía no está abierto
+				oficialmente, pero puedes dejarnos tu solicitud ya y la
+				revisaremos en cuanto abramos.
+			</p>
+
+			<p data-lang="en">
+				We'll soon start looking for people to help out at
+				SpectroDinner Studios — in software, game development,
+				Minecraft, Discord or experimental technology. The
+				program isn't officially open yet, but you can leave
+				your application now and we'll review it once it is.
+			</p>
+
+		</section>
+
+
+		<form id="volunteer-form" class="form" novalidate>
+
+
+			<fieldset class="card">
+
+				<legend>
+					<span data-lang="es">1. Contacto</span>
+					<span data-lang="en">1. Contact</span>
+				</legend>
+
+				<div class="grid two">
+
+					<label>
+						<span data-lang="es">Nombre *</span>
+						<span data-lang="en">Name *</span>
+						<input
+							type="text"
+							name="nombre"
+							autocomplete="name"
+							maxlength="80"
+							required
+							aria-describedby="err-nombre"
+						/>
+						<span id="err-nombre" class="field-error" aria-live="polite"></span>
+					</label>
+
+					<label>
+						<span data-lang="es">Usuario de Discord (opcional)</span>
+						<span data-lang="en">Discord username (optional)</span>
+						<input
+							type="text"
+							name="discord"
+							placeholder="usuario#0000"
+							autocomplete="off"
+							maxlength="50"
+						/>
+					</label>
+
+				</div>
+
+				<label>
+					<span data-lang="es">Email *</span>
+					<span data-lang="en">Email *</span>
+					<input
+						type="email"
+						name="email"
+						autocomplete="email"
+						maxlength="120"
+						required
+						aria-describedby="err-email"
+					/>
+					<span id="err-email" class="field-error" aria-live="polite"></span>
+				</label>
+
+			</fieldset>
+
+
+
+			<fieldset class="card">
+
+				<legend>
+					<span data-lang="es">2. Área de interés</span>
+					<span data-lang="en">2. Area of interest</span>
+				</legend>
+
+				<span class="label-heading">
+					<span data-lang="es">¿En qué te gustaría ayudar? (elige al menos una) *</span>
+					<span data-lang="en">Where would you like to help? (choose at least one) *</span>
+				</span>
+
+				<div class="checkbox-group" role="group" aria-describedby="err-areas">
+
+					<label class="checkbox">
+						<input type="checkbox" name="areas" value="Software Development" />
+						<span data-lang="es">Ingeniería de software</span>
+						<span data-lang="en">Software Development</span>
+					</label>
+
+					<label class="checkbox">
+						<input type="checkbox" name="areas" value="Game Development" />
+						<span data-lang="es">Desarrollo de videojuegos</span>
+						<span data-lang="en">Game Development</span>
+					</label>
+
+					<label class="checkbox">
+						<input type="checkbox" name="areas" value="Minecraft Development" />
+						<span data-lang="es">Desarrollo de Minecraft</span>
+						<span data-lang="en">Minecraft Development</span>
+					</label>
+
+					<label class="checkbox">
+						<input type="checkbox" name="areas" value="Discord Services" />
+						<span data-lang="es">Servicios de Discord</span>
+						<span data-lang="en">Discord Services</span>
+					</label>
+
+					<label class="checkbox">
+						<input type="checkbox" name="areas" value="Experimental Technology" />
+						<span data-lang="es">Tecnología experimental</span>
+						<span data-lang="en">Experimental Technology</span>
+					</label>
+
+				</div>
+				<span id="err-areas" class="field-error" aria-live="polite"></span>
+
+			</fieldset>
+
+
+
+			<fieldset class="card">
+
+				<legend>
+					<span data-lang="es">3. Sobre ti</span>
+					<span data-lang="en">3. About you</span>
+				</legend>
+
+				<label>
+					<span data-lang="es">Experiencia o habilidades relevantes (opcional)</span>
+					<span data-lang="en">Relevant experience or skills (optional)</span>
+					<textarea name="experiencia" rows="4" maxlength="1000"></textarea>
+				</label>
+
+				<label>
+					<span data-lang="es">Enlaces — GitHub, portfolio, itch.io... (opcional)</span>
+					<span data-lang="en">Links — GitHub, portfolio, itch.io... (optional)</span>
+					<input
+						type="text"
+						name="enlaces"
+						placeholder="https://github.com/..."
+						autocomplete="off"
+						maxlength="300"
+					/>
+				</label>
+
+				<label>
+					<span data-lang="es">Disponibilidad aproximada (opcional)</span>
+					<span data-lang="en">Approximate availability (optional)</span>
+					<input
+						type="text"
+						name="disponibilidad"
+						placeholder="Ej./e.g. 5h / semana - week"
+						autocomplete="off"
+						maxlength="200"
+					/>
+				</label>
+
+				<label>
+					<span data-lang="es">¿Por qué quieres ayudar? (opcional)</span>
+					<span data-lang="en">Why do you want to help? (optional)</span>
+					<textarea name="motivacion" rows="4" maxlength="1000"></textarea>
+				</label>
+
+			</fieldset>
+
+
+			<div class="security-note" role="note">
+				<span data-lang="es">
+					🔒 <strong>Nunca envíes contraseñas, claves de API,
+					tokens ni ningún otro tipo de credencial secreta a
+					través de este formulario.</strong>
+				</span>
+				<span data-lang="en">
+					🔒 <strong>Never submit passwords, API keys, tokens
+					or other secrets through this form.</strong>
+				</span>
+			</div>
+
+
+			<div class="honeypot" aria-hidden="true">
+				<label for="volunteer-website">Website</label>
+				<input
+					type="text"
+					id="volunteer-website"
+					name="website"
+					tabindex="-1"
+					autocomplete="off"
+				/>
+			</div>
+
+
+			<p id="form-error-summary" class="status error" role="alert" hidden></p>
+
+
+			<button type="submit" class="submit">
+				<span class="submit-label">
+					<span data-lang="es">Enviar postulación →</span>
+					<span data-lang="en">Submit application →</span>
+				</span>
+				<span class="submit-label submit-loading" hidden>
+					<span data-lang="es">Enviando…</span>
+					<span data-lang="en">Sending…</span>
+				</span>
+			</button>
+
+			<p class="hint">
+				<span data-lang="es">
+					El programa de voluntariado todavía no está abierto
+					oficialmente — tu solicitud se guarda y te
+					contactaremos si encaja cuando lo abramos.
+				</span>
+				<span data-lang="en">
+					The volunteer program isn't officially open yet —
+					your application is saved and we'll reach out if
+					it's a fit once we open it.
+				</span>
+			</p>
+
+			<p id="quest-status" class="status" hidden>
+				<span data-lang="es">
+					✅ ¡Gracias! Hemos recibido tu postulación. Como el
+					programa todavía no está abierto, la revisaremos
+					más adelante.
+				</span>
+				<span data-lang="en">
+					✅ Thanks! We've received your application. Since
+					the program isn't officially open yet, we'll review
+					it later on.
+				</span>
+			</p>
+
+			<p id="quest-error" class="status error" hidden>
+				<span data-lang="es">
+					⚠️ Ha ocurrido un error al enviar el formulario.
+					Escríbenos directamente a
+					<a href="mailto:oierps8@gmail.com">oierps8@gmail.com</a>.
+				</span>
+				<span data-lang="en">
+					⚠️ Something went wrong submitting the form. Please
+					email us directly at
+					<a href="mailto:oierps8@gmail.com">oierps8@gmail.com</a>.
+				</span>
+			</p>
+
+		</form>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+
+<script>
+	const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/0k965b8ykue9xfa4wuny31jj5w5liinb";
+
+	const form = document.getElementById("volunteer-form") as HTMLFormElement | null;
+	const status = document.getElementById("quest-status");
+	const error = document.getElementById("quest-error");
+	const errorSummary = document.getElementById("form-error-summary");
+
+	const submitBtn = form?.querySelector<HTMLButtonElement>(".submit");
+	const submitLabel = submitBtn?.querySelector(".submit-label:not(.submit-loading)");
+	const submitLoading = submitBtn?.querySelector(".submit-loading");
+
+	const messages = {
+		es: { required: "Este campo es obligatorio.", choose: "Elige al menos un área.", email: "Introduce un email válido." },
+		en: { required: "This field is required.", choose: "Choose at least one area.", email: "Enter a valid email address." },
+	};
+
+	const currentLang = () => (document.documentElement.lang === "en" ? "en" : "es");
+
+	const clearFieldError = (input: HTMLElement, errorId: string) => {
+		input.removeAttribute("aria-invalid");
+		const el = document.getElementById(errorId);
+		if (el) el.textContent = "";
+	};
+
+	const setFieldError = (input: HTMLElement, errorId: string, text: string) => {
+		input.setAttribute("aria-invalid", "true");
+		const el = document.getElementById(errorId);
+		if (el) el.textContent = text;
+	};
+
+	const validateForm = (): boolean => {
+		if (!form) return false;
+
+		let firstInvalid: HTMLElement | null = null;
+		const lang = currentLang();
+
+		const requiredTextFields = [
+			{ name: "nombre", errorId: "err-nombre" },
+			{ name: "email", errorId: "err-email" },
+		];
+
+		for (const { name, errorId } of requiredTextFields) {
+			const input = form.elements.namedItem(name) as HTMLInputElement | null;
+			if (!input) continue;
+
+			if (!input.value.trim()) {
+				setFieldError(input, errorId, messages[lang].required);
+				firstInvalid ??= input;
+			} else if (name === "email" && !input.checkValidity()) {
+				setFieldError(input, errorId, messages[lang].email);
+				firstInvalid ??= input;
+			} else {
+				clearFieldError(input, errorId);
+			}
+		}
+
+		const areaBoxes = form.querySelectorAll<HTMLInputElement>('input[name="areas"]');
+		const areaChecked = Array.from(areaBoxes).some((b) => b.checked);
+		const areaError = document.getElementById("err-areas");
+		if (!areaChecked) {
+			if (areaError) areaError.textContent = messages[lang].choose;
+			firstInvalid ??= areaBoxes[0];
+		} else if (areaError) {
+			areaError.textContent = "";
+		}
+
+		if (errorSummary) {
+			if (firstInvalid) {
+				errorSummary.textContent =
+					lang === "es"
+						? "Revisa los campos marcados en rojo antes de enviar."
+						: "Please check the fields highlighted in red before submitting.";
+				errorSummary.hidden = false;
+			} else {
+				errorSummary.hidden = true;
+				errorSummary.textContent = "";
+			}
+		}
+
+		firstInvalid?.focus();
+		return !firstInvalid;
+	};
+
+	const COOLDOWN_MS = 8000;
+	let cooling = false;
+
+	const setSubmitting = (submitting: boolean) => {
+		submitBtn?.toggleAttribute("disabled", submitting);
+		submitLabel?.toggleAttribute("hidden", submitting);
+		submitLoading?.toggleAttribute("hidden", !submitting);
+	};
+
+	form?.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		if (cooling) return;
+
+		status?.setAttribute("hidden", "");
+		error?.setAttribute("hidden", "");
+
+		const honeypot = form.elements.namedItem("website") as HTMLInputElement | null;
+		if (honeypot?.value) {
+			form.reset();
+			status?.removeAttribute("hidden");
+			return;
+		}
+
+		if (!validateForm()) return;
+
+		const data = new FormData(form);
+		const get = (name: string) => (data.get(name) || "").toString().trim();
+		const getAll = (name: string) => data.getAll(name).join(", ");
+
+		const payload = {
+			form: "voluntariado",
+			nombre: get("nombre"),
+			discord: get("discord"),
+			email: get("email"),
+			areas: getAll("areas"),
+			experiencia: get("experiencia"),
+			enlaces: get("enlaces"),
+			disponibilidad: get("disponibilidad"),
+			motivacion: get("motivacion"),
+		};
+
+		setSubmitting(true);
+		cooling = true;
+
+		try {
+			const response = await fetch(MAKE_WEBHOOK_URL, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(payload),
+			});
+
+			if (!response.ok) throw new Error("Request failed");
+
+			form.reset();
+			status?.removeAttribute("hidden");
+		} catch (err) {
+			error?.removeAttribute("hidden");
+		} finally {
+			setSubmitting(false);
+			setTimeout(() => {
+				cooling = false;
+			}, COOLDOWN_MS);
+		}
+	});
+</script>
+
+
+<style>
+
+.container {
+
+	max-width:900px;
+
+	margin:100px auto;
+
+	padding:0 32px;
+
+}
+
+
+.hero {
+
+	text-align:center;
+
+	margin-bottom:60px;
+
+}
+
+
+.badge {
+
+	display:inline-flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+	padding:10px 20px;
+
+	border-radius:999px;
+
+	background:var(--primary-bg);
+
+	border:1px solid var(--primary-border);
+
+	color:var(--primary);
+
+	font-size:.85rem;
+
+	font-weight:700;
+
+	letter-spacing:3px;
+
+}
+
+
+h1 {
+
+	margin-top:26px;
+
+	font-size:clamp(2.4rem,5vw,3.6rem);
+
+	letter-spacing:-2px;
+
+	background:linear-gradient(90deg,var(--text),var(--primary));
+
+	-webkit-background-clip:text;
+
+	-webkit-text-fill-color:transparent;
+
+}
+
+
+.hero p {
+
+	max-width:680px;
+
+	margin:22px auto 0;
+
+	color:var(--text-muted);
+
+	font-size:1.08rem;
+
+	line-height:1.9;
+
+}
+
+
+.form {
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:24px;
+
+}
+
+
+.card {
+
+	min-width:0;
+
+	padding:34px;
+
+	border:1px solid var(--border-1);
+
+	border-radius:22px;
+
+	background:var(--surface-1);
+
+	backdrop-filter:blur(15px);
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:22px;
+
+}
+
+
+legend {
+
+	padding:0 4px 6px 0;
+
+	font-size:1.2rem;
+
+	font-weight:700;
+
+	color:var(--text);
+
+}
+
+
+label {
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:8px;
+
+	color:var(--text-muted);
+
+	font-size:.95rem;
+
+	font-weight:600;
+}
+
+
+.label-heading {
+
+	display:block;
+
+	color:var(--text-muted);
+
+	font-size:.95rem;
+
+	font-weight:600;
+
+}
+
+
+input[type="text"],
+input[type="email"],
+textarea {
+
+	padding:12px 14px;
+
+	border-radius:12px;
+
+	background:var(--surface-2);
+
+	border:1px solid var(--border-2);
+
+	color:var(--text);
+
+	font-family:inherit;
+
+	font-size:.95rem;
+
+	font-weight:400;
+
+	transition:.2s ease;
+
+}
+
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+
+	outline:none;
+
+	border-color:color-mix(in srgb, var(--primary) 60%, transparent);
+
+	background:var(--surface-3);
+
+}
+
+
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+textarea:focus-visible {
+
+	box-shadow:0 0 0 3px var(--primary-bg), 0 0 0 1px var(--primary);
+
+}
+
+
+.checkbox:focus-within {
+
+	box-shadow:0 0 0 3px var(--primary-bg), 0 0 0 1px var(--primary);
+
+}
+
+
+input[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+
+	border-color:var(--danger);
+
+}
+
+
+.field-error {
+
+	color:var(--danger);
+
+	font-size:.85rem;
+
+	font-weight:500;
+
+}
+
+
+.field-error:empty {
+
+	display:none;
+
+}
+
+
+textarea {
+
+	resize:vertical;
+
+}
+
+
+.grid.two {
+
+	display:grid;
+
+	grid-template-columns:1fr 1fr;
+
+	gap:20px;
+
+}
+
+
+.checkbox-group {
+
+	display:flex;
+
+	flex-wrap:wrap;
+
+	gap:12px;
+
+}
+
+
+.checkbox {
+
+	flex-direction:row;
+
+	align-items:center;
+
+	gap:10px;
+
+	padding:10px 16px;
+
+	border-radius:999px;
+
+	background:var(--surface-2);
+
+	border:1px solid var(--border-1);
+
+	font-weight:500;
+
+	cursor:pointer;
+
+}
+
+
+.checkbox input {
+
+	accent-color:var(--primary);
+
+	width:16px;
+
+	height:16px;
+
+}
+
+
+.security-note {
+
+	padding:16px 20px;
+
+	border-radius:14px;
+
+	background:var(--surface-1);
+
+	border:1px solid var(--border-2);
+
+	color:var(--text-muted);
+
+	font-size:.9rem;
+
+	line-height:1.7;
+
+}
+
+
+.honeypot {
+
+	position:absolute;
+
+	width:1px;
+
+	height:1px;
+
+	overflow:hidden;
+
+	clip:rect(0 0 0 0);
+
+	white-space:nowrap;
+
+}
+
+
+.submit {
+
+	position:relative;
+
+	align-self:flex-start;
+
+	padding:16px 36px;
+
+	border-radius:16px;
+
+	border:none;
+
+	background:var(--primary);
+
+	color:white;
+
+	font-weight:700;
+
+	font-size:1rem;
+
+	cursor:pointer;
+
+	transition:.25s ease;
+
+}
+
+
+.submit:hover {
+
+	transform:translateY(-3px);
+
+	box-shadow:0 15px 40px var(--primary-glow);
+
+}
+
+
+.submit:disabled {
+
+	opacity:.7;
+
+	cursor:not-allowed;
+
+	transform:none;
+
+}
+
+
+.hint {
+
+	color:var(--text-muted);
+
+	font-size:.9rem;
+
+	line-height:1.7;
+
+}
+
+
+.status {
+
+	padding:16px 20px;
+
+	border-radius:14px;
+
+	background:var(--primary-bg);
+
+	border:1px solid var(--primary-border);
+
+	color:var(--primary-light);
+
+	font-size:.95rem;
+
+	line-height:1.7;
+
+}
+
+
+.status a {
+
+	color:var(--primary-light);
+
+}
+
+
+.status.error {
+
+	background:color-mix(in srgb, var(--danger) 12%, transparent);
+
+	border-color:color-mix(in srgb, var(--danger) 40%, transparent);
+
+	color:var(--danger);
+
+}
+
+
+@media (max-width:700px) {
+
+	.container {
+
+		margin:70px auto;
+
+		padding:0 20px;
+
+	}
+
+
+	.card {
+
+		padding:24px;
+
+	}
+
+
+	.grid.two {
+
+		grid-template-columns:1fr;
+
+	}
+
+
+	.submit {
+
+		width:100%;
+
+	}
+
+}
+
+</style>

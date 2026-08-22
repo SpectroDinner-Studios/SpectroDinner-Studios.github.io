@@ -23,6 +23,54 @@ const ogImageURL = new URL("/logo.png", Astro.site);
 
 		<script is:inline>
 			(function () {
+				var path = location.pathname.replace(/\/$/, "");
+				if (path === "/mantenimiento") return;
+
+				try {
+					var params = new URLSearchParams(location.search);
+					var bypassAttempt = params.get("bypass");
+					var settled = false;
+
+					var reveal = function () {
+						if (settled) return;
+						settled = true;
+						document.documentElement.style.visibility = "";
+					};
+
+					// Fail-safe: never leave the page hidden longer than this,
+					// even if /config.json is slow or unreachable.
+					setTimeout(reveal, 2500);
+
+					fetch("/config.json", { cache: "no-store" })
+						.then(function (r) {
+							return r.json();
+						})
+						.then(function (cfg) {
+							if (bypassAttempt && cfg && bypassAttempt === cfg.bypassKey) {
+								localStorage.setItem("sd-maintenance-bypass", "true");
+							}
+
+							var bypassed =
+								localStorage.getItem("sd-maintenance-bypass") === "true";
+
+							if (cfg && cfg.maintenance === true && !bypassed) {
+								settled = true;
+								location.replace("/mantenimiento");
+							} else {
+								reveal();
+							}
+						})
+						.catch(reveal);
+
+					document.documentElement.style.visibility = "hidden";
+				} catch (e) {
+					document.documentElement.style.visibility = "";
+				}
+			})();
+		</script>
+
+		<script is:inline>
+			(function () {
 				try {
 					var stored = localStorage.getItem("sd-lang");
 					var lang =
