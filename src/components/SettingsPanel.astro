@@ -66,6 +66,46 @@ const accents = [
 			</div>
 		</div>
 
+		<div class="settings-section">
+			<span class="settings-label">
+				<span data-lang="es">Tamaño de texto</span>
+				<span data-lang="en">Text size</span>
+			</span>
+
+			<div class="fontsize-switch">
+				<button type="button" class="theme-btn" data-fontsize-choice="small">
+					<span data-lang="es">A Pequeño</span>
+					<span data-lang="en">A Small</span>
+				</button>
+				<button type="button" class="theme-btn" data-fontsize-choice="normal">
+					<span data-lang="es">A Normal</span>
+					<span data-lang="en">A Normal</span>
+				</button>
+				<button type="button" class="theme-btn" data-fontsize-choice="large">
+					<span data-lang="es">A Grande</span>
+					<span data-lang="en">A Large</span>
+				</button>
+			</div>
+		</div>
+
+		<div class="settings-section">
+			<span class="settings-label">
+				<span data-lang="es">Movimiento reducido</span>
+				<span data-lang="en">Reduced motion</span>
+			</span>
+
+			<div class="theme-switch">
+				<button type="button" class="theme-btn" data-motion-choice="false">
+					<span data-lang="es">▶️ Activado</span>
+					<span data-lang="en">▶️ On</span>
+				</button>
+				<button type="button" class="theme-btn" data-motion-choice="true">
+					<span data-lang="es">⏸️ Reducido</span>
+					<span data-lang="en">⏸️ Reduced</span>
+				</button>
+			</div>
+		</div>
+
 	</div>
 
 </div>
@@ -94,19 +134,36 @@ const accents = [
 	const FIXED_THEMES = ["light", "dark", "amoled", "contrast"];
 
 	const updateActiveStates = () => {
-		let stored: string | null = null;
+		let storedTheme: string | null = null;
+		let storedFontSize: string | null = null;
+		let storedMotion: string | null = null;
 		try {
-			stored = localStorage.getItem("sd-theme");
+			storedTheme = localStorage.getItem("sd-theme");
+			storedFontSize = localStorage.getItem("sd-fontsize");
+			storedMotion = localStorage.getItem("sd-reduced-motion");
 		} catch (err) {}
 
-		const activeChoice = FIXED_THEMES.includes(stored ?? "") ? stored : "system";
+		const activeTheme = FIXED_THEMES.includes(storedTheme ?? "")
+			? storedTheme
+			: "system";
+
+		const activeFontSize = storedFontSize || "normal";
+		const activeMotion = storedMotion === "true" ? "true" : "false";
 
 		const accent = getComputedStyle(document.documentElement)
 			.getPropertyValue("--primary")
 			.trim();
 
-		wrapper?.querySelectorAll<HTMLButtonElement>(".theme-btn").forEach((btn) => {
-			btn.classList.toggle("active", btn.dataset.themeChoice === activeChoice);
+		wrapper?.querySelectorAll<HTMLButtonElement>("[data-theme-choice]").forEach((btn) => {
+			btn.classList.toggle("active", btn.dataset.themeChoice === activeTheme);
+		});
+
+		wrapper?.querySelectorAll<HTMLButtonElement>("[data-fontsize-choice]").forEach((btn) => {
+			btn.classList.toggle("active", btn.dataset.fontsizeChoice === activeFontSize);
+		});
+
+		wrapper?.querySelectorAll<HTMLButtonElement>("[data-motion-choice]").forEach((btn) => {
+			btn.classList.toggle("active", btn.dataset.motionChoice === activeMotion);
 		});
 
 		wrapper?.querySelectorAll<HTMLButtonElement>(".swatch").forEach((btn) => {
@@ -116,7 +173,7 @@ const accents = [
 		});
 	};
 
-	wrapper?.querySelectorAll<HTMLButtonElement>(".theme-btn").forEach((btn) => {
+	wrapper?.querySelectorAll<HTMLButtonElement>("[data-theme-choice]").forEach((btn) => {
 		btn.addEventListener("click", () => {
 			const theme = btn.dataset.themeChoice as string;
 			try {
@@ -135,6 +192,30 @@ const accents = [
 				localStorage.setItem("sd-accent", accent);
 			} catch (err) {}
 			updateActiveStates();
+		});
+	});
+
+	wrapper?.querySelectorAll<HTMLButtonElement>("[data-fontsize-choice]").forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const size = btn.dataset.fontsizeChoice as string;
+			try {
+				localStorage.setItem("sd-fontsize", size);
+			} catch (err) {}
+			(window as any).__sdApplyFontSize?.();
+			updateActiveStates();
+		});
+	});
+
+	wrapper?.querySelectorAll<HTMLButtonElement>("[data-motion-choice]").forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const reduced = btn.dataset.motionChoice as string;
+			try {
+				localStorage.setItem("sd-reduced-motion", reduced);
+			} catch (err) {}
+			// Scroll-reveal/counter/spotlight are wired up once at load
+			// based on this value, so a reload is the simplest way to
+			// apply it consistently everywhere.
+			location.reload();
 		});
 	});
 
@@ -276,6 +357,17 @@ const accents = [
 	display: grid;
 
 	grid-template-columns: 1fr 1fr;
+
+	gap: 8px;
+
+}
+
+
+.fontsize-switch {
+
+	display: grid;
+
+	grid-template-columns: 1fr 1fr 1fr;
 
 	gap: 8px;
 

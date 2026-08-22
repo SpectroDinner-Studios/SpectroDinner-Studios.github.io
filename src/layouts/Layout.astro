@@ -122,6 +122,26 @@ const ogImageURL = new URL("/logo.png", Astro.site);
 						document.documentElement.style.setProperty("--primary", accent);
 					}
 				} catch (e) {}
+
+				try {
+					var FONT_SCALES = { small: "87.5%", normal: "100%", large: "112.5%" };
+
+					var applyFontSize = function () {
+						var stored = localStorage.getItem("sd-fontsize");
+						var scale = FONT_SCALES[stored] || FONT_SCALES.normal;
+						document.documentElement.style.setProperty("--font-scale", scale);
+					};
+
+					applyFontSize();
+					window.__sdApplyFontSize = applyFontSize;
+				} catch (e) {}
+
+				try {
+					var manualReducedMotion = localStorage.getItem("sd-reduced-motion") === "true";
+					if (manualReducedMotion) {
+						document.documentElement.setAttribute("data-reduced-motion", "true");
+					}
+				} catch (e) {}
 			})();
 		</script>
 
@@ -180,9 +200,9 @@ const ogImageURL = new URL("/logo.png", Astro.site);
 		<BackToTop />
 
 		<script>
-			const prefersReducedMotion = window.matchMedia(
-				"(prefers-reduced-motion: reduce)"
-			).matches;
+			const prefersReducedMotion =
+				window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+				document.documentElement.getAttribute("data-reduced-motion") === "true";
 
 			// Scroll reveal
 			const revealEls = document.querySelectorAll(".reveal");

@@ -200,6 +200,8 @@ html {
 
 	scroll-behavior:smooth;
 
+	font-size:var(--font-scale, 100%);
+
 }
 
 
@@ -671,4 +673,22 @@ a:focus-visible {
 		scroll-behavior: auto !important;
 	}
 
+}
+
+
+/* Same as above, but for the manual "reduce motion" toggle in Settings,
+   independent of the OS-level prefers-reduced-motion setting. */
+html[data-reduced-motion="true"] .reveal {
+	opacity: 1 !important;
+	transform: none !important;
+	transition: none !important;
+}
+
+html[data-reduced-motion="true"] *,
+html[data-reduced-motion="true"] *::before,
+html[data-reduced-motion="true"] *::after {
+	animation-duration: .001ms !important;
+	animation-iteration-count: 1 !important;
+	transition-duration: .001ms !important;
+	scroll-behavior: auto !important;
 }

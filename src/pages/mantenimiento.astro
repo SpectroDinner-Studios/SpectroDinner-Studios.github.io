@@ -9,13 +9,19 @@ import Layout from "../layouts/Layout.astro";
 
 	<main class="maintenance">
 
-		<div class="glow"></div>
+		<div class="glow glow-a"></div>
+		<div class="glow glow-b"></div>
 
-		<div class="content">
+		<div class="card spotlight">
 
-			<img src="/logo.png" alt="SpectroDinner Logo" class="logo" />
+			<div class="icon-wrap">
+				<span class="icon-glow"></span>
+				<img src="/logo.png" alt="SpectroDinner Logo" class="logo" />
+				<span class="gear">⚙️</span>
+			</div>
 
 			<span class="badge">
+				<span class="dot"></span>
 				<span data-lang="es">MANTENIMIENTO</span>
 				<span data-lang="en">MAINTENANCE</span>
 			</span>
@@ -25,21 +31,45 @@ import Layout from "../layouts/Layout.astro";
 				<span data-lang="en">Back shortly</span>
 			</h1>
 
-			<p data-lang="es">
+			<p class="tagline">
+				<span data-lang="es">Software · Juegos · Minecraft · Tecnología Experimental</span>
+				<span data-lang="en">Software · Games · Minecraft · Experimental Technology</span>
+			</p>
+
+			<p class="description" data-lang="es">
 				SpectroDinner Studios no está disponible ahora mismo —
 				estamos haciendo cambios en el sitio. Vuelve a pasarte
 				en un rato.
 			</p>
 
-			<p data-lang="en">
+			<p class="description" data-lang="en">
 				SpectroDinner Studios isn't available right now — we're
 				making changes to the site. Please check back shortly.
 			</p>
 
-			<a href="mailto:oierps8@gmail.com" class="contact">
-				<span data-lang="es">oierps8@gmail.com</span>
-				<span data-lang="en">oierps8@gmail.com</span>
-			</a>
+			<div class="working">
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+
+			<div class="actions">
+
+				<a href="mailto:oierps8@gmail.com" class="primary">
+					<span data-lang="es">Escríbenos</span>
+					<span data-lang="en">Email us</span>
+				</a>
+
+				<a
+					href="https://github.com/elmoderador"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="secondary"
+				>
+					GitHub ↗
+				</a>
+
+			</div>
 
 		</div>
 
@@ -71,26 +101,75 @@ import Layout from "../layouts/Layout.astro";
 
 	position:absolute;
 
-	width:650px;
-	height:650px;
+	border-radius:50%;
 
-	background:
-		radial-gradient(
-			circle,
-			color-mix(in srgb, var(--primary) 15%, transparent),
-			transparent 70%
-		);
-
-	filter:blur(70px);
+	pointer-events:none;
 
 	z-index:-1;
 
 }
 
 
-.content {
+.glow-a {
 
-	max-width:520px;
+	width:650px;
+	height:650px;
+
+	background:
+		radial-gradient(
+			circle,
+			color-mix(in srgb, var(--primary) 16%, transparent),
+			transparent 70%
+		);
+
+	filter:blur(70px);
+
+	animation:glowFloat 9s ease-in-out infinite;
+
+}
+
+
+.glow-b {
+
+	width:420px;
+	height:420px;
+
+	right:-120px;
+	bottom:-120px;
+
+	background:
+		radial-gradient(
+			circle,
+			color-mix(in srgb, var(--primary) 10%, transparent),
+			transparent 70%
+		);
+
+	filter:blur(60px);
+
+	animation:glowFloat 11s ease-in-out infinite reverse;
+
+}
+
+
+@keyframes glowFloat {
+
+	0%, 100% {
+		transform:translate(0,0) scale(1);
+	}
+
+	50% {
+		transform:translate(0,-20px) scale(1.06);
+	}
+
+}
+
+
+.card {
+
+	position:relative;
+
+	width:100%;
+	max-width:560px;
 
 	display:flex;
 	flex-direction:column;
@@ -98,17 +177,79 @@ import Layout from "../layouts/Layout.astro";
 
 	text-align:center;
 
+	padding:64px 48px;
+
+	border-radius:32px;
+
+	background:var(--surface-1);
+	border:1px solid var(--border-1);
+
+	backdrop-filter:blur(20px);
+
+	animation:cardFadeUp .8s cubic-bezier(.16,1,.3,1) both;
+
+}
+
+
+@keyframes cardFadeUp {
+
+	from {
+		opacity:0;
+		transform:translateY(20px);
+	}
+
+	to {
+		opacity:1;
+		transform:none;
+	}
+
+}
+
+
+.icon-wrap {
+
+	position:relative;
+
+	width:96px;
+	height:96px;
+
+	margin-bottom:28px;
+
+	display:flex;
+	align-items:center;
+	justify-content:center;
+
+}
+
+
+.icon-glow {
+
+	position:absolute;
+
+	inset:-14px;
+
+	border-radius:50%;
+
+	background:
+		radial-gradient(
+			circle,
+			color-mix(in srgb, var(--primary) 45%, transparent),
+			transparent 70%
+		);
+
+	filter:blur(20px);
+
 }
 
 
 .logo {
 
+	position:relative;
+
 	width:80px;
 	height:80px;
 
 	object-fit:contain;
-
-	margin-bottom:28px;
 
 	filter:
 		drop-shadow(
@@ -119,11 +260,40 @@ import Layout from "../layouts/Layout.astro";
 }
 
 
+.gear {
+
+	position:absolute;
+
+	bottom:-6px;
+	right:-10px;
+
+	font-size:1.7rem;
+
+	filter:drop-shadow(0 4px 10px var(--shadow-color));
+
+	animation:gearSpin 6s linear infinite;
+
+}
+
+
+@keyframes gearSpin {
+
+	from {
+		transform:rotate(0deg);
+	}
+
+	to {
+		transform:rotate(360deg);
+	}
+
+}
+
+
 .badge {
 
 	display:inline-flex;
 	align-items:center;
-	justify-content:center;
+	gap:8px;
 
 	padding:10px 20px;
 
@@ -134,16 +304,45 @@ import Layout from "../layouts/Layout.astro";
 
 	color:var(--primary);
 
-	font-size:.85rem;
+	font-size:.8rem;
 	font-weight:700;
-	letter-spacing:3px;
+	letter-spacing:2.5px;
+
+}
+
+
+.badge .dot {
+
+	width:7px;
+	height:7px;
+
+	border-radius:50%;
+
+	background:var(--primary);
+
+	box-shadow:0 0 8px var(--primary-glow);
+
+	animation:dotPulse 1.6s ease-in-out infinite;
+
+}
+
+
+@keyframes dotPulse {
+
+	0%, 100% {
+		opacity:1;
+	}
+
+	50% {
+		opacity:.35;
+	}
 
 }
 
 
 h1 {
 
-	margin:22px 0 0;
+	margin:24px 0 0;
 
 	font-size:clamp(2.2rem,5vw,3.2rem);
 	font-weight:800;
@@ -158,36 +357,174 @@ h1 {
 }
 
 
-p {
+.tagline {
 
-	margin-top:24px;
+	margin-top:14px;
+
+	color:var(--text-dim);
+
+	font-size:.85rem;
+	font-weight:600;
+
+	letter-spacing:1px;
+
+}
+
+
+.description {
+
+	margin-top:22px;
+
+	max-width:400px;
 
 	color:var(--text-muted);
 
-	font-size:1.05rem;
+	font-size:1.02rem;
 	line-height:1.8;
 
 }
 
 
-.contact {
+.working {
 
-	margin-top:36px;
+	display:flex;
+	gap:8px;
 
-	color:var(--primary-light);
+	margin-top:30px;
+
+}
+
+
+.working span {
+
+	width:8px;
+	height:8px;
+
+	border-radius:50%;
+
+	background:var(--primary);
+
+	animation:workingBounce 1.2s ease-in-out infinite;
+
+}
+
+
+.working span:nth-child(2) {
+	animation-delay:.15s;
+}
+
+.working span:nth-child(3) {
+	animation-delay:.3s;
+}
+
+
+@keyframes workingBounce {
+
+	0%, 80%, 100% {
+		transform:translateY(0);
+		opacity:.4;
+	}
+
+	40% {
+		transform:translateY(-6px);
+		opacity:1;
+	}
+
+}
+
+
+.actions {
+
+	display:flex;
+	flex-wrap:wrap;
+
+	justify-content:center;
+
+	gap:14px;
+
+	margin-top:38px;
+
+}
+
+
+.actions a {
+
+	padding:13px 28px;
+
+	border-radius:14px;
 
 	text-decoration:none;
 
 	font-weight:600;
 
-	transition:.2s ease;
+	font-size:.95rem;
+
+	transition:.25s ease;
 
 }
 
 
-.contact:hover {
+.primary {
+
+	background:var(--primary);
+
+	color:white;
+
+}
+
+
+.primary:hover {
+
+	transform:translateY(-3px);
+
+	box-shadow:0 15px 40px var(--primary-glow);
+
+}
+
+
+.secondary {
+
+	background:var(--surface-2);
+
+	border:1px solid var(--border-2);
 
 	color:var(--text);
+
+}
+
+
+.secondary:hover {
+
+	background:var(--surface-hover);
+
+	transform:translateY(-3px);
+
+}
+
+
+@media (max-width:600px) {
+
+	.card {
+
+		padding:48px 28px;
+
+	}
+
+
+	.actions {
+
+		flex-direction:column;
+
+		width:100%;
+
+	}
+
+
+	.actions a {
+
+		width:100%;
+
+	}
 
 }
 
