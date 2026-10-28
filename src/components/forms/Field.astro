@@ -1,0 +1,114 @@
+---
+import T from "../T.astro";
+
+type Text = { es: string; en?: string };
+
+interface Props {
+	name: string;
+	label: Text;
+	type?: "text" | "email" | "url" | "textarea";
+	required?: boolean;
+	maxlength?: number;
+	rows?: number;
+	placeholder?: Text;
+	autocomplete?: string;
+	help?: Text;
+	// One-click suggestions. "line" appends on a new line, "list" appends
+	// comma-separated, "replace" sets the whole value.
+	chips?: Text[];
+	chipMode?: "line" | "list" | "replace";
+	// Counts towards the Minecraft queue-priority meter.
+	priority?: boolean;
+	half?: boolean;
+	// "fieldName=value|other value" — only shown when that field has one of them.
+	showWhen?: string;
+}
+
+const {
+	name,
+	label,
+	type = "text",
+	required = false,
+	maxlength,
+	rows = 4,
+	placeholder,
+	autocomplete = "off",
+	help,
+	chips = [],
+	chipMode = "line",
+	priority = false,
+	half = false,
+	showWhen,
+} = Astro.props;
+
+const id = `f-${name}`;
+const errorId = `err-${name}`;
+const helpId = help ? `help-${name}` : undefined;
+const describedBy = [helpId, errorId].filter(Boolean).join(" ");
+
+const ph = placeholder ? { es: placeholder.es, en: placeholder.en ?? placeholder.es } : undefined;
+
+const shared = {
+	id,
+	name,
+	maxlength,
+	required,
+	placeholder: ph?.es,
+	"data-ph-es": ph?.es,
+	"data-ph-en": ph?.en,
+	"aria-describedby": describedBy,
+	autocomplete,
+};
+---
+
+<div
+	class:list={["wz-field", { half }]}
+	data-field={name}
+	data-label-es={label.es}
+	data-label-en={label.en ?? label.es}
+	data-priority={priority ? "" : undefined}
+	data-show-when={showWhen}
+>
+
+	<label for={id} class="wz-label">
+		<T {...label} />
+		{required
+			? <span class="wz-req" aria-hidden="true">*</span>
+			: <span class="wz-opt"><T es="opcional" en="optional" /></span>}
+	</label>
+
+	{help && <p id={helpId} class="wz-help"><T {...help} /></p>}
+
+	{type === "textarea"
+		? <textarea {...shared} rows={rows}></textarea>
+		: <input {...shared} type={type} />}
+
+	{(chips.length > 0 || (type === "textarea" && maxlength)) && (
+		<div class="wz-field-foot">
+			{chips.length > 0 && (
+				<div class="wz-chips">
+					{chips.map((chip) => (
+						<button
+							type="button"
+							class="wz-chip"
+							data-target={id}
+							data-mode={chipMode}
+							data-insert-es={chip.es}
+							data-insert-en={chip.en ?? chip.es}
+						>
+							+ <T {...chip} />
+						</button>
+					))}
+				</div>
+			)}
+			{type === "textarea" && maxlength && (
+				<span class="wz-count" data-count-for={id} aria-hidden="true">0 / {maxlength}</span>
+			)}
+		</div>
+	)}
+
+	<p class="wz-suggest" data-suggest-for={id} hidden></p>
+
+	<span id={errorId} class="field-error" aria-live="polite"></span>
+
+</div>

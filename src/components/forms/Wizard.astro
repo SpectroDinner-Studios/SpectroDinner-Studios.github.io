@@ -1,0 +1,185 @@
+---
+import T from "../T.astro";
+
+type Text = { es: string; en?: string };
+
+interface Props {
+	formId: string;
+	quest: { icon: string; code: string; title: Text };
+	steps: { icon: string; title: Text }[];
+	minutes: number;
+	submitLabel: Text;
+	success: {
+		title: Text;
+		text: Text;
+		next: { icon: string; text: Text }[];
+		backHref: string;
+		backLabel: Text;
+	};
+}
+
+const { formId, quest, steps, minutes, submitLabel, success } = Astro.props;
+
+const total = steps.length + 1; // + review step
+---
+
+<div class="wz" data-wizard={formId}>
+
+	<!-- Mission panel -->
+	<aside class="wz-side" aria-label="Progreso / Progress">
+
+		<div class="wz-quest">
+			<span class="wz-quest-icon" aria-hidden="true">{quest.icon}</span>
+			<div>
+				<small>{quest.code}</small>
+				<strong><T {...quest.title} /></strong>
+			</div>
+		</div>
+
+		<div class="wz-progress">
+			<div class="wz-progress-top">
+				<span><T es="Progreso" en="Progress" /></span>
+				<span data-progress-text>0%</span>
+			</div>
+			<div class="xpbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-progress-bar>
+				<div class="xpbar-fill" data-progress-fill></div>
+			</div>
+		</div>
+
+		<ol class="wz-steps">
+			{steps.map((step, i) => (
+				<li>
+					<button type="button" class="wz-step-link" data-goto={i}>
+						<span class="wz-dot">{i + 1}</span>
+						<span class="wz-step-name"><T {...step.title} /></span>
+					</button>
+				</li>
+			))}
+			<li>
+				<button type="button" class="wz-step-link" data-goto={steps.length}>
+					<span class="wz-dot">✓</span>
+					<span class="wz-step-name"><T es="Revisar y enviar" en="Review & send" /></span>
+				</button>
+			</li>
+		</ol>
+
+		<slot name="side" />
+
+		<div class="wz-meta">
+			<span>⏱ ≈ {minutes} min</span>
+			<span class="wz-saved" data-saved hidden>
+				💾 <T es="Borrador guardado" en="Draft saved" />
+			</span>
+		</div>
+
+	</aside>
+
+	<!-- Steps -->
+	<div class="wz-main">
+
+		<div class="wz-draft" data-draft-notice hidden>
+			<span>💾 <T es="Hemos recuperado tu borrador donde lo dejaste." en="We restored your draft where you left off." /></span>
+			<button type="button" class="wz-link" data-draft-clear>
+				<T es="Empezar de cero" en="Start over" />
+			</button>
+		</div>
+
+		<form id={formId} class="wz-form" novalidate>
+
+			<slot />
+
+			<section class="wz-step" data-step="review" aria-labelledby={`wz-h-${formId}-review`}>
+
+				<header class="wz-step-head">
+					<span class="wz-kicker"><T es="Paso" en="Step" /> {total} / {total}</span>
+					<h2 id={`wz-h-${formId}-review`} tabindex="-1">
+						<span class="wz-step-icon" aria-hidden="true">📋</span>
+						<span class="wz-step-title"><T es="Revisar y enviar" en="Review & send" /></span>
+					</h2>
+					<p class="wz-intro">
+						<T
+							es="Comprueba que todo está bien. Puedes volver a cualquier paso con «Editar»."
+							en="Check everything looks right. You can jump back to any step with “Edit”."
+						/>
+					</p>
+				</header>
+
+				<div class="wz-review" data-review></div>
+
+				<div class="wz-note" role="note">
+					🔒 <T
+						es="Nunca envíes contraseñas, claves de API, tokens ni ningún otro tipo de credencial secreta a través de este formulario."
+						en="Never submit passwords, API keys, tokens or any other secrets through this form."
+					/>
+				</div>
+
+				<div class="wz-honeypot" aria-hidden="true">
+					<label for={`${formId}-website`}>Website</label>
+					<input type="text" id={`${formId}-website`} name="website" tabindex="-1" autocomplete="off" />
+				</div>
+
+				<p class="wz-alert error" data-submit-error hidden>
+					⚠️ <T
+						es="No hemos podido enviarlo. Inténtalo de nuevo en unos segundos o escríbenos a"
+						en="We couldn't send it. Try again in a moment or email us at"
+					/> <a href="mailto:oierps8@gmail.com">oierps8@gmail.com</a>.
+				</p>
+
+			</section>
+
+			<p class="wz-alert error" data-step-error role="alert" hidden></p>
+
+			<nav class="wz-nav" aria-label="Pasos / Steps">
+				<button type="button" class="btn btn-ghost" data-prev>
+					← <T es="Atrás" en="Back" />
+				</button>
+				<span class="wz-nav-pos" data-nav-pos></span>
+				<button type="button" class="btn btn-primary" data-next>
+					<span class="lbl-next"><T es="Siguiente" en="Next" /> →</span>
+					<span class="lbl-review"><T es="Revisar" en="Review" /> →</span>
+				</button>
+				<button type="submit" class="btn btn-primary" data-submit>
+					<span class="submit-label"><T {...submitLabel} /></span>
+					<span class="submit-loading" hidden><T es="Enviando…" en="Sending…" /></span>
+				</button>
+			</nav>
+
+		</form>
+
+		<!-- Success -->
+		<section class="wz-success" data-success hidden>
+
+			<div class="wz-success-badge" aria-hidden="true">✓</div>
+
+			<span class="eyebrow"><T es="Misión enviada" en="Mission sent" /></span>
+
+			<h2 tabindex="-1" data-success-title><T {...success.title} /></h2>
+
+			<p class="wz-ref" data-ref hidden>
+				<T es="Nº de solicitud" en="Request no." /> <strong data-ref-value></strong>
+			</p>
+
+			<p class="wz-success-text"><T {...success.text} /></p>
+
+			<ol class="wz-next">
+				{success.next.map((item, i) => (
+					<li>
+						<span class="wz-next-icon" aria-hidden="true">{item.icon}</span>
+						<span class="wz-next-n">0{i + 1}</span>
+						<p><T {...item.text} /></p>
+					</li>
+				))}
+			</ol>
+
+			<div class="actions">
+				<a href={success.backHref} class="btn btn-primary"><T {...success.backLabel} /></a>
+				<button type="button" class="btn btn-ghost" data-again>
+					<T es="Enviar otra respuesta" en="Send another" />
+				</button>
+			</div>
+
+		</section>
+
+	</div>
+
+</div>

@@ -1,0 +1,98 @@
+---
+import T from "../T.astro";
+
+type Text = { es: string; en?: string };
+
+interface Option {
+	value: string;
+	label: Text;
+	icon?: string;
+	desc?: Text;
+}
+
+interface Props {
+	name: string;
+	label: Text;
+	options: Option[];
+	type?: "radio" | "checkbox";
+	required?: boolean;
+	// Minimum number of checked options (checkboxes).
+	min?: number;
+	columns?: 1 | 2 | 3 | 4;
+	help?: Text;
+	// Small pill-style options instead of cards (long lists like bots).
+	compact?: boolean;
+	priority?: boolean;
+	showWhen?: string;
+}
+
+const {
+	name,
+	label,
+	options,
+	type = "radio",
+	required = false,
+	min,
+	columns = 2,
+	help,
+	compact = false,
+	priority = false,
+	showWhen,
+} = Astro.props;
+
+const errorId = `err-${name}`;
+const helpId = help ? `help-${name}` : undefined;
+const minChecked = min ?? (required ? 1 : 0);
+---
+
+<fieldset
+	class:list={["wz-field", "wz-choices", { compact }]}
+	data-field={name}
+	data-type={type}
+	data-min={minChecked || undefined}
+	data-label-es={label.es}
+	data-label-en={label.en ?? label.es}
+	data-priority={priority ? "" : undefined}
+	data-show-when={showWhen}
+	aria-describedby={[helpId, errorId].filter(Boolean).join(" ")}
+	role={type === "radio" ? "radiogroup" : "group"}
+	aria-required={minChecked > 0 ? "true" : undefined}
+>
+
+	<legend class="wz-label">
+		<T {...label} />
+		{minChecked > 0
+			? <span class="wz-req" aria-hidden="true">*</span>
+			: <span class="wz-opt"><T es="opcional" en="optional" /></span>}
+		{type === "checkbox" && (
+			<span class="wz-picked" data-picked-for={name} hidden></span>
+		)}
+	</legend>
+
+	{help && <p id={helpId} class="wz-help"><T {...help} /></p>}
+
+	<slot name="before" />
+
+	<div class={`wz-options cols-${columns}`}>
+		{options.map((option) => (
+			<label class="wz-option">
+				<input
+					type={type}
+					name={name}
+					value={option.value}
+					data-text-es={option.label.es}
+					data-text-en={option.label.en ?? option.label.es}
+				/>
+				{option.icon && <span class="wz-option-icon" aria-hidden="true">{option.icon}</span>}
+				<span class="wz-option-text">
+					<strong><T {...option.label} /></strong>
+					{option.desc && <small><T {...option.desc} /></small>}
+				</span>
+				<span class="wz-option-check" aria-hidden="true"></span>
+			</label>
+		))}
+	</div>
+
+	<span id={errorId} class="field-error" aria-live="polite"></span>
+
+</fieldset>

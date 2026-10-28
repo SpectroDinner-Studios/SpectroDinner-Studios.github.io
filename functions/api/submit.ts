@@ -34,7 +34,7 @@ export const onRequestPost: PagesHandler = async ({ request, env, waitUntil }) =
 
 	if ((recent?.n ?? 0) >= RATE_LIMIT) return json({ error: "rate_limited" }, 429);
 
-	await env.DB.prepare(
+	const { meta } = await env.DB.prepare(
 		`INSERT INTO submissions (form, status, data, ip_hash) VALUES (?, ?, ?, ?)`
 	)
 		.bind(
@@ -54,5 +54,6 @@ export const onRequestPost: PagesHandler = async ({ request, env, waitUntil }) =
 		}).catch(() => undefined)
 	);
 
-	return json({ ok: true }, 201);
+	// The id is shown to the visitor as their request number.
+	return json({ ok: true, id: Number(meta.last_row_id) || undefined }, 201);
 };

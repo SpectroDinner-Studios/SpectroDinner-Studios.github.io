@@ -1,8 +1,61 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import "../styles/forms.css";
+import "../styles/wizard.css";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+import Wizard from "../components/forms/Wizard.astro";
+import Step from "../components/forms/Step.astro";
+import Field from "../components/forms/Field.astro";
+import Choices from "../components/forms/Choices.astro";
+
+const steps = [
+	{ icon: "👤", title: { es: "Contacto", en: "Contact" } },
+	{ icon: "🧭", title: { es: "Tipo de servicio", en: "Service type" } },
+	{ icon: "🎯", title: { es: "Propósito", en: "Purpose" } },
+	{ icon: "🎨", title: { es: "Diseño y estilo", en: "Design & style" } },
+	{ icon: "🧩", title: { es: "Estructura y bots", en: "Structure & bots" } },
+	{ icon: "📅", title: { es: "Últimos detalles", en: "Final details" } },
+];
+const total = steps.length + 1;
+
+const purposes = [
+	{ value: "Comunidad de gaming", icon: "🎮", label: { es: "Comunidad de gaming", en: "Gaming community" } },
+	{ value: "Marca o negocio", icon: "💼", label: { es: "Marca o negocio", en: "Brand or business" } },
+	{ value: "Creador de contenido", icon: "🎥", label: { es: "Creador de contenido", en: "Content creator" } },
+	{ value: "Amigos / privado", icon: "🫂", label: { es: "Amigos / privado", en: "Friends / private" } },
+	{ value: "Educación / aprendizaje", icon: "📚", label: { es: "Educación / aprendizaje", en: "Education / learning" } },
+	{ value: "Otro", icon: "✨", label: { es: "Otro", en: "Other" } },
+];
+
+const bots = [
+	{ value: "Moderación", icon: "🛡️", label: { es: "Moderación", en: "Moderation" } },
+	{ value: "Auto-moderación", icon: "🤖", label: { es: "Auto-moderación", en: "Auto-moderation" } },
+	{ value: "Anti-raid / Anti-spam", icon: "🚧", label: { es: "Anti-raid / Anti-spam" } },
+	{ value: "Verificación", icon: "✅", label: { es: "Verificación", en: "Verification" } },
+	{ value: "Mensajes de bienvenida", icon: "👋", label: { es: "Mensajes de bienvenida", en: "Welcome messages" } },
+	{ value: "Roles por reacción", icon: "🎭", label: { es: "Roles por reacción", en: "Reaction roles" } },
+	{ value: "Sistema de tickets", icon: "🎫", label: { es: "Sistema de tickets", en: "Ticket system" } },
+	{ value: "Niveles / XP", icon: "📈", label: { es: "Niveles / XP", en: "Leveling / XP" } },
+	{ value: "Economía", icon: "💰", label: { es: "Economía", en: "Economy" } },
+	{ value: "Música", icon: "🎵", label: { es: "Música", en: "Music" } },
+	{ value: "Sorteos", icon: "🎁", label: { es: "Sorteos", en: "Giveaways" } },
+	{ value: "Sugerencias", icon: "💡", label: { es: "Sugerencias", en: "Suggestions" } },
+	{ value: "Starboard", icon: "⭐", label: { es: "Starboard" } },
+	{ value: "Logs del servidor", icon: "🗂️", label: { es: "Logs del servidor", en: "Server logs" } },
+	{ value: "Notificaciones YouTube/Twitch", icon: "📣", label: { es: "Notificaciones YouTube/Twitch", en: "YouTube/Twitch notifications" } },
+	{ value: "Comandos personalizados", icon: "⌨️", label: { es: "Comandos personalizados", en: "Custom commands" } },
+];
+
+// Suggested bots per purpose (values must match the options above).
+const recommended: Record<string, string[]> = {
+	"Comunidad de gaming": ["Moderación", "Anti-raid / Anti-spam", "Mensajes de bienvenida", "Roles por reacción", "Niveles / XP", "Música"],
+	"Marca o negocio": ["Moderación", "Verificación", "Sistema de tickets", "Mensajes de bienvenida", "Sugerencias", "Logs del servidor"],
+	"Creador de contenido": ["Moderación", "Roles por reacción", "Niveles / XP", "Sorteos", "Starboard", "Notificaciones YouTube/Twitch"],
+	"Amigos / privado": ["Música", "Niveles / XP", "Starboard", "Comandos personalizados"],
+	"Educación / aprendizaje": ["Moderación", "Verificación", "Roles por reacción", "Sistema de tickets", "Logs del servidor"],
+	Otro: ["Moderación", "Anti-raid / Anti-spam", "Mensajes de bienvenida"],
+};
 ---
 
 <Layout
@@ -12,455 +65,212 @@ import Footer from "../components/Footer.astro";
 
 	<Navbar />
 
-	<main class="container form-page form-ui">
-
-		<section class="hero">
-
-			<span class="badge">
-				<span data-lang="es">CUESTIONARIO</span>
-				<span data-lang="en">QUESTIONNAIRE</span>
-			</span>
-
-			<h1>
-				<span data-lang="es">Cuéntanos tu servidor de Discord</span>
-				<span data-lang="en">Tell us about your Discord server</span>
-			</h1>
-
-			<p data-lang="es">
-				Cuanta más información nos des, mejor podremos diseñar,
-				configurar o rediseñar tu servidor a tu gusto. No hace falta
-				que respondas todo — pero cuanto más detalle, mejor propuesta
-				podremos prepararte.
-			</p>
-
-			<p data-lang="en">
-				The more information you give us, the better we can design,
-				configure or redesign your server exactly the way you want.
-				You don't have to answer everything — but the more detail,
-				the better proposal we can prepare for you.
-			</p>
-
-			<div class="free-badge">
-				<span data-lang="es">✨ Recuerda: este servicio es 100% gratuito</span>
-				<span data-lang="en">✨ Remember: this service is 100% free</span>
-			</div>
-
-		</section>
-
-
-		<form id="quest-form" class="form" novalidate>
-
-
-			<fieldset class="card">
-
-				<legend>
-					<span data-lang="es">1. Contacto</span>
-					<span data-lang="en">1. Contact</span>
-				</legend>
-
-				<div class="grid two">
-
-					<label>
-						<span data-lang="es">Nombre *</span>
-						<span data-lang="en">Name *</span>
-						<input
-							type="text"
-							name="nombre"
-							autocomplete="name"
-							maxlength="80"
-							required
-							aria-describedby="err-nombre"
-						/>
-						<span id="err-nombre" class="field-error" aria-live="polite"></span>
-					</label>
-
-					<label>
-						<span data-lang="es">Usuario de Discord (opcional)</span>
-						<span data-lang="en">Discord username (optional)</span>
-						<input
-							type="text"
-							name="discord"
-							placeholder="usuario#0000"
-							autocomplete="off"
-							maxlength="50"
-						/>
-					</label>
-
-				</div>
-
-				<label>
-					<span data-lang="es">Email *</span>
-					<span data-lang="en">Email *</span>
-					<input
-						type="email"
-						name="email"
-						autocomplete="email"
-						maxlength="120"
-						required
-						aria-describedby="err-email"
-					/>
-					<span id="err-email" class="field-error" aria-live="polite"></span>
-				</label>
-
-			</fieldset>
-
-
-
-			<fieldset class="card">
-
-				<legend>
-					<span data-lang="es">2. Tipo de servicio</span>
-					<span data-lang="en">2. Type of service</span>
-				</legend>
-
-				<div class="radio-group" role="radiogroup" aria-describedby="err-tipo">
-
-					<label class="radio">
-						<input type="radio" name="tipo" value="Crear un servidor nuevo" required />
-						<span data-lang="es">Crear un servidor nuevo</span>
-						<span data-lang="en">Create a new server</span>
-					</label>
-
-					<label class="radio">
-						<input type="radio" name="tipo" value="Configurar mi servidor actual" />
-						<span data-lang="es">Configurar mi servidor actual</span>
-						<span data-lang="en">Configure my current server</span>
-					</label>
-
-					<label class="radio">
-						<input type="radio" name="tipo" value="Rediseñar mi servidor actual" />
-						<span data-lang="es">Rediseñar mi servidor actual</span>
-						<span data-lang="en">Redesign my current server</span>
-					</label>
-
-				</div>
-				<span id="err-tipo" class="field-error" aria-live="polite"></span>
-
-				<label>
-					<span data-lang="es">Enlace de invitación actual (opcional, si aplica)</span>
-					<span data-lang="en">Current invite link (optional, if applicable)</span>
-					<input
-						type="text"
-						name="invite"
-						placeholder="discord.gg/..."
-						autocomplete="off"
-						maxlength="200"
-					/>
-				</label>
-
-			</fieldset>
-
-
-
-			<fieldset class="card">
-
-				<legend>
-					<span data-lang="es">3. Propósito del servidor</span>
-					<span data-lang="en">3. Server purpose</span>
-				</legend>
-
-				<label>
-					<span data-lang="es">¿Para qué es el servidor? *</span>
-					<span data-lang="en">What is the server for? *</span>
-
-					<select name="proposito" required aria-describedby="err-proposito">
-						<option value="" disabled selected>-- </option>
-						<option value="Comunidad de gaming">Comunidad de gaming / Gaming community</option>
-						<option value="Marca o negocio">Marca o negocio / Brand or business</option>
-						<option value="Creador de contenido">Creador de contenido / Content creator</option>
-						<option value="Amigos / privado">Amigos / privado / Friends / private</option>
-						<option value="Educación / aprendizaje">Educación / aprendizaje / Education / learning</option>
-						<option value="Otro">Otro / Other</option>
-					</select>
-					<span id="err-proposito" class="field-error" aria-live="polite"></span>
-				</label>
-
-				<label>
-					<span data-lang="es">Cuéntanos más sobre el propósito (opcional)</span>
-					<span data-lang="en">Tell us more about the purpose (optional)</span>
-					<textarea name="proposito_detalle" rows="3" maxlength="1000"></textarea>
-				</label>
-
-				<label>
-					<span data-lang="es">Tamaño estimado de miembros (opcional)</span>
-					<span data-lang="en">Estimated member size (optional)</span>
-
-					<select name="tamano">
-						<option value="">-- </option>
-						<option value="Menos de 100">&lt; 100</option>
-						<option value="100 - 1.000">100 - 1,000</option>
-						<option value="1.000 - 10.000">1,000 - 10,000</option>
-						<option value="Más de 10.000">10,000+</option>
-					</select>
-				</label>
-
-			</fieldset>
-
-
-
-			<fieldset class="card">
-
-				<legend>
-					<span data-lang="es">4. Diseño y estilo</span>
-					<span data-lang="en">4. Design and style</span>
-				</legend>
-
-				<label>
-					<span data-lang="es">Estilo deseado (opcional)</span>
-					<span data-lang="en">Desired style (optional)</span>
-
-					<select name="estilo">
-						<option value="">-- </option>
-						<option value="Minimalista">Minimalista / Minimalist</option>
-						<option value="Colorido y vibrante">Colorido y vibrante / Colorful & vibrant</option>
-						<option value="Oscuro / gaming">Oscuro / gaming / Dark / gaming</option>
-						<option value="Elegante / corporativo">Elegante / corporativo / Elegant / corporate</option>
-						<option value="Anime / arte personalizado">Anime / arte personalizado / Anime / custom art</option>
-						<option value="Otro">Otro / Other</option>
-					</select>
-				</label>
-
-				<label>
-					<span data-lang="es">Colores, referencias, logos o servidores que te gusten — links (opcional)</span>
-					<span data-lang="en">Colors, references, logos or servers you like — links (optional)</span>
-					<textarea name="referencias" rows="3" maxlength="1000"></textarea>
-				</label>
-
-			</fieldset>
-
-
-
-			<fieldset class="card">
-
-				<legend>
-					<span data-lang="es">5. Estructura</span>
-					<span data-lang="en">5. Structure</span>
-				</legend>
-
-				<label>
-					<span data-lang="es">Canales y categorías que necesitas (opcional)</span>
-					<span data-lang="en">Channels and categories you need (optional)</span>
-					<textarea name="canales" rows="3" maxlength="1000"></textarea>
-				</label>
-
-				<label>
-					<span data-lang="es">Roles y permisos que necesitas (opcional)</span>
-					<span data-lang="en">Roles and permissions you need (optional)</span>
-					<textarea name="roles" rows="3" maxlength="1000"></textarea>
-				</label>
-
-				<span class="label-heading">
-					<span data-lang="es">Bots y funciones necesarias (opcional)</span>
-					<span data-lang="en">Bots and features needed (optional)</span>
-				</span>
-
-				<div class="checkbox-group">
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Moderación" />
-						<span data-lang="es">Moderación</span>
-						<span data-lang="en">Moderation</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Música" />
-						<span data-lang="es">Música</span>
-						<span data-lang="en">Music</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Verificación" />
-						<span data-lang="es">Verificación</span>
-						<span data-lang="en">Verification</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Sistema de tickets" />
-						<span data-lang="es">Sistema de tickets</span>
-						<span data-lang="en">Ticket system</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Niveles / XP" />
-						<span data-lang="es">Niveles / XP</span>
-						<span data-lang="en">Leveling / XP</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Economía" />
-						<span data-lang="es">Economía</span>
-						<span data-lang="en">Economy</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Mensajes de bienvenida" />
-						<span data-lang="es">Mensajes de bienvenida</span>
-						<span data-lang="en">Welcome messages</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Auto-moderación" />
-						<span data-lang="es">Auto-moderación</span>
-						<span data-lang="en">Auto-moderation</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Roles por reacción" />
-						<span data-lang="es">Roles por reacción</span>
-						<span data-lang="en">Reaction roles</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Anti-raid / Anti-spam" />
-						<span data-lang="es">Anti-raid / Anti-spam</span>
-						<span data-lang="en">Anti-raid / Anti-spam</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Sorteos" />
-						<span data-lang="es">Sorteos</span>
-						<span data-lang="en">Giveaways</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Logs del servidor" />
-						<span data-lang="es">Logs del servidor</span>
-						<span data-lang="en">Server logs</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Notificaciones YouTube/Twitch" />
-						<span data-lang="es">Notificaciones YouTube/Twitch</span>
-						<span data-lang="en">YouTube/Twitch notifications</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Sugerencias" />
-						<span data-lang="es">Sugerencias</span>
-						<span data-lang="en">Suggestions</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Starboard" />
-						<span data-lang="es">Starboard</span>
-						<span data-lang="en">Starboard</span>
-					</label>
-
-					<label class="checkbox">
-						<input type="checkbox" name="bots" value="Comandos personalizados" />
-						<span data-lang="es">Comandos personalizados</span>
-						<span data-lang="en">Custom commands</span>
-					</label>
-
-				</div>
-
-			</fieldset>
-
-
-
-			<fieldset class="card">
-
-				<legend>
-					<span data-lang="es">6. Plazo</span>
-					<span data-lang="en">6. Timeline</span>
-				</legend>
-
-				<label>
-					<span data-lang="es">Plazo deseado (opcional)</span>
-					<span data-lang="en">Desired timeframe (optional)</span>
-					<input
-						type="text"
-						name="plazo"
-						placeholder="Ej./e.g. 1 semana - 1 week"
-						autocomplete="off"
-						maxlength="100"
-					/>
-				</label>
-
-			</fieldset>
-
-
-
-			<fieldset class="card">
-
-				<legend>
-					<span data-lang="es">7. Comentarios adicionales</span>
-					<span data-lang="en">7. Additional comments</span>
-				</legend>
-
-				<label>
-					<span data-lang="es">¿Algo más que debamos saber? (opcional)</span>
-					<span data-lang="en">Anything else we should know? (optional)</span>
-					<textarea name="comentarios" rows="4" maxlength="1000"></textarea>
-				</label>
-
-			</fieldset>
-
-
-			<div class="security-note" role="note">
-				<span data-lang="es">
-					🔒 <strong>Nunca envíes contraseñas, claves de API,
-					tokens ni ningún otro tipo de credencial secreta a
-					través de este formulario.</strong>
-				</span>
-				<span data-lang="en">
-					🔒 <strong>Never submit passwords, API keys, tokens
-					or other secrets through this form.</strong>
-				</span>
-			</div>
-
-
-			<div class="honeypot" aria-hidden="true">
-				<label for="quest-website">Website</label>
-				<input
-					type="text"
-					id="quest-website"
-					name="website"
-					tabindex="-1"
-					autocomplete="off"
+	<main class="container wz-page">
+
+		<header class="wz-hero">
+			<span class="eyebrow"><T es="Servicio de Discord" en="Discord service" /></span>
+			<h1><T es="Cuéntanos tu servidor de Discord" en="Tell us about your Discord server" /></h1>
+			<p>
+				<T
+					es="Cuanta más información nos des, mejor podremos diseñar, configurar o rediseñar tu servidor a tu gusto. Solo hay cuatro datos obligatorios — el resto nos ayuda a prepararte una propuesta mejor."
+					en="The more information you give us, the better we can design, configure or redesign your server the way you want. Only four things are required — the rest helps us prepare a better proposal."
 				/>
+			</p>
+			<div class="wz-perks">
+				<span class="chip chip-gold">✨ <T es="100% gratis" en="100% free" /></span>
+				<span class="chip">⏱ ≈ 4 min</span>
+				<span class="chip">💾 <T es="Se guarda solo en tu navegador" en="Auto-saved in your browser" /></span>
 			</div>
+		</header>
 
+		<Wizard
+			formId="quest-form"
+			quest={{ icon: "💬", code: "QUEST // DISCORD", title: { es: "Servicio de Discord", en: "Discord Service" } }}
+			steps={steps}
+			minutes={4}
+			submitLabel={{ es: "Enviar cuestionario →", en: "Send questionnaire →" }}
+			success={{
+				title: { es: "¡Cuestionario recibido!", en: "Questionnaire received!" },
+				text: {
+					es: "Gracias por contarnos tu idea. Tenemos todo lo que necesitamos para empezar a preparar tu propuesta.",
+					en: "Thanks for telling us your idea. We have everything we need to start preparing your proposal.",
+				},
+				next: [
+					{ icon: "📥", text: { es: "Revisamos tus respuestas y preparamos una propuesta a tu medida.", en: "We review your answers and prepare a proposal made for you." } },
+					{ icon: "💬", text: { es: "Te escribimos por email o Discord para confirmar detalles y plazo antes de empezar.", en: "We reach out by email or Discord to confirm details and timing before starting." } },
+					{ icon: "🛠️", text: { es: "Montamos tu servidor — sin ningún coste.", en: "We build your server — at no cost." } },
+				],
+				backHref: "/",
+				backLabel: { es: "Volver al inicio", en: "Back to home" },
+			}}
+		>
 
-			<p id="form-error-summary" class="status error" role="alert" hidden></p>
+			<Step id="contacto" n={1} total={total} {...steps[0]} intro={{ es: "¿Cómo te llamamos y dónde te respondemos?", en: "What should we call you and where do we reply?" }}>
+				<Field name="nombre" label={{ es: "Nombre", en: "Name" }} required maxlength={80} autocomplete="name" placeholder={{ es: "Tu nombre", en: "Your name" }} half />
+				<Field name="discord" label={{ es: "Usuario de Discord", en: "Discord username" }} maxlength={50} placeholder={{ es: "tu_usuario", en: "your_username" }} half />
+				<Field
+					name="email"
+					type="email"
+					label={{ es: "Email", en: "Email" }}
+					required
+					maxlength={120}
+					autocomplete="email"
+					placeholder={{ es: "tu@email.com", en: "you@email.com" }}
+					help={{ es: "Te responderemos aquí. No lo compartimos con nadie.", en: "We'll reply here. We never share it." }}
+				/>
+			</Step>
 
+			<Step id="servicio" n={2} total={total} {...steps[1]} intro={{ es: "¿Qué hacemos por ti?", en: "What can we do for you?" }}>
+				<Choices
+					name="tipo"
+					label={{ es: "Tipo de servicio", en: "Type of service" }}
+					required
+					columns={3}
+					options={[
+						{ value: "Crear un servidor nuevo", icon: "✨", label: { es: "Crear un servidor nuevo", en: "Create a new server" }, desc: { es: "Lo montamos desde cero.", en: "We build it from scratch." } },
+						{ value: "Configurar mi servidor actual", icon: "⚙️", label: { es: "Configurar mi servidor", en: "Configure my server" }, desc: { es: "Bots, roles, permisos y canales.", en: "Bots, roles, permissions and channels." } },
+						{ value: "Rediseñar mi servidor actual", icon: "🎨", label: { es: "Rediseñar mi servidor", en: "Redesign my server" }, desc: { es: "Nueva identidad y reorganización.", en: "New identity and reorganization." } },
+					]}
+				/>
+				<Field
+					name="invite"
+					label={{ es: "Enlace de invitación actual", en: "Current invite link" }}
+					maxlength={200}
+					placeholder={{ es: "discord.gg/…" }}
+					help={{ es: "Para echar un vistazo a cómo está ahora.", en: "So we can see how it looks right now." }}
+					showWhen="tipo=Configurar mi servidor actual|Rediseñar mi servidor actual"
+				/>
+			</Step>
 
-			<button type="submit" class="submit">
-				<span class="submit-label">
-					<span data-lang="es">Enviar cuestionario →</span>
-					<span data-lang="en">Submit questionnaire →</span>
-				</span>
-				<span class="submit-label submit-loading" hidden>
-					<span data-lang="es">Enviando…</span>
-					<span data-lang="en">Sending…</span>
-				</span>
-			</button>
+			<Step id="proposito" n={3} total={total} {...steps[2]} intro={{ es: "Para qué es el servidor y cuánta gente esperas.", en: "What the server is for and how many people you expect." }}>
+				<Choices name="proposito" label={{ es: "¿Para qué es el servidor?", en: "What is the server for?" }} required columns={3} options={purposes} />
+				<Field
+					name="proposito_detalle"
+					type="textarea"
+					label={{ es: "Cuéntanos más sobre el propósito", en: "Tell us more about the purpose" }}
+					maxlength={1000}
+					rows={3}
+					placeholder={{ es: "Ej. Comunidad de Minecraft con eventos semanales y torneos…", en: "e.g. Minecraft community with weekly events and tournaments…" }}
+				/>
+				<Choices
+					name="tamano"
+					label={{ es: "Tamaño estimado de miembros", en: "Estimated member size" }}
+					columns={4}
+					options={[
+						{ value: "Menos de 100", icon: "🌱", label: { es: "< 100" } },
+						{ value: "100 - 1.000", icon: "🌿", label: { es: "100 – 1.000", en: "100 – 1,000" } },
+						{ value: "1.000 - 10.000", icon: "🌳", label: { es: "1.000 – 10.000", en: "1,000 – 10,000" } },
+						{ value: "Más de 10.000", icon: "🏔️", label: { es: "10.000+", en: "10,000+" } },
+					]}
+				/>
+			</Step>
 
-			<p id="quest-status" class="status" hidden>
-				<span data-lang="es">
-					✅ ¡Gracias! Hemos recibido tu cuestionario y te
-					contactaremos pronto.
-				</span>
-				<span data-lang="en">
-					✅ Thanks! We've received your questionnaire and
-					will contact you soon.
-				</span>
-			</p>
+			<Step id="estilo" n={4} total={total} {...steps[3]} intro={{ es: "Cómo quieres que se vea y se sienta.", en: "How you want it to look and feel." }}>
+				<Choices
+					name="estilo"
+					label={{ es: "Estilo deseado", en: "Desired style" }}
+					columns={3}
+					options={[
+						{ value: "Minimalista", icon: "◻️", label: { es: "Minimalista", en: "Minimalist" }, desc: { es: "Limpio y ordenado.", en: "Clean and tidy." } },
+						{ value: "Colorido y vibrante", icon: "🌈", label: { es: "Colorido y vibrante", en: "Colorful & vibrant" }, desc: { es: "Mucho color y energía.", en: "Lots of color and energy." } },
+						{ value: "Oscuro / gaming", icon: "🕹️", label: { es: "Oscuro / gaming", en: "Dark / gaming" }, desc: { es: "Tonos oscuros y neón.", en: "Dark tones and neon." } },
+						{ value: "Elegante / corporativo", icon: "🏛️", label: { es: "Elegante / corporativo", en: "Elegant / corporate" }, desc: { es: "Serio y profesional.", en: "Serious and professional." } },
+						{ value: "Anime / arte personalizado", icon: "🌸", label: { es: "Anime / arte propio", en: "Anime / custom art" }, desc: { es: "Ilustraciones y temática.", en: "Illustrations and theme." } },
+						{ value: "Otro", icon: "✨", label: { es: "Otro", en: "Other" }, desc: { es: "Cuéntanoslo abajo.", en: "Tell us below." } },
+					]}
+				/>
+				<Field
+					name="referencias"
+					type="textarea"
+					label={{ es: "Colores, referencias, logos o servidores que te gusten", en: "Colors, references, logos or servers you like" }}
+					maxlength={1000}
+					rows={3}
+					placeholder={{ es: "Ej. Azul y morado, https://discord.gg/… como referencia, logo en https://…", en: "e.g. Blue and purple, https://discord.gg/… as reference, logo at https://…" }}
+					help={{ es: "Puedes pegar enlaces.", en: "Links are welcome." }}
+				/>
+			</Step>
 
-			<p id="quest-error" class="status error" hidden>
-				<span data-lang="es">
-					⚠️ Ha ocurrido un error al enviar el formulario.
-					Escríbenos directamente a
-					<a href="mailto:oierps8@gmail.com">oierps8@gmail.com</a>.
-				</span>
-				<span data-lang="en">
-					⚠️ Something went wrong submitting the form. Please
-					email us directly at
-					<a href="mailto:oierps8@gmail.com">oierps8@gmail.com</a>.
-				</span>
-			</p>
+			<Step id="estructura" n={5} total={total} {...steps[4]} intro={{ es: "Pulsa las sugerencias para añadirlas o escribe lo tuyo. Si no lo tienes claro, déjalo en blanco y te proponemos una estructura.", en: "Tap the suggestions to add them or write your own. If you're not sure, leave it blank and we'll propose a structure." }}>
+				<Field
+					name="canales"
+					type="textarea"
+					label={{ es: "Canales y categorías que necesitas", en: "Channels and categories you need" }}
+					maxlength={1000}
+					rows={4}
+					chips={[
+						{ es: "📢 anuncios", en: "📢 announcements" },
+						{ es: "📜 reglas", en: "📜 rules" },
+						{ es: "👋 bienvenida", en: "👋 welcome" },
+						{ es: "💬 general" },
+						{ es: "🖼️ memes-y-clips", en: "🖼️ memes-and-clips" },
+						{ es: "🎮 juegos", en: "🎮 games" },
+						{ es: "🎫 soporte", en: "🎫 support" },
+						{ es: "🔊 canales de voz", en: "🔊 voice channels" },
+					]}
+				/>
+				<Field
+					name="roles"
+					type="textarea"
+					label={{ es: "Roles y permisos que necesitas", en: "Roles and permissions you need" }}
+					maxlength={1000}
+					rows={3}
+					chips={[
+						{ es: "👑 Owner" },
+						{ es: "🛡️ Admin" },
+						{ es: "🔨 Moderador", en: "🔨 Moderator" },
+						{ es: "⭐ VIP / Booster" },
+						{ es: "🤖 Bots" },
+						{ es: "👤 Miembro", en: "👤 Member" },
+					]}
+				/>
+				<Choices
+					name="bots"
+					type="checkbox"
+					label={{ es: "Bots y funciones necesarias", en: "Bots and features needed" }}
+					compact
+					options={bots}
+				>
+					<div class="wz-presets" slot="before">
+						{Object.entries(recommended).map(([purpose, values]) => (
+							<button
+								type="button"
+								class="wz-chip"
+								data-check-name="bots"
+								data-check-values={values.join("|")}
+								data-show-when={`proposito=${purpose}`}
+							>
+								✨ <T es="Marcar los recomendados para tu propósito" en="Tick the ones we recommend for your purpose" />
+							</button>
+						))}
+					</div>
+				</Choices>
+			</Step>
 
-		</form>
+			<Step id="detalles" n={6} total={total} {...steps[5]} intro={{ es: "Ya casi está.", en: "Almost there." }}>
+				<Field
+					name="plazo"
+					label={{ es: "Plazo deseado", en: "Desired timeframe" }}
+					maxlength={100}
+					placeholder={{ es: "Ej. 1 semana", en: "e.g. 1 week" }}
+					chipMode="replace"
+					chips={[
+						{ es: "Lo antes posible", en: "As soon as possible" },
+						{ es: "1 semana", en: "1 week" },
+						{ es: "2 semanas", en: "2 weeks" },
+						{ es: "1 mes", en: "1 month" },
+						{ es: "Sin prisa", en: "No rush" },
+					]}
+				/>
+				<Field
+					name="comentarios"
+					type="textarea"
+					label={{ es: "¿Algo más que debamos saber?", en: "Anything else we should know?" }}
+					maxlength={1000}
+					rows={4}
+				/>
+			</Step>
+
+		</Wizard>
 
 	</main>
 
@@ -468,166 +278,33 @@ import Footer from "../components/Footer.astro";
 
 </Layout>
 
-
 <script>
-	import { submitForm } from "../scripts/submit";
+	import { initWizard } from "../scripts/wizard";
 
-	const form = document.getElementById("quest-form") as HTMLFormElement | null;
-	const status = document.getElementById("quest-status");
-	const error = document.getElementById("quest-error");
-	const errorSummary = document.getElementById("form-error-summary");
+	initWizard({
+		formId: "quest-form",
+		buildPayload: (data) => {
+			const get = (name: string) => (data.get(name) || "").toString().trim();
+			const getAll = (name: string) => data.getAll(name).join(", ");
 
-	const submitBtn = form?.querySelector<HTMLButtonElement>(".submit");
-	const submitLabel = submitBtn?.querySelector(".submit-label:not(.submit-loading)");
-	const submitLoading = submitBtn?.querySelector(".submit-loading");
-
-	const messages = {
-		es: { required: "Este campo es obligatorio.", choose: "Elige una opción.", email: "Introduce un email válido." },
-		en: { required: "This field is required.", choose: "Please choose an option.", email: "Enter a valid email address." },
-	};
-
-	const currentLang = () => (document.documentElement.lang === "en" ? "en" : "es");
-
-	const clearFieldError = (input: HTMLElement, errorId: string) => {
-		input.removeAttribute("aria-invalid");
-		const el = document.getElementById(errorId);
-		if (el) el.textContent = "";
-	};
-
-	const setFieldError = (input: HTMLElement, errorId: string, text: string) => {
-		input.setAttribute("aria-invalid", "true");
-		const el = document.getElementById(errorId);
-		if (el) el.textContent = text;
-	};
-
-	const validateForm = (): boolean => {
-		if (!form) return false;
-
-		let firstInvalid: HTMLElement | null = null;
-		const lang = currentLang();
-
-		const requiredTextFields = [
-			{ name: "nombre", errorId: "err-nombre" },
-			{ name: "email", errorId: "err-email" },
-		];
-
-		for (const { name, errorId } of requiredTextFields) {
-			const input = form.elements.namedItem(name) as HTMLInputElement | null;
-			if (!input) continue;
-
-			if (!input.value.trim()) {
-				setFieldError(input, errorId, messages[lang].required);
-				firstInvalid ??= input;
-			} else if (name === "email" && !input.checkValidity()) {
-				setFieldError(input, errorId, messages[lang].email);
-				firstInvalid ??= input;
-			} else {
-				clearFieldError(input, errorId);
-			}
-		}
-
-		const proposito = form.elements.namedItem("proposito") as HTMLSelectElement | null;
-		if (proposito) {
-			if (!proposito.value) {
-				setFieldError(proposito, "err-proposito", messages[lang].choose);
-				firstInvalid ??= proposito;
-			} else {
-				clearFieldError(proposito, "err-proposito");
-			}
-		}
-
-		const tipoRadios = form.querySelectorAll<HTMLInputElement>('input[name="tipo"]');
-		const tipoChecked = Array.from(tipoRadios).some((r) => r.checked);
-		const tipoError = document.getElementById("err-tipo");
-		if (!tipoChecked) {
-			if (tipoError) tipoError.textContent = messages[lang].choose;
-			firstInvalid ??= tipoRadios[0];
-		} else if (tipoError) {
-			tipoError.textContent = "";
-		}
-
-		if (errorSummary) {
-			if (firstInvalid) {
-				errorSummary.textContent =
-					lang === "es"
-						? "Revisa los campos marcados en rojo antes de enviar."
-						: "Please check the fields highlighted in red before submitting.";
-				errorSummary.hidden = false;
-			} else {
-				errorSummary.hidden = true;
-				errorSummary.textContent = "";
-			}
-		}
-
-		firstInvalid?.focus();
-		return !firstInvalid;
-	};
-
-	const COOLDOWN_MS = 8000;
-	let cooling = false;
-
-	const setSubmitting = (submitting: boolean) => {
-		submitBtn?.toggleAttribute("disabled", submitting);
-		submitLabel?.toggleAttribute("hidden", submitting);
-		submitLoading?.toggleAttribute("hidden", !submitting);
-	};
-
-	form?.addEventListener("submit", async (e) => {
-		e.preventDefault();
-		if (cooling) return;
-
-		status?.setAttribute("hidden", "");
-		error?.setAttribute("hidden", "");
-
-		const honeypot = form.elements.namedItem("website") as HTMLInputElement | null;
-		if (honeypot?.value) {
-			form.reset();
-			status?.removeAttribute("hidden");
-			return;
-		}
-
-		if (!validateForm()) return;
-
-		const data = new FormData(form);
-		const get = (name: string) => (data.get(name) || "").toString().trim();
-		const getAll = (name: string) => data.getAll(name).join(", ");
-
-		const payload = {
-			form: "discord",
-			nombre: get("nombre"),
-			discord: get("discord"),
-			email: get("email"),
-			tipo: get("tipo"),
-			invite: get("invite"),
-			proposito: get("proposito"),
-			proposito_detalle: get("proposito_detalle"),
-			tamano: get("tamano"),
-			estilo: get("estilo"),
-			referencias: get("referencias"),
-			canales: get("canales"),
-			roles: get("roles"),
-			bots: getAll("bots"),
-			plazo: get("plazo"),
-			comentarios: get("comentarios"),
-		};
-
-		setSubmitting(true);
-		cooling = true;
-
-		try {
-			await submitForm(payload);
-
-			form.reset();
-			status?.removeAttribute("hidden");
-		} catch (err) {
-			error?.removeAttribute("hidden");
-		} finally {
-			setSubmitting(false);
-			setTimeout(() => {
-				cooling = false;
-			}, COOLDOWN_MS);
-		}
+			return {
+				form: "discord",
+				nombre: get("nombre"),
+				discord: get("discord"),
+				email: get("email"),
+				tipo: get("tipo"),
+				invite: get("invite"),
+				proposito: get("proposito"),
+				proposito_detalle: get("proposito_detalle"),
+				tamano: get("tamano"),
+				estilo: get("estilo"),
+				referencias: get("referencias"),
+				canales: get("canales"),
+				roles: get("roles"),
+				bots: getAll("bots"),
+				plazo: get("plazo"),
+				comentarios: get("comentarios"),
+			};
+		},
 	});
 </script>
-
-

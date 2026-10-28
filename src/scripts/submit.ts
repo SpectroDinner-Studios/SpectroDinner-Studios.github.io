@@ -10,13 +10,14 @@ const postJson = (url: string, payload: unknown) =>
 
 /**
  * Sends a form to our backend (/api/submit on Cloudflare Pages), which stores
- * it in D1 and forwards it to Make.
+ * it in D1 and forwards it to Make. Resolves with the stored request id.
  *
  * When there's no backend — the GitHub Pages copy of the site, or D1 not set
- * up yet — it falls back to posting straight to Make, as the site always did.
- * Rejections from a working backend (bad data, rate limit) are real errors.
+ * up yet — it falls back to posting straight to Make, as the site always did
+ * (no id in that case). Rejections from a working backend (bad data, rate
+ * limit) are real errors.
  */
-export async function submitForm(payload: Record<string, unknown>): Promise<void> {
+export async function submitForm(payload: Record<string, unknown>): Promise<{ id?: number }> {
 	let response: Response | null = null;
 
 	try {
@@ -25,7 +26,10 @@ export async function submitForm(payload: Record<string, unknown>): Promise<void
 		// Network error reaching the backend: fall through to Make.
 	}
 
-	if (response?.ok) return;
+	if (response?.ok) {
+		const body = (await response.json().catch(() => ({}))) as { id?: unknown };
+		return { id: typeof body.id === "number" ? body.id : undefined };
+	}
 
 	if (response && (response.status === 400 || response.status === 429)) {
 		throw new Error(`Backend rejected the submission (${response.status})`);
@@ -33,4 +37,5 @@ export async function submitForm(payload: Record<string, unknown>): Promise<void
 
 	const fallback = await postJson(MAKE_WEBHOOK_URL, payload);
 	if (!fallback.ok) throw new Error("Request failed");
+	return {};
 }

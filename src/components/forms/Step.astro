@@ -1,0 +1,35 @@
+---
+import T from "../T.astro";
+
+type Text = { es: string; en?: string };
+
+interface Props {
+	id: string;
+	n: number;
+	total: number;
+	icon: string;
+	title: Text;
+	intro?: Text;
+}
+
+const { id, n, total, icon, title, intro } = Astro.props;
+---
+
+<section class="wz-step" data-step={id} aria-labelledby={`wz-h-${id}`}>
+
+	<header class="wz-step-head">
+		<span class="wz-kicker">
+			<T es="Paso" en="Step" /> {n} / {total}
+		</span>
+		<h2 id={`wz-h-${id}`} tabindex="-1">
+			<span class="wz-step-icon" aria-hidden="true">{icon}</span>
+			<span class="wz-step-title"><T {...title} /></span>
+		</h2>
+		{intro && <p class="wz-intro"><T {...intro} /></p>}
+	</header>
+
+	<div class="wz-grid">
+		<slot />
+	</div>
+
+</section>
