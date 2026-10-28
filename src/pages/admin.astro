@@ -1,0 +1,519 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const tabs = [
+	{ form: "review", label: "Valoraciones", icon: "⭐" },
+	{ form: "discord", label: "Discord", icon: "💬" },
+	{ form: "minecraft", label: "Minecraft", icon: "⛏️" },
+	{ form: "voluntariado", label: "Voluntariado", icon: "🤝" },
+];
+---
+
+<Layout title="Admin | SpectroDinner™" description="Panel de administración." noindex>
+
+	<main class="admin-page container">
+
+		<header class="admin-head">
+			<a href="/" class="admin-brand">
+				<img src="/logo.png" alt="" width="32" height="32" />
+				<span>SPECTRO<b>DINNER</b> <small>// ADMIN</small></span>
+			</a>
+			<button type="button" id="logout" class="btn btn-ghost btn-sm" hidden>Cerrar sesión</button>
+		</header>
+
+		<section id="state-loading" class="admin-state">
+			<p class="mono"><span class="prompt">&gt;</span> Conectando con el backend…<span class="cursor"></span></p>
+		</section>
+
+		<section id="state-unavailable" class="admin-state hud-card" hidden>
+			<span class="chip chip-gold">Sin backend</span>
+			<h1 class="title">El panel no funciona aquí</h1>
+			<p>
+				Esta copia de la web no tiene backend (por ejemplo, la de GitHub Pages).
+				Entra desde <a href="https://spectrodinner-studios.pages.dev/admin">spectrodinner-studios.pages.dev/admin</a>.
+			</p>
+		</section>
+
+		<section id="state-unconfigured" class="admin-state hud-card" hidden>
+			<span class="chip chip-gold">Falta configuración</span>
+			<h1 class="title">Backend sin configurar</h1>
+			<p>
+				En Cloudflare → Workers &amp; Pages → <b>spectrodinner-studios</b> → Settings, añade:
+			</p>
+			<ul>
+				<li><b>Bindings</b> → D1 database con el nombre de variable <code>DB</code>.</li>
+				<li><b>Variables and secrets</b> → secretos <code>ADMIN_PASSWORD</code> y <code>SESSION_SECRET</code>.</li>
+			</ul>
+			<p>Después vuelve a desplegar. Mientras tanto los formularios siguen llegando a Make como siempre.</p>
+		</section>
+
+		<section id="state-login" class="admin-state" hidden>
+			<form id="login-form" class="hud-card login">
+				<span class="eyebrow">Acceso restringido</span>
+				<h1 class="title">Panel de administración</h1>
+				<label>
+					Contraseña
+					<input type="password" name="password" autocomplete="current-password" required autofocus />
+				</label>
+				<button type="submit" class="btn btn-primary">Entrar →</button>
+				<p id="login-error" class="admin-error" hidden>Contraseña incorrecta.</p>
+			</form>
+		</section>
+
+		<section id="state-dashboard" class="admin-state" hidden>
+
+			<nav class="admin-tabs" aria-label="Formularios">
+				{tabs.map((tab, i) => (
+					<button type="button" class:list={["admin-tab", { active: i === 0 }]} data-form={tab.form}>
+						<span>{tab.icon}</span>
+						{tab.label}
+						<span class="admin-badge" data-badge={tab.form} hidden></span>
+					</button>
+				))}
+			</nav>
+
+			<p id="admin-empty" class="admin-empty" hidden>No hay nada aquí todavía.</p>
+
+			<div id="admin-list" class="admin-list"></div>
+
+		</section>
+
+	</main>
+
+</Layout>
+
+<script>
+	type Submission = {
+		id: number;
+		created_at: string;
+		form: string;
+		status: string;
+		data: Record<string, string | number | string[]>;
+	};
+
+	type Count = { form: string; status: string; n: number };
+
+	const states = ["loading", "unavailable", "unconfigured", "login", "dashboard"] as const;
+
+	const show = (state: (typeof states)[number]) => {
+		for (const s of states) {
+			document.getElementById(`state-${s}`)!.hidden = s !== state;
+		}
+		document.getElementById("logout")!.hidden = state !== "dashboard";
+	};
+
+	const api = (path: string, body?: unknown) =>
+		fetch(`/api/admin/${path}`, {
+			method: body === undefined ? "GET" : "POST",
+			headers: body === undefined ? undefined : { "Content-Type": "application/json" },
+			body: body === undefined ? undefined : JSON.stringify(body),
+			credentials: "same-origin",
+		});
+
+	const handleStatus = (res: Response) => {
+		if (res.status === 404 || res.status === 405) show("unavailable");
+		else if (res.status === 503) show("unconfigured");
+		else if (res.status === 401) show("login");
+		return res.ok;
+	};
+
+	// ---------- Rendering ----------
+
+	const list = document.getElementById("admin-list")!;
+	const empty = document.getElementById("admin-empty")!;
+	let currentForm = "review";
+
+	const el = <K extends keyof HTMLElementTagNameMap>(
+		tag: K,
+		className = "",
+		text = ""
+	): HTMLElementTagNameMap[K] => {
+		const node = document.createElement(tag);
+		if (className) node.className = className;
+		if (text) node.textContent = text;
+		return node;
+	};
+
+	const STATUS_LABEL: Record<string, string> = {
+		pending: "Pendiente",
+		approved: "Publicada",
+		hidden: "Oculta",
+		new: "Nuevo",
+		read: "Leído",
+	};
+
+	const prettyKey = (key: string) =>
+		key.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+
+	const formatDate = (value: string) =>
+		new Date(`${value.replace(" ", "T")}Z`).toLocaleString("es-ES", {
+			dateStyle: "medium",
+			timeStyle: "short",
+		});
+
+	const actionButton = (label: string, onClick: () => void, danger = false) => {
+		const button = el("button", `btn btn-sm ${danger ? "btn-danger" : "btn-ghost"}`, label);
+		button.type = "button";
+		button.addEventListener("click", onClick);
+		return button;
+	};
+
+	const act = async (id: number, action: string) => {
+		if (action === "delete" && !confirm("¿Eliminar este envío? No se puede deshacer.")) return;
+		const res = await api("submissions", { id, action });
+		if (handleStatus(res)) load();
+	};
+
+	const renderItem = (item: Submission) => {
+		const card = el("article", `admin-item hud-card status-${item.status}`);
+
+		const head = el("div", "admin-item-head");
+		const who = String(item.data.nickname ?? item.data.nombre ?? "—");
+		head.append(
+			el("strong", "", who),
+			el("span", `chip ${item.status === "pending" || item.status === "new" ? "chip-gold" : ""}`, STATUS_LABEL[item.status] ?? item.status),
+			el("span", "admin-date", formatDate(item.created_at))
+		);
+		card.append(head);
+
+		if (item.form === "review") {
+			const rating = Number(item.data.rating) || 0;
+			card.append(
+				el("span", "admin-stars", "★".repeat(rating) + "☆".repeat(5 - rating)),
+				el("p", "admin-quote", `"${item.data.comment ?? ""}"`)
+			);
+			if (item.data.service) card.append(el("p", "admin-meta", String(item.data.service)));
+		} else {
+			const details = el("dl", "admin-fields");
+			for (const [key, value] of Object.entries(item.data)) {
+				if (key === "form") continue;
+				const text = Array.isArray(value) ? value.join(", ") : String(value);
+				if (!text) continue;
+				details.append(el("dt", "", prettyKey(key)), el("dd", "", text));
+			}
+			card.append(details);
+		}
+
+		const actions = el("div", "actions");
+		if (item.form === "review") {
+			actions.append(
+				item.status === "approved"
+					? actionButton("Ocultar", () => act(item.id, "hide"))
+					: actionButton("Publicar ✓", () => act(item.id, "approve"))
+			);
+		} else {
+			actions.append(
+				item.status === "new"
+					? actionButton("Marcar leído", () => act(item.id, "read"))
+					: actionButton("Marcar como nuevo", () => act(item.id, "unread"))
+			);
+		}
+		actions.append(actionButton("Eliminar", () => act(item.id, "delete"), true));
+		card.append(actions);
+
+		return card;
+	};
+
+	const renderBadges = (counts: Count[]) => {
+		document.querySelectorAll<HTMLElement>("[data-badge]").forEach((badge) => {
+			const n = counts
+				.filter((c) => c.form === badge.dataset.badge && (c.status === "pending" || c.status === "new"))
+				.reduce((sum, c) => sum + c.n, 0);
+			badge.textContent = String(n);
+			badge.hidden = n === 0;
+		});
+	};
+
+	// ---------- Data ----------
+
+	const load = async () => {
+		const res = await api(`submissions?form=${currentForm}`);
+		if (!handleStatus(res)) return;
+
+		const { submissions, counts } = (await res.json()) as { submissions: Submission[]; counts: Count[] };
+
+		show("dashboard");
+		renderBadges(counts);
+		list.replaceChildren(...submissions.map(renderItem));
+		empty.hidden = submissions.length > 0;
+	};
+
+	document.querySelectorAll<HTMLButtonElement>(".admin-tab").forEach((tab) => {
+		tab.addEventListener("click", () => {
+			document.querySelectorAll(".admin-tab").forEach((t) => t.classList.toggle("active", t === tab));
+			currentForm = tab.dataset.form!;
+			load();
+		});
+	});
+
+	document.getElementById("login-form")?.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const form = e.currentTarget as HTMLFormElement;
+		const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+		const error = document.getElementById("login-error")!;
+
+		const res = await api("login", { password });
+		if (res.ok) {
+			form.reset();
+			error.hidden = true;
+			load();
+		} else if (res.status === 401) {
+			error.hidden = false;
+		} else {
+			handleStatus(res);
+		}
+	});
+
+	document.getElementById("logout")?.addEventListener("click", async () => {
+		await api("logout", {});
+		show("login");
+	});
+
+	(async () => {
+		try {
+			const res = await api("session");
+			if (handleStatus(res)) load();
+		} catch {
+			show("unavailable");
+		}
+	})();
+</script>
+
+<style is:global>
+
+.admin-page {
+	max-width: 980px;
+	padding-top: 32px;
+	padding-bottom: 80px;
+}
+
+.admin-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 48px;
+}
+
+.admin-brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+
+	font-family: var(--font-display);
+	font-weight: 700;
+	letter-spacing: .05em;
+	text-decoration: none;
+}
+
+.admin-brand b {
+	color: var(--primary-light);
+}
+
+.admin-brand small {
+	font-family: var(--font-pixel);
+	font-weight: 400;
+	font-size: .72rem;
+	color: var(--text-dim);
+}
+
+.admin-state.hud-card {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 16px;
+	color: var(--text-muted);
+	line-height: 1.7;
+}
+
+.admin-state a {
+	color: var(--primary-light);
+}
+
+.admin-state code {
+	padding: 2px 6px;
+	font-size: .9em;
+	background: var(--bg-sunken);
+	border: 1px solid var(--border-1);
+}
+
+.admin-state .prompt {
+	color: var(--primary-light);
+	margin-right: 8px;
+}
+
+.login {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	max-width: 420px;
+	margin: 40px auto 0;
+}
+
+.login label {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	font-weight: 600;
+}
+
+.login input {
+	padding: 12px 14px;
+	font: inherit;
+	color: var(--text);
+	background: var(--bg-sunken);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-xs);
+}
+
+.login input:focus {
+	border-color: var(--primary);
+	outline: none;
+	box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.admin-error {
+	color: var(--danger);
+}
+
+.admin-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 24px;
+}
+
+.admin-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+
+	padding: 10px 16px;
+
+	font-family: var(--font-display);
+	font-size: .95rem;
+	font-weight: 600;
+	color: var(--text-muted);
+
+	background: var(--surface-1);
+	border: 1px solid var(--border-1);
+	border-radius: var(--radius-xs);
+
+	cursor: pointer;
+}
+
+.admin-tab.active {
+	color: var(--text);
+	background: var(--primary-bg);
+	border-color: var(--primary);
+	box-shadow: inset 0 -2px 0 var(--primary);
+}
+
+.admin-badge {
+	min-width: 22px;
+	padding: 1px 6px;
+
+	font-family: var(--font-pixel);
+	font-size: .7rem;
+	text-align: center;
+	color: #1C1305;
+
+	background: var(--gold);
+}
+
+.admin-empty {
+	color: var(--text-dim);
+}
+
+.admin-list {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.admin-item {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 22px 24px;
+}
+
+.admin-item.status-read,
+.admin-item.status-hidden {
+	opacity: .65;
+}
+
+.admin-item-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+}
+
+.admin-item-head strong {
+	font-family: var(--font-display);
+	font-size: 1.15rem;
+}
+
+.admin-date {
+	margin-left: auto;
+	font-size: .85rem;
+	color: var(--text-dim);
+}
+
+.admin-stars {
+	color: var(--gold);
+	letter-spacing: 3px;
+}
+
+.admin-quote {
+	color: var(--text);
+	line-height: 1.7;
+}
+
+.admin-meta {
+	font-size: .88rem;
+	color: var(--text-dim);
+}
+
+.admin-fields {
+	display: grid;
+	grid-template-columns: 190px 1fr;
+	gap: 8px 16px;
+	margin: 0;
+}
+
+.admin-fields dt {
+	font-family: var(--font-pixel);
+	font-size: .7rem;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	color: var(--primary-light);
+	padding-top: 3px;
+}
+
+.admin-fields dd {
+	margin: 0;
+	color: var(--text);
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.btn-danger {
+	--btn-bg: color-mix(in srgb, var(--danger) 14%, transparent);
+	--btn-fg: var(--danger);
+	--btn-ring: color-mix(in srgb, var(--danger) 45%, transparent);
+}
+
+@media (max-width: 640px) {
+
+	.admin-fields {
+		grid-template-columns: 1fr;
+		gap: 2px;
+	}
+
+	.admin-fields dd {
+		margin-bottom: 8px;
+	}
+}
+
+</style>

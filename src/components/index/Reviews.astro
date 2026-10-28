@@ -69,7 +69,8 @@ const stars = (rating: number) =>
 						<div class="score-meta">
 							<span class="score-stars" aria-hidden="true">{stars(Math.round(average))}</span>
 							<span class="score-count">
-								<T es={`basado en ${count} valoraciones`} en={`based on ${count} reviews`} />
+								<span data-lang="es">basado en <b class="review-count">{count}</b> valoraciones</span>
+								<span data-lang="en">based on <b class="review-count">{count}</b> reviews</span>
 							</span>
 						</div>
 						<a href="#review-form" class="btn btn-ghost btn-sm">
@@ -81,7 +82,7 @@ const stars = (rating: number) =>
 						<div class="carousel reveal">
 							<div class="carousel-track">
 								{reviews.map((review) => (
-									<article class="card hud-card gold">
+									<article class="card hud-card gold" data-rating={review.rating}>
 										<div class="author">
 											<span class="avatar" aria-hidden="true">{review.name.charAt(0)}</span>
 											<div>
@@ -108,7 +109,11 @@ const stars = (rating: number) =>
 					) : (
 						<div class="grid">
 							{reviews.map((review, i) => (
-								<article class="card hud-card gold interactive reveal" style={`--reveal-delay:${i * 80}ms`}>
+								<article
+									class="card hud-card gold interactive reveal"
+									style={`--reveal-delay:${i * 80}ms`}
+									data-rating={review.rating}
+								>
 									<div class="author">
 										<span class="avatar" aria-hidden="true">{review.name.charAt(0)}</span>
 										<div>
@@ -134,6 +139,21 @@ const stars = (rating: number) =>
 				</div>
 			)
 		}
+
+		<!-- Card for reviews approved in /admin, filled in by the script below. -->
+		<template id="review-template">
+			<article class="card hud-card gold interactive">
+				<div class="author">
+					<span class="avatar" aria-hidden="true"></span>
+					<div>
+						<strong class="name"></strong>
+						<span class="service"></span>
+					</div>
+				</div>
+				<span class="card-stars"></span>
+				<p class="text"></p>
+			</article>
+		</template>
 
 		<div class="leave form-ui">
 
@@ -262,6 +282,8 @@ const stars = (rating: number) =>
 </section>
 
 <script>
+	import { submitForm } from "../../scripts/submit";
+
 	const prefersReducedMotion = window.matchMedia(
 		"(prefers-reduced-motion: reduce)"
 	).matches;
@@ -321,8 +343,66 @@ const stars = (rating: number) =>
 		}
 	}
 
-	const MAKE_WEBHOOK_URL =
-		"https://hook.eu1.make.com/0k965b8ykue9xfa4wuny31jj5w5liinb";
+	// Reviews approved from the admin panel. Only the Cloudflare copy of the
+	// site has /api; anywhere else this quietly keeps the hard-coded reviews.
+	const loadApprovedReviews = async () => {
+		const container = document.querySelector<HTMLElement>(
+			"#valoraciones .grid, #valoraciones .carousel-track"
+		);
+		const template = document.getElementById("review-template") as HTMLTemplateElement | null;
+		if (!container || !template) return;
+
+		let approved: { name: string; service: string; rating: number; text: string }[] = [];
+
+		try {
+			const res = await fetch("/api/reviews");
+			if (!res.ok) return;
+			approved = (await res.json()).reviews ?? [];
+		} catch {
+			return;
+		}
+
+		const starsFor = (rating: number) => "★".repeat(rating) + "☆".repeat(5 - rating);
+
+		for (const review of approved) {
+			const card = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
+			const rating = Math.min(5, Math.max(1, Math.round(review.rating)));
+
+			card.dataset.rating = String(rating);
+			card.querySelector(".avatar")!.textContent = review.name.charAt(0);
+			card.querySelector(".name")!.textContent = review.name;
+
+			const service = card.querySelector(".service")!;
+			if (review.service) service.textContent = review.service;
+			else service.remove();
+
+			const cardStars = card.querySelector(".card-stars")!;
+			cardStars.textContent = starsFor(rating);
+			cardStars.setAttribute("aria-label", `${rating}/5`);
+
+			card.querySelector(".text")!.textContent = `"${review.text}"`;
+
+			container.append(card);
+		}
+
+		const ratings = Array.from(
+			document.querySelectorAll<HTMLElement>("#valoraciones [data-rating]"),
+			(card) => Number(card.dataset.rating)
+		);
+		if (!ratings.length) return;
+
+		const average = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
+
+		const scoreNumber = document.querySelector("#valoraciones .score-number");
+		const scoreStars = document.querySelector("#valoraciones .score-stars");
+		if (scoreNumber) scoreNumber.textContent = average.toFixed(1);
+		if (scoreStars) scoreStars.textContent = starsFor(Math.round(average));
+		document.querySelectorAll("#valoraciones .review-count").forEach((el) => {
+			el.textContent = String(ratings.length);
+		});
+	};
+
+	loadApprovedReviews();
 
 	const form = document.getElementById("review-form") as HTMLFormElement | null;
 	const status = document.getElementById("review-status");
@@ -436,13 +516,7 @@ const stars = (rating: number) =>
 		cooling = true;
 
 		try {
-			const response = await fetch(MAKE_WEBHOOK_URL, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(payload),
-			});
-
-			if (!response.ok) throw new Error("Request failed");
+			await submitForm(payload);
 
 			form.reset();
 			status?.removeAttribute("hidden");

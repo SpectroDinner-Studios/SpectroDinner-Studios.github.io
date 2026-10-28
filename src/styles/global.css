@@ -230,6 +230,11 @@
 	box-sizing: border-box;
 }
 
+/* `hidden` must win over any component `display` rule. */
+[hidden] {
+	display: none !important;
+}
+
 html {
 	scroll-behavior: smooth;
 	scroll-padding-top: calc(var(--header-h) + 16px);

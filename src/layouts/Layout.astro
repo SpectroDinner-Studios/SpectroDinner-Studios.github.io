@@ -33,6 +33,9 @@ const ogImageURL = new URL("/logo.png", Astro.site);
 				var onMaintenancePage =
 					location.pathname.replace(/\/$/, "") === "/mantenimiento";
 
+				// The admin panel must stay reachable during maintenance.
+				if (location.pathname.replace(/\/$/, "") === "/admin") return;
+
 				try {
 					var settled = false;
 

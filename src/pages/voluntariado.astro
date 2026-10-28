@@ -289,7 +289,7 @@ import Footer from "../components/Footer.astro";
 
 
 <script>
-	const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/0k965b8ykue9xfa4wuny31jj5w5liinb";
+	import { submitForm } from "../scripts/submit";
 
 	const form = document.getElementById("volunteer-form") as HTMLFormElement | null;
 	const status = document.getElementById("quest-status");
@@ -417,13 +417,7 @@ import Footer from "../components/Footer.astro";
 		cooling = true;
 
 		try {
-			const response = await fetch(MAKE_WEBHOOK_URL, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(payload),
-			});
-
-			if (!response.ok) throw new Error("Request failed");
+			await submitForm(payload);
 
 			form.reset();
 			status?.removeAttribute("hidden");

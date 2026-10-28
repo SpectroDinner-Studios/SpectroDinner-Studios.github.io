@@ -538,6 +538,8 @@ import Footer from "../components/Footer.astro";
 
 
 <script>
+	import { submitForm } from "../scripts/submit";
+
 	// --------------------------------------------------------------------
 	// Priority meter — based on how many of the OPTIONAL technical fields
 	// are filled in (completeness), not on how much text is written.
@@ -695,8 +697,6 @@ import Footer from "../components/Footer.astro";
 	// --------------------------------------------------------------------
 	// Submit: honeypot check, validation, cooldown, fetch to the webhook.
 	// --------------------------------------------------------------------
-	const MAKE_WEBHOOK_URL =
-		"https://hook.eu1.make.com/0k965b8ykue9xfa4wuny31jj5w5liinb";
 
 	const status = document.getElementById("quest-status");
 	const error = document.getElementById("quest-error");
@@ -760,13 +760,7 @@ import Footer from "../components/Footer.astro";
 		cooling = true;
 
 		try {
-			const response = await fetch(MAKE_WEBHOOK_URL, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(payload),
-			});
-
-			if (!response.ok) throw new Error("Request failed");
+			await submitForm(payload);
 
 			form.reset();
 			updatePriority();

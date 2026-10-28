@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /mantenimiento
+Disallow: /admin
+Disallow: /api/
 
 Sitemap: https://spectrodinner-studios.github.io/sitemap.xml
