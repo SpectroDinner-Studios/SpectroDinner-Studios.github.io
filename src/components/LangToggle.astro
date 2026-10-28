@@ -1,7 +1,7 @@
 <button type="button" class="lang-toggle" aria-label="Switch language / Cambiar idioma">
-	<span class="globe">🌐</span>
-	<span data-lang="es">EN</span>
-	<span data-lang="en">ES</span>
+	<span class="lang-opt" data-opt="es">ES</span>
+	<span class="lang-sep" aria-hidden="true">/</span>
+	<span class="lang-opt" data-opt="en">EN</span>
 </button>
 
 <script>
@@ -26,41 +26,57 @@
 </script>
 
 <style>
+
 .lang-toggle {
-	display: flex;
-
+	display: inline-flex;
 	align-items: center;
+	gap: 5px;
 
-	gap: 8px;
+	height: 42px;
+	padding: 0 12px;
 
-	padding: 10px 16px;
-
-	border-radius: 12px;
+	font-family: var(--font-pixel);
+	font-size: .78rem;
+	letter-spacing: .04em;
+	color: var(--text-dim);
 
 	background: var(--surface-2);
-
 	border: 1px solid var(--border-2);
-
-	color: var(--text);
-
-	font-weight: 700;
-
-	font-size: 0.85rem;
+	border-radius: var(--radius-xs);
 
 	cursor: pointer;
 
-	transition: 0.25s ease;
+	transition:
+		border-color var(--transition),
+		background var(--transition);
 }
 
 .lang-toggle:hover {
-	background: var(--surface-hover);
-
-	border-color: color-mix(in srgb, var(--primary) 40%, transparent);
-
-	transform: translateY(-2px);
+	border-color: var(--primary-border);
+	background: var(--primary-bg);
 }
 
-.globe {
-	font-size: 0.95rem;
+.lang-sep {
+	opacity: .5;
 }
+
+:global(html:not([lang="en"])) .lang-opt[data-opt="es"],
+:global(html[lang="en"]) .lang-opt[data-opt="en"] {
+	color: var(--primary-light);
+}
+
+/* On small screens show only the active language to save room. */
+@media (max-width: 480px) {
+
+	.lang-toggle {
+		padding: 0 10px;
+	}
+
+	.lang-sep,
+	:global(html:not([lang="en"])) .lang-opt[data-opt="en"],
+	:global(html[lang="en"]) .lang-opt[data-opt="es"] {
+		display: none;
+	}
+}
+
 </style>

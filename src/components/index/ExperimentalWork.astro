@@ -1,38 +1,51 @@
-<section class="experimental">
+---
+import T from "../T.astro";
+
+const slots = Array.from({ length: 8 });
+---
+
+<section class="section-sm">
 
 	<div class="container">
 
-		<div class="card reveal spotlight">
+		<div class="hud-card lab reveal">
 
-			<div class="icon">
-				🧪
+			<div class="copy">
+
+				<span class="eyebrow">
+					<span class="idx">04 //</span>
+					<T es="Tecnología experimental" en="Experimental technology" />
+				</span>
+
+				<h2 class="title">
+					<T es="Experimentos y prototipos" en="Experiments & prototypes" />
+				</h2>
+
+				<p>
+					<T
+						es="Además de nuestros proyectos principales, SpectroDinner Studios dedica tiempo a probar nuevas ideas, mecánicas y tecnologías. No todo experimento se convierte en un proyecto público — esta sección se irá completando a medida que ese trabajo alcance un estado presentable."
+						en="Alongside our main projects, SpectroDinner Studios spends time testing new ideas, mechanics and technologies. Not every experiment becomes a public project — this section will grow as that work reaches a presentable state."
+					/>
+				</p>
+
 			</div>
 
-			<span class="eyebrow">
-				<span data-lang="es">TECNOLOGÍA EXPERIMENTAL</span>
-				<span data-lang="en">EXPERIMENTAL TECHNOLOGY</span>
-			</span>
+			<div class="inventory" aria-hidden="true">
 
-			<h2>
-				<span data-lang="es">Experimentos y prototipos</span>
-				<span data-lang="en">Experiments & Prototypes</span>
-			</h2>
+				<div class="inventory-head">
+					<span>LAB.INV</span>
+					<span>0 / {slots.length}</span>
+				</div>
 
-			<p data-lang="es">
-				Además de nuestros proyectos principales, SpectroDinner
-				Studios dedica tiempo a probar nuevas ideas, mecánicas
-				y tecnologías. No todo experimento se convierte en un
-				proyecto público — esta sección se irá completando a
-				medida que ese trabajo alcance un estado presentable.
-			</p>
+				<div class="slots">
+					{slots.map(() => <span class="slot">?</span>)}
+				</div>
 
-			<p data-lang="en">
-				Alongside our main projects, SpectroDinner Studios
-				spends time testing new ideas, mechanics and
-				technologies. Not every experiment becomes a public
-				project — this section will grow as that work reaches
-				a presentable state.
-			</p>
+				<span class="inventory-foot">
+					<T es="Ranuras bloqueadas — próximamente" en="Locked slots — coming soon" />
+				</span>
+
+			</div>
 
 		</div>
 
@@ -40,109 +53,96 @@
 
 </section>
 
-
 <style>
 
-.experimental {
+.lab {
+	display: grid;
+	grid-template-columns: 1.3fr 1fr;
+	align-items: center;
+	gap: 48px;
 
-	padding:60px 32px 100px;
-
+	padding: 44px;
 }
 
-
-.container {
-
-	max-width:900px;
-
-	margin:auto;
-
+.copy {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
 }
 
-
-.card {
-
-	padding:56px;
-
-	border-radius:32px;
-
-	text-align:center;
-
-	background:var(--surface-1);
-
-	border:1px dashed var(--border-2);
-
-	backdrop-filter:blur(15px);
-
+.copy p {
+	color: var(--text-muted);
+	line-height: 1.8;
 }
 
+.inventory {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 
-.icon {
+	padding: 16px;
 
-	font-size:2.4rem;
-
+	background: var(--bg-sunken);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-xs);
 }
 
+.inventory-head,
+.inventory-foot {
+	display: flex;
+	justify-content: space-between;
 
-.eyebrow {
-
-	display:block;
-
-	margin-top:18px;
-
-	font-size:.85rem;
-
-	letter-spacing:3px;
-
-	color:var(--primary);
-
-	font-weight:700;
-
+	font-family: var(--font-pixel);
+	font-size: .68rem;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--text-dim);
 }
 
-
-h2 {
-
-	margin-top:18px;
-
-	font-size:clamp(1.7rem,3.5vw,2.4rem);
-
-	color:var(--text);
-
-	letter-spacing:-1px;
-
+.slots {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 6px;
 }
 
+.slot {
+	display: grid;
+	place-items: center;
 
-p {
+	aspect-ratio: 1;
 
-	max-width:640px;
+	font-family: var(--font-pixel);
+	font-size: 1.3rem;
+	color: var(--border-3);
 
-	margin:20px auto 0;
+	background: var(--surface-1);
+	border: 2px solid var(--border-1);
+	box-shadow:
+		inset 2px 2px 0 rgba(0, 0, 0, .35),
+		inset -2px -2px 0 rgba(255, 255, 255, .04);
 
-	color:var(--text-muted);
-
-	font-size:1rem;
-
-	line-height:1.85;
-
+	animation: slotPulse 3.2s ease-in-out infinite;
 }
 
+.slot:nth-child(2n) {
+	animation-delay: .4s;
+}
 
-@media(max-width:700px) {
+.slot:nth-child(3n) {
+	animation-delay: .9s;
+}
 
-	.experimental {
+@keyframes slotPulse {
+	0%, 100% { color: var(--border-3); }
+	50% { color: var(--primary-light); }
+}
 
-		padding:40px 20px 70px;
+@media (max-width: 900px) {
 
+	.lab {
+		grid-template-columns: 1fr;
+		padding: 28px;
 	}
-
-
-	.card {
-
-		padding:36px 24px;
-
-	}
-
 }
 
 </style>

@@ -3,12 +3,12 @@ import Layout from "../layouts/Layout.astro";
 
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import CTABanner from "../components/CTABanner.astro";
 
-import ProjectHero from "../components/projects/ProjectHero.astro";
-import ProjectStats from "../components/projects/ProjectStats.astro";
 import FeaturedProjectCard from "../components/projects/FeaturedProjectCard.astro";
 import ProjectGrid from "../components/projects/ProjectGrid.astro";
-import ProjectsCTA from "../components/projects/ProjectsCTA.astro";
 ---
 
 <Layout
@@ -18,28 +18,90 @@ import ProjectsCTA from "../components/projects/ProjectsCTA.astro";
 
 	<Navbar />
 
+	<main>
 
-	<main class="projects-page">
+		<section class="page-top">
 
+			<div class="container">
 
-		<ProjectHero />
+				<SectionHeader
+					as="h1"
+					eyebrow={{ es: "Proyectos", en: "Projects" }}
+					title={{ es: "Productos reales.", en: "Engineering real products." }}
+				>
+					<T
+						es="Los proyectos de SpectroDinner Studios, construidos siguiendo los mismos principios: arquitectura limpia, rendimiento y mantenibilidad a largo plazo."
+						en="SpectroDinner Studios' projects, built following the same principles: clean architecture, performance and long-term maintainability."
+					/>
+				</SectionHeader>
 
+				<div class="readouts reveal">
+					<div class="readout">
+						<strong data-counter="2024">2024</strong>
+						<span><T es="Fundación" en="Founded" /></span>
+					</div>
+					<div class="readout gold">
+						<strong data-counter="1" data-counter-suffix="+">1+</strong>
+						<span><T es="Proyectos activos" en="Active projects" /></span>
+					</div>
+					<div class="readout">
+						<strong data-counter="5" data-counter-suffix="+">5+</strong>
+						<span><T es="Tecnologías" en="Technologies" /></span>
+					</div>
+					<div class="readout">
+						<strong><T es="Abierto" en="Open" /></strong>
+						<span><T es="Modelo de desarrollo" en="Development model" /></span>
+					</div>
+				</div>
 
-		<ProjectStats />
+			</div>
 
+		</section>
 
-		<FeaturedProjectCard />
+		<section class="section">
 
+			<div class="container">
+
+				<SectionHeader
+					index="01"
+					eyebrow={{ es: "Proyecto principal", en: "Flagship project" }}
+					title={{ es: "En el taller.", en: "In the workshop." }}
+				/>
+
+				<FeaturedProjectCard />
+
+			</div>
+
+		</section>
 
 		<ProjectGrid />
 
-
-		<ProjectsCTA />
-
+		<CTABanner
+			eyebrow={{ es: "Mantente al día", en: "Stay updated" }}
+			title={{ es: "Sigue el desarrollo.", en: "Follow the development." }}
+			text={{
+				es: "Cada repositorio, versión y actualización se publica a través de nuestro GitHub oficial a medida que está disponible. Los proyectos públicos buscan fomentar el aprendizaje, la colaboración y la transparencia.",
+				en: "Every repository, release and update is published through our official GitHub as it becomes available. Public projects are meant to encourage learning, collaboration and transparency.",
+			}}
+		>
+			<a href="https://github.com/elmoderador" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+				<T es="Perfil de GitHub ↗" en="GitHub Profile ↗" />
+			</a>
+			<a href="/documentation" class="btn btn-ghost">
+				<T es="Documentación" en="Documentation" /> →
+			</a>
+		</CTABanner>
 
 	</main>
-
 
 	<Footer />
 
 </Layout>
+
+<style>
+
+.readouts {
+	margin-top: -8px;
+}
+
+</style>

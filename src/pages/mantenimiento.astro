@@ -1,11 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import LangToggle from "../components/LangToggle.astro";
+import T from "../components/T.astro";
 ---
 
 <Layout
 	title="Mantenimiento | SpectroDinner™"
 	description="SpectroDinner Studios is temporarily under maintenance."
+	noindex
 >
 
 	<div class="lang-toggle-wrap">
@@ -14,67 +16,57 @@ import LangToggle from "../components/LangToggle.astro";
 
 	<main class="maintenance">
 
-		<div class="grid-glow" aria-hidden="true"></div>
-
-		<div class="content reveal">
+		<div class="screen reveal">
 
 			<div class="tag-row">
-
-				<span class="tag">
-					[SPECTRODINNER STUDIOS]
+				<span class="chip">[SPECTRODINNER STUDIOS]</span>
+				<span class="chip chip-gold">
+					<span class="status-dot gold" aria-hidden="true"></span>
+					<T es="[MODO MANTENIMIENTO]" en="[MAINTENANCE MODE]" />
 				</span>
-
-				<span class="tag status">
-					<span class="dot" aria-hidden="true"></span>
-					<span data-lang="es">[MODO MANTENIMIENTO]</span>
-					<span data-lang="en">[MAINTENANCE MODE]</span>
-				</span>
-
 			</div>
 
+			<img src="/logo.png" alt="" width="88" height="88" class="logo" />
+
 			<h1 class="wordmark">
-				SPECTRODINNER
-				<span>STUDIOS</span>
+				SPECTRO<span>DINNER</span>
+				<small>STUDIOS</small>
 			</h1>
 
-			<p class="status-line">
-				<span data-lang="es">LA COCINA ESTÁ CERRADA.</span>
-				<span data-lang="en">THE KITCHEN IS CLOSED.</span>
+			<p class="status-line mono">
+				<span class="prompt">&gt;</span>
+				<T es="LA COCINA ESTÁ CERRADA." en="THE KITCHEN IS CLOSED." />
 				<span class="cursor" aria-hidden="true"></span>
 			</p>
 
+			<div class="loader" aria-hidden="true">
+				<div class="loader-bar"><span></span></div>
+				<span class="loader-label"><T es="Cocinando algo nuevo…" en="Cooking something new…" /></span>
+			</div>
+
 			<p class="tagline">
-				<span data-lang="es">Estamos cocinando algo nuevo.</span>
-				<span data-lang="en">We're cooking something new.</span>
+				<T es="Estamos cocinando algo nuevo." en="We're cooking something new." />
 			</p>
 
-			<p class="description" data-lang="es">
-				SpectroDinner Studios no está disponible ahora mismo —
-				estamos trabajando en el sitio. Vuelve a pasarte en un
-				rato.
-			</p>
-
-			<p class="description" data-lang="en">
-				SpectroDinner Studios isn't available right now — we're
-				working on the site. Please check back shortly.
+			<p class="description">
+				<T
+					es="SpectroDinner Studios no está disponible ahora mismo — estamos trabajando en el sitio. Vuelve a pasarte en un rato."
+					en="SpectroDinner Studios isn't available right now — we're working on the site. Please check back shortly."
+				/>
 			</p>
 
 			<div class="actions">
-
-				<a href="mailto:oierps8@gmail.com" class="primary">
-					<span data-lang="es">Escríbenos</span>
-					<span data-lang="en">Email us</span>
+				<a href="mailto:oierps8@gmail.com" class="btn btn-primary">
+					<T es="Escríbenos" en="Email us" />
 				</a>
-
 				<a
 					href="https://github.com/elmoderador"
 					target="_blank"
 					rel="noopener noreferrer"
-					class="secondary"
+					class="btn btn-ghost"
 				>
 					GitHub ↗
 				</a>
-
 			</div>
 
 		</div>
@@ -83,374 +75,158 @@ import LangToggle from "../components/LangToggle.astro";
 
 </Layout>
 
-
 <style>
 
 .lang-toggle-wrap {
-
-	position:fixed;
-
-	top:24px;
-	right:24px;
-
-	z-index:50;
-
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: 10;
 }
-
 
 .maintenance {
+	display: grid;
+	place-items: center;
 
-	min-height:100vh;
-	width:100%;
-
-	display:flex;
-	align-items:center;
-	justify-content:center;
-
-	position:relative;
-	overflow:hidden;
-
-	padding:100px 32px;
-
+	min-height: 100svh;
+	padding: 80px 20px;
 }
 
+.screen {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 22px;
 
-.grid-glow {
+	width: 100%;
+	max-width: 720px;
+	padding: 48px 40px;
 
-	position:absolute;
+	text-align: center;
 
-	inset:0;
-
-	background:
-		radial-gradient(
-			circle at 50% 35%,
-			color-mix(in srgb, var(--primary) 10%, transparent),
-			transparent 55%
-		);
-
-	pointer-events:none;
-
-	z-index:-1;
-
+	background: color-mix(in srgb, var(--bg-elevated) 85%, transparent);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-sm);
+	box-shadow: 0 40px 120px -40px var(--primary-glow);
+	backdrop-filter: blur(12px);
 }
-
-
-.content {
-
-	width:100%;
-	max-width:600px;
-
-	display:flex;
-	flex-direction:column;
-	align-items:center;
-
-	text-align:center;
-
-	padding:56px 0;
-
-	border-top:1px solid var(--border-1);
-	border-bottom:1px solid var(--border-1);
-
-}
-
 
 .tag-row {
-
-	display:flex;
-	flex-wrap:wrap;
-
-	align-items:center;
-	justify-content:center;
-
-	gap:10px;
-
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
 }
 
-
-.tag {
-
-	display:inline-flex;
-	align-items:center;
-	gap:8px;
-
-	padding:7px 12px;
-
-	border-radius:8px;
-
-	background:var(--surface-2);
-	border:1px solid var(--border-2);
-
-	color:var(--text-dim);
-
-	font-family:
-		ui-monospace, "SF Mono", "Cascadia Code",
-		"Roboto Mono", Menlo, Consolas, monospace;
-
-	font-size:.72rem;
-	font-weight:600;
-	letter-spacing:.5px;
-
+.logo {
+	filter: drop-shadow(0 0 22px var(--primary-glow));
 }
-
-
-.tag.status {
-
-	color:var(--primary);
-
-	background:var(--primary-bg);
-	border-color:var(--primary-border);
-
-}
-
-
-.tag .dot {
-
-	width:6px;
-	height:6px;
-
-	border-radius:50%;
-
-	background:var(--primary);
-
-	box-shadow:0 0 8px var(--primary-glow);
-
-	animation:dotPulse 1.6s ease-in-out infinite;
-
-}
-
-
-@keyframes dotPulse {
-
-	0%, 100% {
-		opacity:1;
-	}
-
-	50% {
-		opacity:.3;
-	}
-
-}
-
 
 .wordmark {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
 
-	margin:28px 0 0;
-
-	font-size:clamp(2.4rem,7vw,4.2rem);
-	font-weight:800;
-
-	letter-spacing:-1px;
-	line-height:1;
-
-	background:linear-gradient(90deg,var(--text),var(--primary));
-
-	-webkit-background-clip:text;
-	-webkit-text-fill-color:transparent;
-
+	font-size: clamp(2.4rem, 8vw, 4.4rem);
+	font-weight: 700;
+	letter-spacing: .04em;
+	line-height: 1;
 }
-
 
 .wordmark span {
-
-	display:block;
-
-	margin-top:10px;
-
-	font-size:clamp(1rem,2.4vw,1.3rem);
-	font-weight:700;
-
-	letter-spacing:8px;
-
-	background:none;
-
-	-webkit-text-fill-color:var(--text-muted);
-	color:var(--text-muted);
-
+	color: var(--primary-light);
 }
 
+.wordmark small {
+	font-family: var(--font-pixel);
+	font-size: clamp(.8rem, 2vw, 1.05rem);
+	font-weight: 400;
+	letter-spacing: .5em;
+	color: var(--text-dim);
+}
 
 .status-line {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 
-	margin-top:34px;
-
-	font-family:
-		ui-monospace, "SF Mono", "Cascadia Code",
-		"Roboto Mono", Menlo, Consolas, monospace;
-
-	font-size:clamp(1.1rem,3vw,1.5rem);
-	font-weight:700;
-
-	letter-spacing:.5px;
-
-	color:var(--text);
-
+	font-size: clamp(.95rem, 2vw, 1.1rem);
+	color: var(--text);
 }
 
-
-.cursor {
-
-	display:inline-block;
-
-	width:.55em;
-	height:1em;
-
-	margin-left:4px;
-
-	background:var(--primary);
-
-	vertical-align:text-bottom;
-
-	animation:cursorBlink 1s step-end infinite;
-
+.status-line .prompt {
+	color: var(--primary-light);
 }
 
-
-@keyframes cursorBlink {
-
-	0%, 100% {
-		opacity:1;
-	}
-
-	50% {
-		opacity:0;
-	}
-
+.loader {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 100%;
+	max-width: 420px;
 }
 
+.loader-bar {
+	position: relative;
+	height: 14px;
+
+	background: var(--bg-sunken);
+	border: 1px solid var(--border-2);
+	border-radius: 2px;
+
+	overflow: hidden;
+}
+
+.loader-bar span {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 35%;
+
+	background: repeating-linear-gradient(
+		90deg,
+		var(--primary) 0 10px,
+		transparent 10px 13px
+	);
+
+	animation: load 2.2s steps(14) infinite;
+}
+
+@keyframes load {
+	from { left: -35%; }
+	to { left: 100%; }
+}
+
+.loader-label {
+	font-family: var(--font-pixel);
+	font-size: .7rem;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--text-dim);
+}
 
 .tagline {
-
-	margin-top:12px;
-
-	color:var(--text-muted);
-
-	font-size:1.05rem;
-	font-style:italic;
-
+	font-family: var(--font-display);
+	font-size: 1.4rem;
+	font-weight: 600;
 }
-
 
 .description {
-
-	margin-top:26px;
-
-	max-width:420px;
-
-	color:var(--text-muted);
-
-	font-size:.98rem;
-	line-height:1.8;
-
+	max-width: 520px;
+	color: var(--text-muted);
+	line-height: 1.75;
 }
-
 
 .actions {
-
-	display:flex;
-	flex-wrap:wrap;
-
-	justify-content:center;
-
-	gap:14px;
-
-	margin-top:40px;
-
+	justify-content: center;
 }
 
+@media (max-width: 560px) {
 
-.actions a {
-
-	padding:13px 28px;
-
-	border-radius:14px;
-
-	text-decoration:none;
-
-	font-weight:600;
-
-	font-size:.95rem;
-
-	transition:.25s ease;
-
-}
-
-
-.primary {
-
-	background:var(--primary);
-
-	color:white;
-
-}
-
-
-.primary:hover {
-
-	transform:translateY(-3px);
-
-	box-shadow:0 15px 40px var(--primary-glow);
-
-}
-
-
-.secondary {
-
-	background:var(--surface-2);
-
-	border:1px solid var(--border-2);
-
-	color:var(--text);
-
-}
-
-
-.secondary:hover {
-
-	background:var(--surface-hover);
-
-	transform:translateY(-3px);
-
-}
-
-
-@media (max-width:600px) {
-
-	.maintenance {
-
-		padding:70px 20px;
-
+	.screen {
+		padding: 36px 22px;
 	}
-
-
-	.content {
-
-		padding:40px 0;
-
-	}
-
-
-	.wordmark span {
-
-		letter-spacing:5px;
-
-	}
-
-
-	.actions {
-
-		flex-direction:column;
-
-		width:100%;
-
-	}
-
-
-	.actions a {
-
-		width:100%;
-
-	}
-
 }
 
 </style>

@@ -1,0 +1,188 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+
+// 8×8 "broken block": 1 = solid, 2 = accent, 0 = missing.
+const block = [
+	1, 1, 2, 1, 1, 1, 2, 1,
+	1, 2, 1, 1, 2, 1, 1, 1,
+	1, 1, 1, 0, 1, 1, 2, 1,
+	2, 1, 0, 0, 0, 1, 1, 1,
+	1, 1, 1, 0, 0, 0, 1, 2,
+	1, 2, 1, 1, 0, 1, 1, 1,
+	1, 1, 1, 2, 1, 1, 2, 1,
+	1, 1, 2, 1, 1, 1, 1, 1,
+];
+---
+
+<Layout
+	title="404 | SpectroDinner™"
+	description="This page doesn't exist."
+	noindex
+>
+
+	<Navbar />
+
+	<main class="lost container">
+
+		<div class="block" aria-hidden="true">
+			{block.map((cell, i) => (
+				<i class={`c${cell}`} style={`--i:${i}`}></i>
+			))}
+		</div>
+
+		<div class="copy">
+
+			<span class="eyebrow">ERROR 404 // <T es="Chunk no encontrado" en="Chunk not found" /></span>
+
+			<h1 class="display glitch" data-text="404">404</h1>
+
+			<p class="lead">
+				<T
+					es="Esta zona del mapa no existe — o se ha movido. Vuelve al spawn y sigue explorando."
+					en="This part of the map doesn't exist — or it moved. Head back to spawn and keep exploring."
+				/>
+			</p>
+
+			<div class="actions">
+				<a href="/" class="btn btn-primary">
+					<T es="Volver al inicio" en="Back to spawn" />
+				</a>
+				<a href="/projects" class="btn btn-ghost">
+					<T es="Ver proyectos" en="View projects" /> →
+				</a>
+			</div>
+
+		</div>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+<style>
+
+.lost {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	gap: 64px;
+
+	min-height: 78vh;
+	padding-top: calc(var(--header-h) + 48px);
+	padding-bottom: 48px;
+}
+
+.block {
+	display: grid;
+	grid-template-columns: repeat(8, 28px);
+	gap: 3px;
+
+	transform: rotate(-6deg);
+}
+
+.block i {
+	width: 28px;
+	height: 28px;
+}
+
+.c1 {
+	background: var(--surface-3);
+	box-shadow:
+		inset 2px 2px 0 rgba(255, 255, 255, .06),
+		inset -2px -2px 0 rgba(0, 0, 0, .3);
+}
+
+.c2 {
+	background: var(--primary);
+	box-shadow:
+		inset 2px 2px 0 rgba(255, 255, 255, .25),
+		inset -2px -2px 0 rgba(0, 0, 0, .3),
+		0 0 12px var(--primary-glow);
+}
+
+.c0 {
+	border: 1px dashed var(--border-2);
+	animation: flicker 1.8s steps(2, jump-none) infinite;
+	animation-delay: calc(var(--i) * -.13s);
+}
+
+@keyframes flicker {
+	50% { opacity: .2; }
+}
+
+.copy {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 22px;
+}
+
+.glitch {
+	position: relative;
+	font-size: clamp(5rem, 16vw, 10rem);
+	line-height: .9;
+}
+
+.glitch::before,
+.glitch::after {
+	content: attr(data-text);
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.glitch::before {
+	color: var(--primary);
+	clip-path: inset(0 0 55% 0);
+	transform: translate(-4px, 0);
+	opacity: .8;
+	animation: glitchTop 3s steps(1) infinite;
+}
+
+.glitch::after {
+	color: var(--primary-2);
+	clip-path: inset(55% 0 0 0);
+	transform: translate(4px, 0);
+	opacity: .8;
+	animation: glitchBottom 3s steps(1) infinite;
+}
+
+@keyframes glitchTop {
+	0%, 88%, 100% { transform: translate(-4px, 0); }
+	90% { transform: translate(6px, -2px); }
+	94% { transform: translate(-8px, 1px); }
+}
+
+@keyframes glitchBottom {
+	0%, 88%, 100% { transform: translate(4px, 0); }
+	91% { transform: translate(-6px, 2px); }
+	95% { transform: translate(8px, -1px); }
+}
+
+:global([data-theme="contrast"]) .glitch::before,
+:global([data-theme="contrast"]) .glitch::after {
+	display: none;
+}
+
+@media (max-width: 860px) {
+
+	.lost {
+		grid-template-columns: 1fr;
+		gap: 40px;
+	}
+
+	.block {
+		grid-template-columns: repeat(8, 18px);
+	}
+
+	.block i {
+		width: 18px;
+		height: 18px;
+	}
+}
+
+</style>

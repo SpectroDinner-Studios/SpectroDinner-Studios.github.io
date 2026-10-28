@@ -1,15 +1,46 @@
 ---
-import FAQHeader from "./FAQHeader.astro";
+import T from "../T.astro";
+import SectionHeader from "../SectionHeader.astro";
 import FAQCategory from "./FAQCategory.astro";
 import FAQItem from "./FAQItem.astro";
-import FAQCTA from "./FAQCTA.astro";
 ---
 
-<section class="faq" id="faq">
+<section class="section" id="faq">
 
-	<div class="container">
+	<div class="container layout">
 
-		<FAQHeader />
+		<aside class="side">
+
+			<SectionHeader
+				index="07"
+				eyebrow={{ es: "FAQ" }}
+				title={{ es: "Preguntas frecuentes", en: "Frequently asked questions" }}
+			>
+				<T
+					es="Todo lo que necesitas saber sobre SpectroDinner Studios, nuestra filosofía, proyectos, tecnologías y el proceso de desarrollo detrás de cada producto."
+					en="Everything you need to know about SpectroDinner Studios, our philosophy, projects, technologies and the development process behind every product."
+				/>
+			</SectionHeader>
+
+			<div class="readouts reveal">
+				<div class="readout">
+					<strong data-counter="13">13</strong>
+					<span><T es="Preguntas" en="Questions" /></span>
+				</div>
+				<div class="readout">
+					<strong>04</strong>
+					<span><T es="Categorías" en="Categories" /></span>
+				</div>
+			</div>
+
+			<p class="side-note reveal">
+				<T es="¿No encuentras tu respuesta?" en="Can't find your answer?" />
+				<a href="mailto:oierps8@gmail.com"><T es="Escríbenos →" en="Email us →" /></a>
+			</p>
+
+		</aside>
+
+		<div class="categories">
 
 		<FAQCategory title="Discord">
 
@@ -273,6 +304,12 @@ import FAQCTA from "./FAQCTA.astro";
 					mechanics, progression systems and advanced
 					server features.
 				</p>
+
+				<p>
+					<a href="/tep">
+						<T es="Ver la página de T.E.P. →" en="See the T.E.P. page →" />
+					</a>
+				</p>
 			</FAQItem>
 
 			<FAQItem
@@ -364,11 +401,17 @@ import FAQCTA from "./FAQCTA.astro";
 					The best way to stay informed is through our
 					official GitHub repositories.
 				</p>
+
+				<p>
+					<a href="/voluntariado">
+						<T es="¿Quieres ayudar? Mira el voluntariado →" en="Want to help? See volunteering →" />
+					</a>
+				</p>
 			</FAQItem>
 
 		</FAQCategory>
 
-		<FAQCTA />
+		</div>
 
 	</div>
 
@@ -376,40 +419,64 @@ import FAQCTA from "./FAQCTA.astro";
 
 <style>
 
-.faq {
-
-	padding:120px 32px;
-
+.layout {
+	display: grid;
+	grid-template-columns: 1fr 1.65fr;
+	align-items: start;
+	gap: 64px;
 }
 
-.container {
+.side {
+	position: sticky;
+	top: calc(var(--header-h) + 32px);
 
-	max-width:1100px;
-
-	margin:auto;
-
-	display:flex;
-
-	flex-direction:column;
-
-	gap:70px;
-
+	display: flex;
+	flex-direction: column;
+	gap: 22px;
 }
 
-@media (max-width:768px) {
+.side :global(.section-header) {
+	margin-bottom: 8px;
+}
 
-	.faq {
+.side .readouts {
+	grid-template-columns: 1fr 1fr;
+}
 
-		padding:90px 20px;
+.side-note {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
 
+	font-size: .95rem;
+	color: var(--text-muted);
+}
+
+.side-note a {
+	color: var(--primary-light);
+	text-decoration: none;
+}
+
+.side-note a:hover {
+	text-decoration: underline;
+}
+
+.categories {
+	display: flex;
+	flex-direction: column;
+	gap: 48px;
+}
+
+@media (max-width: 960px) {
+
+	.layout {
+		grid-template-columns: 1fr;
+		gap: 40px;
 	}
 
-	.container {
-
-		gap:50px;
-
+	.side {
+		position: static;
 	}
-
 }
 
 </style>

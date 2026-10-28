@@ -1,4 +1,6 @@
 ---
+import T from "./T.astro";
+
 const accents = [
 	{ id: "blue", value: "#0A84FF" },
 	{ id: "purple", value: "#8B5CF6" },
@@ -12,45 +14,48 @@ const accents = [
 <div class="settings">
 
 	<button type="button" class="settings-toggle" aria-label="Settings / Configuración" aria-expanded="false">
-		⚙️
+		<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+			<path
+				fill="currentColor"
+				d="M10 2h4v3h2v1h1v1h1v2h3v4h-3v2h-1v1h-1v1h-2v3h-4v-3H8v-1H7v-1H6v-2H3V9h3V7h1V6h1V5h2V2Zm0 8v4h4v-4h-4Z"
+			/>
+		</svg>
 	</button>
 
 	<div class="settings-panel">
 
+		<div class="panel-head">
+			<span><T es="Ajustes" en="Settings" /></span>
+			<span class="panel-code">CFG.SYS</span>
+		</div>
+
 		<div class="settings-section">
 			<span class="settings-label">
-				<span data-lang="es">Tema</span>
-				<span data-lang="en">Theme</span>
+				<T es="Tema" en="Theme" />
 			</span>
 
 			<div class="theme-switch">
 				<button type="button" class="theme-btn" data-theme-choice="system">
-					<span data-lang="es">🖥️ Sistema</span>
-					<span data-lang="en">🖥️ System</span>
+					<T es="🖥️ Sistema" en="🖥️ System" />
 				</button>
 				<button type="button" class="theme-btn" data-theme-choice="dark">
-					<span data-lang="es">🌙 Oscuro</span>
-					<span data-lang="en">🌙 Dark</span>
+					<T es="🌙 Oscuro" en="🌙 Dark" />
 				</button>
 				<button type="button" class="theme-btn" data-theme-choice="light">
-					<span data-lang="es">☀️ Claro</span>
-					<span data-lang="en">☀️ Light</span>
+					<T es="☀️ Claro" en="☀️ Light" />
 				</button>
 				<button type="button" class="theme-btn" data-theme-choice="amoled">
-					<span data-lang="es">⚫ AMOLED</span>
-					<span data-lang="en">⚫ AMOLED</span>
+					<T es="⚫ AMOLED" />
 				</button>
 				<button type="button" class="theme-btn" data-theme-choice="contrast">
-					<span data-lang="es">◐ Alto contraste</span>
-					<span data-lang="en">◐ High contrast</span>
+					<T es="◐ Alto contraste" en="◐ High contrast" />
 				</button>
 			</div>
 		</div>
 
 		<div class="settings-section">
 			<span class="settings-label">
-				<span data-lang="es">Color de acento</span>
-				<span data-lang="en">Accent color</span>
+				<T es="Color de acento" en="Accent color" />
 			</span>
 
 			<div class="swatches">
@@ -68,40 +73,33 @@ const accents = [
 
 		<div class="settings-section">
 			<span class="settings-label">
-				<span data-lang="es">Tamaño de texto</span>
-				<span data-lang="en">Text size</span>
+				<T es="Tamaño de texto" en="Text size" />
 			</span>
 
 			<div class="fontsize-switch">
 				<button type="button" class="theme-btn" data-fontsize-choice="small">
-					<span data-lang="es">A Pequeño</span>
-					<span data-lang="en">A Small</span>
+					<T es="A Pequeño" en="A Small" />
 				</button>
 				<button type="button" class="theme-btn" data-fontsize-choice="normal">
-					<span data-lang="es">A Normal</span>
-					<span data-lang="en">A Normal</span>
+					<T es="A Normal" />
 				</button>
 				<button type="button" class="theme-btn" data-fontsize-choice="large">
-					<span data-lang="es">A Grande</span>
-					<span data-lang="en">A Large</span>
+					<T es="A Grande" en="A Large" />
 				</button>
 			</div>
 		</div>
 
 		<div class="settings-section">
 			<span class="settings-label">
-				<span data-lang="es">Movimiento reducido</span>
-				<span data-lang="en">Reduced motion</span>
+				<T es="Movimiento reducido" en="Reduced motion" />
 			</span>
 
 			<div class="theme-switch">
 				<button type="button" class="theme-btn" data-motion-choice="false">
-					<span data-lang="es">▶️ Activado</span>
-					<span data-lang="en">▶️ On</span>
+					<T es="▶️ Activado" en="▶️ On" />
 				</button>
 				<button type="button" class="theme-btn" data-motion-choice="true">
-					<span data-lang="es">⏸️ Reducido</span>
-					<span data-lang="en">⏸️ Reduced</span>
+					<T es="⏸️ Reducido" en="⏸️ Reduced" />
 				</button>
 			</div>
 		</div>
@@ -109,7 +107,6 @@ const accents = [
 	</div>
 
 </div>
-
 
 <script>
 	const wrapper = document.querySelector(".settings");
@@ -131,16 +128,22 @@ const accents = [
 		if (wrapper && !wrapper.contains(e.target as Node)) closePanel();
 	});
 
+	document.addEventListener("keydown", (e) => {
+		if (e.key === "Escape") closePanel();
+	});
+
 	const FIXED_THEMES = ["light", "dark", "amoled", "contrast"];
 
 	const updateActiveStates = () => {
 		let storedTheme: string | null = null;
 		let storedFontSize: string | null = null;
 		let storedMotion: string | null = null;
+		let storedAccent: string | null = null;
 		try {
 			storedTheme = localStorage.getItem("sd-theme");
 			storedFontSize = localStorage.getItem("sd-fontsize");
 			storedMotion = localStorage.getItem("sd-reduced-motion");
+			storedAccent = localStorage.getItem("sd-accent");
 		} catch (err) {}
 
 		const activeTheme = FIXED_THEMES.includes(storedTheme ?? "")
@@ -150,9 +153,10 @@ const accents = [
 		const activeFontSize = storedFontSize || "normal";
 		const activeMotion = storedMotion === "true" ? "true" : "false";
 
-		const accent = getComputedStyle(document.documentElement)
-			.getPropertyValue("--primary")
-			.trim();
+		// The light theme darkens the default accent for contrast, so the
+		// computed --primary no longer matches the blue swatch; fall back to
+		// the default swatch when nothing has been chosen yet.
+		const accent = (storedAccent || "#0A84FF").trim();
 
 		wrapper?.querySelectorAll<HTMLButtonElement>("[data-theme-choice]").forEach((btn) => {
 			btn.classList.toggle("active", btn.dataset.themeChoice === activeTheme);
@@ -212,9 +216,9 @@ const accents = [
 			try {
 				localStorage.setItem("sd-reduced-motion", reduced);
 			} catch (err) {}
-			// Scroll-reveal/counter/spotlight are wired up once at load
-			// based on this value, so a reload is the simplest way to
-			// apply it consistently everywhere.
+			// Scroll-reveal/counters are wired up once at load based on
+			// this value, so a reload is the simplest way to apply it
+			// consistently everywhere.
 			location.reload();
 		});
 	});
@@ -222,270 +226,187 @@ const accents = [
 	updateActiveStates();
 </script>
 
-
 <style>
 
 .settings {
-
 	position: relative;
-
 }
-
 
 .settings-toggle {
+	display: grid;
+	place-items: center;
 
-	display: flex;
-
-	align-items: center;
-
-	justify-content: center;
-
-	width: 38px;
-
-	height: 38px;
-
-	padding: 0;
-
-	border-radius: 12px;
-
-	background: var(--surface-2);
-
-	border: 1px solid var(--border-2);
-
-	font-size: 1.05rem;
-
-	cursor: pointer;
-
-	transition: .25s ease;
-
-}
-
-
-.settings-toggle:hover {
-
-	background: var(--surface-hover);
-
-	border-color: color-mix(in srgb, var(--primary) 40%, transparent);
-
-}
-
-
-.settings-panel {
-
-	position: absolute;
-
-	top: calc(100% + 12px);
-
-	right: 0;
-
-	width: 290px;
-
-	padding: 20px;
-
-	display: flex;
-
-	flex-direction: column;
-
-	gap: 18px;
-
-	border-radius: 18px;
-
-	background: var(--bg-elevated);
-
-	border: 1px solid var(--border-2);
-
-	backdrop-filter: blur(20px);
-
-	box-shadow: 0 20px 50px var(--shadow-color);
-
-	opacity: 0;
-
-	visibility: hidden;
-
-	transform: translateY(-8px);
-
-	transition: opacity .25s ease, transform .25s ease, visibility .25s;
-
-	pointer-events: none;
-
-	z-index: 200;
-
-}
-
-
-.settings-panel.open {
-
-	opacity: 1;
-
-	visibility: visible;
-
-	transform: none;
-
-	pointer-events: auto;
-
-}
-
-
-.settings-section {
-
-	display: flex;
-
-	flex-direction: column;
-
-	gap: 10px;
-
-}
-
-
-.settings-label {
-
-	font-size: .78rem;
-
-	font-weight: 700;
-
-	letter-spacing: 1px;
-
-	text-transform: uppercase;
+	width: 42px;
+	height: 42px;
 
 	color: var(--text-muted);
 
-}
-
-
-.theme-switch {
-
-	display: grid;
-
-	grid-template-columns: 1fr 1fr;
-
-	gap: 8px;
-
-}
-
-
-.fontsize-switch {
-
-	display: grid;
-
-	grid-template-columns: 1fr 1fr 1fr;
-
-	gap: 8px;
-
-}
-
-
-.theme-btn {
-
-	padding: 10px 8px;
-
-	border-radius: 10px;
-
-	background: var(--surface-1);
-
-	border: 1px solid var(--border-1);
-
-	color: var(--text);
-
-	font-size: .8rem;
-
-	font-weight: 600;
-
-	line-height: 1.3;
-
-	text-align: center;
+	background: var(--surface-2);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-xs);
 
 	cursor: pointer;
 
-	transition: .2s ease;
-
+	transition:
+		color var(--transition),
+		border-color var(--transition),
+		background var(--transition);
 }
 
-
-.theme-btn:hover {
-
-	background: var(--surface-hover);
-
+.settings-toggle svg {
+	transition: transform .5s cubic-bezier(.2, .8, .2, 1);
 }
 
-
-.theme-btn.active {
-
-	background: var(--primary-bg);
-
+.settings-toggle:hover,
+.settings-toggle[aria-expanded="true"] {
+	color: var(--primary-light);
 	border-color: var(--primary-border);
-
-	color: var(--primary);
-
+	background: var(--primary-bg);
 }
 
+.settings-toggle:hover svg,
+.settings-toggle[aria-expanded="true"] svg {
+	transform: rotate(90deg);
+}
 
-.swatches {
+.settings-panel {
+	position: absolute;
+	top: calc(100% + 12px);
+	right: 0;
+	z-index: 60;
 
 	display: flex;
+	flex-direction: column;
+	gap: 18px;
 
-	flex-wrap: wrap;
+	width: min(320px, calc(100vw - 32px));
+	padding: 16px;
 
-	gap: 10px;
+	background: var(--bg-elevated);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-sm);
+	box-shadow: 0 24px 60px var(--shadow-color);
 
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(-6px);
+
+	transition:
+		opacity .2s ease,
+		transform .2s ease,
+		visibility .2s;
 }
 
+.settings-panel.open {
+	opacity: 1;
+	visibility: visible;
+	transform: none;
+}
 
-.swatch {
+.panel-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 
-	width: 32px;
+	padding-bottom: 12px;
 
-	height: 32px;
+	font-family: var(--font-pixel);
+	font-size: .8rem;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--text);
 
-	border-radius: 50%;
+	border-bottom: 1px dashed var(--border-2);
+}
 
-	background: var(--swatch-color);
+.panel-code {
+	color: var(--text-dim);
+	font-size: .68rem;
+}
 
-	border: 2px solid transparent;
+.settings-section {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.settings-label {
+	font-family: var(--font-pixel);
+	font-size: .7rem;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--text-dim);
+}
+
+.theme-switch,
+.fontsize-switch {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.theme-btn {
+	flex: 1 1 auto;
+
+	padding: 8px 10px;
+
+	font-family: var(--font-main);
+	font-size: .82rem;
+	color: var(--text-muted);
+
+	background: var(--surface-1);
+	border: 1px solid var(--border-1);
+	border-radius: var(--radius-xs);
 
 	cursor: pointer;
 
-	transition: .2s ease;
-
-	padding: 0;
-
+	transition:
+		color var(--transition),
+		border-color var(--transition),
+		background var(--transition);
 }
 
+.theme-btn:hover {
+	color: var(--text);
+	border-color: var(--border-3);
+}
+
+.theme-btn.active {
+	color: var(--text);
+	background: var(--primary-bg);
+	border-color: var(--primary);
+	box-shadow: inset 0 -2px 0 var(--primary);
+}
+
+.swatches {
+	display: flex;
+	gap: 8px;
+}
+
+.swatch {
+	width: 32px;
+	height: 32px;
+
+	background: var(--swatch-color);
+	border: 2px solid transparent;
+	border-radius: 2px;
+	box-shadow:
+		inset 0 2px 0 rgba(255, 255, 255, .25),
+		inset 0 -3px 0 rgba(0, 0, 0, .3);
+
+	cursor: pointer;
+
+	transition: transform var(--transition);
+}
 
 .swatch:hover {
-
-	transform: scale(1.12);
-
+	transform: translateY(-2px);
 }
-
 
 .swatch.active {
-
 	border-color: var(--text);
-
-	box-shadow: 0 0 0 2px var(--bg-elevated);
-
-}
-
-
-@media (max-width: 768px) {
-
-	.settings-panel {
-
-		right: auto;
-
-		left: 50%;
-
-		transform: translate(-50%, -8px);
-
-	}
-
-
-	.settings-panel.open {
-
-		transform: translate(-50%, 0);
-
-	}
-
+	outline: 2px solid var(--swatch-color);
+	outline-offset: 2px;
 }
 
 </style>

@@ -1,0 +1,120 @@
+---
+import T from "./T.astro";
+
+type Text = { es: string; en?: string };
+
+interface Props {
+	eyebrow: Text;
+	title: Text;
+	text: Text;
+}
+
+const { eyebrow, title, text } = Astro.props;
+---
+
+<section class="section-sm">
+
+	<div class="container">
+
+		<div class="banner reveal">
+
+			<div class="copy">
+				<span class="eyebrow"><T {...eyebrow} /></span>
+				<h2 class="title"><T {...title} /></h2>
+				<p class="lead"><T {...text} /></p>
+			</div>
+
+			<div class="actions">
+				<slot />
+			</div>
+
+			<span class="corner corner-tl" aria-hidden="true"></span>
+			<span class="corner corner-br" aria-hidden="true"></span>
+
+		</div>
+
+	</div>
+
+</section>
+
+<style>
+
+.banner {
+	position: relative;
+
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 32px;
+
+	padding: 48px 52px;
+
+	background:
+		linear-gradient(120deg, color-mix(in srgb, var(--primary) 16%, transparent), transparent 60%),
+		var(--bg-elevated);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-sm);
+
+	overflow: hidden;
+}
+
+.banner::after {
+	content: "";
+	position: absolute;
+	right: -40px;
+	top: -40px;
+	width: 220px;
+	height: 220px;
+	pointer-events: none;
+	background:
+		repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 22px),
+		repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 22px);
+	mask-image: radial-gradient(circle, #000, transparent 70%);
+}
+
+.copy {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	max-width: 640px;
+}
+
+.copy .title {
+	font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+}
+
+.actions {
+	position: relative;
+	z-index: 1;
+}
+
+.corner {
+	position: absolute;
+	width: 22px;
+	height: 22px;
+	border: 2px solid var(--primary);
+}
+
+.corner-tl {
+	top: -1px;
+	left: -1px;
+	border-right: 0;
+	border-bottom: 0;
+}
+
+.corner-br {
+	right: -1px;
+	bottom: -1px;
+	border-left: 0;
+	border-top: 0;
+}
+
+@media (max-width: 640px) {
+
+	.banner {
+		padding: 32px 24px;
+	}
+}
+
+</style>

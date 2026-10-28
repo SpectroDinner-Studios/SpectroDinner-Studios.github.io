@@ -1,235 +1,84 @@
-<section class="services">
+---
+import T from "../T.astro";
+import SectionHeader from "../SectionHeader.astro";
+
+const areas = [
+	{
+		icon: "💻",
+		title: { es: "Ingeniería de software", en: "Software Engineering" },
+		text: {
+			es: "Aplicaciones, herramientas y sistemas modernos, diseñados pensando en escalabilidad, mantenibilidad y rendimiento.",
+			en: "Modern applications, tools and systems designed with scalability, maintainability and performance in mind.",
+		},
+		tags: [{ es: "Java" }, { es: "TypeScript" }, { es: "Python" }],
+	},
+	{
+		icon: "🎮",
+		title: { es: "Desarrollo de videojuegos", en: "Game Development" },
+		text: {
+			es: "Mundos y experiencias interactivas que combinan tecnología, jugabilidad y diseño creativo.",
+			en: "Interactive worlds and experiences that combine technology, gameplay and creative design.",
+		},
+		tags: [{ es: "Unity" }, { es: "Unreal Engine" }, { es: "Roblox" }],
+	},
+	{
+		icon: "⛏️",
+		title: { es: "Desarrollo de Minecraft", en: "Minecraft Development" },
+		text: {
+			es: "Experiencias, plugins y sistemas de juego a medida para Minecraft, con tecnologías de servidor potentes.",
+			en: "Custom Minecraft experiences, plugins and gameplay systems built with powerful server-side technologies.",
+		},
+		tags: [{ es: "Paper API" }, { es: "Java" }, { es: "Bukkit" }],
+	},
+	{
+		icon: "🧪",
+		title: { es: "Tecnología experimental", en: "Experimental Technology" },
+		text: {
+			es: "Prototipado y pruebas de nuevas ideas, mecánicas y enfoques técnicos antes de convertirse en proyectos concretos.",
+			en: "Prototyping and testing new ideas, mechanics and technical approaches before they become concrete projects.",
+		},
+		tags: [{ es: "Prototipos", en: "Prototypes" }, { es: "Investigación", en: "R&D" }],
+	},
+];
+---
+
+<section class="section">
 
 	<div class="container">
 
-
-		<div class="header reveal">
-
-			<span>
-				<span data-lang="es">ÁREAS DE DESARROLLO</span>
-				<span data-lang="en">AREAS OF DEVELOPMENT</span>
-			</span>
-
-
-			<h2>
-				<span data-lang="es">Lo que desarrollamos.</span>
-				<span data-lang="en">What we develop.</span>
-			</h2>
-
-
-			<p>
-				<span data-lang="es">
-					SpectroDinner Studios trabaja en software, juegos,
-					desarrollo de Minecraft y tecnología experimental,
-					con el rendimiento y la fiabilidad a largo plazo
-					como prioridad.
-				</span>
-				<span data-lang="en">
-					SpectroDinner Studios works across software, games,
-					Minecraft development and experimental technology,
-					with performance and long-term reliability as a
-					priority.
-				</span>
-			</p>
-
-		</div>
-
-
-
+		<SectionHeader
+			index="02"
+			eyebrow={{ es: "Áreas de desarrollo", en: "Areas of development" }}
+			title={{ es: "Lo que desarrollamos.", en: "What we develop." }}
+		>
+			<T
+				es="SpectroDinner Studios trabaja en software, juegos, desarrollo de Minecraft y tecnología experimental, con el rendimiento y la fiabilidad a largo plazo como prioridad."
+				en="SpectroDinner Studios works across software, games, Minecraft development and experimental technology, with performance and long-term reliability as a priority."
+			/>
+		</SectionHeader>
 
 		<div class="grid">
 
+			{areas.map((area, i) => (
+				<article class="hud-card interactive reveal" style={`--reveal-delay:${i * 70}ms`}>
 
-			<div class="card reveal spotlight">
+					<div class="top">
+						<span class="icon-tile">{area.icon}</span>
+						<span class="code">0{i + 1}</span>
+					</div>
 
-				<div class="icon">
-					💻
-				</div>
+					<h3><T {...area.title} /></h3>
 
+					<p><T {...area.text} /></p>
 
-				<h3>
-					<span data-lang="es">Ingeniería de software</span>
-					<span data-lang="en">Software Engineering</span>
-				</h3>
+					<div class="chips">
+						{area.tags.map((tag) => (
+							<span class="chip"><T {...tag} /></span>
+						))}
+					</div>
 
-
-				<p>
-					<span data-lang="es">
-						Aplicaciones, herramientas y sistemas modernos,
-						diseñados pensando en escalabilidad,
-						mantenibilidad y rendimiento.
-					</span>
-					<span data-lang="en">
-						Modern applications, tools and systems
-						designed with scalability, maintainability
-						and performance in mind.
-					</span>
-				</p>
-
-
-				<div class="tags">
-
-					<span>
-						Java
-					</span>
-
-					<span>
-						TypeScript
-					</span>
-
-					<span>
-						Python
-					</span>
-
-				</div>
-
-			</div>
-
-
-
-
-
-			<div class="card reveal spotlight">
-
-				<div class="icon">
-					🎮
-				</div>
-
-
-				<h3>
-					<span data-lang="es">Desarrollo de videojuegos</span>
-					<span data-lang="en">Game Development</span>
-				</h3>
-
-
-				<p>
-					<span data-lang="es">
-						Mundos y experiencias interactivas que combinan
-						tecnología, jugabilidad y diseño creativo.
-					</span>
-					<span data-lang="en">
-						Interactive worlds and experiences that
-						combine technology, gameplay and creative
-						design.
-					</span>
-				</p>
-
-
-				<div class="tags">
-
-					<span>
-						Unity
-					</span>
-
-					<span>
-						Unreal Engine
-					</span>
-
-					<span>
-						Roblox
-					</span>
-
-				</div>
-
-			</div>
-
-
-
-
-
-			<div class="card reveal spotlight">
-
-				<div class="icon">
-					⛏️
-				</div>
-
-
-				<h3>
-					<span data-lang="es">Desarrollo de Minecraft</span>
-					<span data-lang="en">Minecraft Development</span>
-				</h3>
-
-
-				<p>
-					<span data-lang="es">
-						Experiencias, plugins y sistemas de juego a
-						medida para Minecraft, con tecnologías de
-						servidor potentes.
-					</span>
-					<span data-lang="en">
-						Custom Minecraft experiences, plugins and
-						gameplay systems built with powerful
-						server-side technologies.
-					</span>
-				</p>
-
-
-				<div class="tags">
-
-					<span>
-						Paper API
-					</span>
-
-					<span>
-						Java
-					</span>
-
-					<span>
-						Bukkit
-					</span>
-
-				</div>
-
-			</div>
-
-
-
-
-
-			<div class="card reveal spotlight">
-
-				<div class="icon">
-					🧪
-				</div>
-
-
-				<h3>
-					<span data-lang="es">Tecnología experimental</span>
-					<span data-lang="en">Experimental Technology</span>
-				</h3>
-
-
-				<p>
-					<span data-lang="es">
-						Prototipado y pruebas de nuevas ideas, mecánicas
-						y enfoques técnicos antes de convertirse en
-						proyectos concretos.
-					</span>
-					<span data-lang="en">
-						Prototyping and testing new ideas, mechanics
-						and technical approaches before they become
-						concrete projects.
-					</span>
-				</p>
-
-
-				<div class="tags">
-
-					<span>
-						<span data-lang="es">Prototipos</span>
-						<span data-lang="en">Prototypes</span>
-					</span>
-
-					<span>
-						<span data-lang="es">Investigación</span>
-						<span data-lang="en">R&D</span>
-					</span>
-
-				</div>
-
-			</div>
-
-
+				</article>
+			))}
 
 		</div>
 
@@ -237,272 +86,57 @@
 
 </section>
 
-
-
 <style>
 
-.services {
-
-	padding:120px 32px;
-
-}
-
-
-
-.container {
-
-	max-width:1200px;
-
-	margin:auto;
-
-}
-
-
-
-.header {
-
-	text-align:center;
-
-	margin-bottom:70px;
-
-}
-
-
-
-.header span {
-
-	font-size:.85rem;
-
-	font-weight:700;
-
-	letter-spacing:3px;
-
-	color:var(--primary);
-
-}
-
-
-
-.header h2 {
-
-	margin-top:20px;
-
-	font-size:
-
-		clamp(2.5rem,5vw,4rem);
-
-
-	color:var(--text);
-
-	letter-spacing:-2px;
-
-}
-
-
-
-.header p {
-
-	max-width:750px;
-
-	margin:20px auto 0;
-
-	color:var(--text-muted);
-
-	line-height:1.8;
-
-	font-size:1.1rem;
-
-}
-
-
-
 .grid {
-
-	display:grid;
-
-	grid-template-columns:
-
-		repeat(2,1fr);
-
-
-	gap:30px;
-
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 18px;
 }
 
-
-
-.card {
-
-	padding:40px;
-
-	border-radius:28px;
-
-
-	background:
-
-		var(--surface-1);
-
-
-	border:
-
-		1px solid
-
-		var(--border-1);
-
-
-	transition:.3s ease;
-
-
-	position:relative;
-
-	overflow:hidden;
-
+.hud-card {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 }
 
-
-
-.card::before {
-
-	content:"";
-
-
-	position:absolute;
-
-	inset:0;
-
-
-	background:
-
-		radial-gradient(
-
-			circle at top right,
-
-			color-mix(in srgb, var(--primary) 15%, transparent),
-
-			transparent 45%
-
-		);
-
-
-	opacity:0;
-
-	transition:.3s ease;
-
+.top {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
 }
 
-
-
-.card:hover::before {
-
-	opacity:1;
-
+.code {
+	font-family: var(--font-pixel);
+	font-size: 1.4rem;
+	color: var(--border-3);
+	line-height: 1;
 }
 
-
-
-.card:hover {
-
-	transform:
-
-		translateY(-8px);
-
-
-	border-color:
-
-		color-mix(in srgb, var(--primary) 40%, transparent);
-
+h3 {
+	font-size: 1.3rem;
+	font-weight: 600;
 }
 
-
-
-.grid .card:nth-child(2) { transition-delay: .08s; }
-.grid .card:nth-child(3) { transition-delay: .16s; }
-.grid .card:nth-child(4) { transition-delay: .24s; }
-
-
-
-.icon {
-
-	font-size:2.5rem;
-
-	margin-bottom:25px;
-
+p {
+	flex-grow: 1;
+	color: var(--text-muted);
+	font-size: .95rem;
+	line-height: 1.7;
 }
 
-
-
-.card h3 {
-
-	margin:0 0 15px;
-
-	color:var(--text);
-
-	font-size:1.6rem;
-
-}
-
-
-
-.card p {
-
-	color:var(--text-muted);
-
-	line-height:1.8;
-
-}
-
-
-
-.tags {
-
-	display:flex;
-
-	flex-wrap:wrap;
-
-	gap:10px;
-
-	margin-top:25px;
-
-}
-
-
-
-.tags span {
-
-	padding:7px 14px;
-
-	border-radius:999px;
-
-
-	background:
-
-		var(--primary-bg);
-
-
-	color:var(--primary-light);
-
-	font-size:.85rem;
-
-}
-
-
-
-@media(max-width:900px) {
-
+@media (max-width: 1080px) {
 
 	.grid {
-
-		grid-template-columns:1fr;
-
+		grid-template-columns: repeat(2, 1fr);
 	}
+}
 
+@media (max-width: 600px) {
 
-	.card {
-
-		padding:30px;
-
+	.grid {
+		grid-template-columns: 1fr;
 	}
-
 }
 
 </style>

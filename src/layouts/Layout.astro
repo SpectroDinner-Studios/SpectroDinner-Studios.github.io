@@ -1,15 +1,22 @@
 ---
+import "@fontsource-variable/inter";
+import "@fontsource/chakra-petch/500.css";
+import "@fontsource/chakra-petch/600.css";
+import "@fontsource/chakra-petch/700.css";
+import "@fontsource/silkscreen/400.css";
 import "../styles/global.css";
 import BackToTop from "../components/BackToTop.astro";
 
 interface Props {
 	title?: string;
 	description?: string;
+	noindex?: boolean;
 }
 
 const {
 	title = "SpectroDinner™",
 	description = "SpectroDinner™ is an independent development studio working across software engineering, game development, Minecraft development and open source.",
+	noindex = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -185,6 +192,8 @@ const ogImageURL = new URL("/logo.png", Astro.site);
 		</title>
 
 		<meta name="description" content={description} />
+		<meta name="theme-color" content="#06070C" />
+		{noindex && <meta name="robots" content="noindex" />}
 		<link rel="canonical" href={canonicalURL} />
 
 		<meta property="og:type" content="website" />
@@ -221,7 +230,12 @@ const ogImageURL = new URL("/logo.png", Astro.site);
 
 	<body>
 
-		<div class="background"></div>
+		<div class="bg" aria-hidden="true">
+			<div class="bg-glow bg-glow-a"></div>
+			<div class="bg-glow bg-glow-b"></div>
+			<div class="bg-grid"></div>
+			<div class="bg-scan"></div>
+		</div>
 
 		<slot />
 
@@ -297,31 +311,6 @@ const ogImageURL = new URL("/logo.png", Astro.site);
 				counterEls.forEach((el) => counterObserver.observe(el));
 			}
 
-			// Spotlight cursor glow
-			if (!prefersReducedMotion) {
-				document.addEventListener(
-					"pointermove",
-					(e) => {
-						const target = (e.target as HTMLElement)?.closest(
-							".spotlight"
-						) as HTMLElement | null;
-
-						if (!target) return;
-
-						const rect = target.getBoundingClientRect();
-						target.style.setProperty(
-							"--mx",
-							`${((e.clientX - rect.left) / rect.width) * 100}%`
-						);
-						target.style.setProperty(
-							"--my",
-							`${((e.clientY - rect.top) / rect.height) * 100}%`
-						);
-					},
-					{ passive: true }
-				);
-			}
-
 			// Navbar scrolled state
 			const navbar = document.querySelector(".navbar");
 
@@ -336,189 +325,6 @@ const ogImageURL = new URL("/logo.png", Astro.site);
 		</script>
 
 
-		<style is:global>
-
-			* {
-
-				box-sizing:border-box;
-
-			}
-
-
-
-			html {
-
-				scroll-behavior:smooth;
-
-			}
-
-
-
-			body {
-
-				margin:0;
-
-				padding:0;
-
-				background:var(--background);
-
-				color:var(--text);
-
-
-				font-family:
-
-					Inter,
-
-					system-ui,
-
-					sans-serif;
-
-
-				transition:
-
-					background-color .3s ease,
-
-					color .3s ease;
-
-			}
-
-
-
-			.background {
-
-				position:fixed;
-
-				inset:0;
-
-				z-index:-1;
-
-				overflow:hidden;
-
-
-				background:
-
-					radial-gradient(
-
-						circle at 50% -20%,
-
-						color-mix(in srgb, var(--primary) 35%, transparent),
-
-						transparent 40%
-
-					),
-
-					radial-gradient(
-
-						circle at 10% 80%,
-
-						color-mix(in srgb, var(--primary) 12%, transparent),
-
-						transparent 35%
-
-					),
-
-					radial-gradient(
-
-						circle at 90% 70%,
-
-						color-mix(in srgb, var(--primary) 10%, transparent),
-
-						transparent 40%
-
-					),
-
-					var(--background);
-
-
-				transition: background .3s ease;
-
-			}
-
-
-
-			.background::before {
-
-				content:"";
-
-
-				position:absolute;
-
-				inset:0;
-
-
-				background-image:
-
-					radial-gradient(
-
-						color-mix(in srgb, var(--text) 8%, transparent) 1px,
-
-						transparent 1px
-
-					);
-
-
-				background-size:
-
-					45px 45px;
-
-
-				opacity:.15;
-
-			}
-
-
-
-			.background::after {
-
-				content:"";
-
-
-				position:absolute;
-
-				inset:-50%;
-
-
-				background:
-
-					linear-gradient(
-
-						120deg,
-
-						transparent 40%,
-
-						color-mix(in srgb, var(--primary) 5%, transparent),
-
-						transparent 60%
-
-					);
-
-
-				animation:
-
-					backgroundMove 18s linear infinite;
-
-			}
-
-
-
-			@keyframes backgroundMove {
-
-				from {
-
-					transform:translateX(-20%);
-
-				}
-
-
-				to {
-
-					transform:translateX(20%);
-
-				}
-
-			}
-
-		</style>
 
 	</body>
 

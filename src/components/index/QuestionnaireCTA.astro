@@ -1,78 +1,84 @@
-<section class="q-cta spotlight">
+---
+import T from "../T.astro";
 
-	<div class="background-glow glow-left"></div>
-	<div class="background-glow glow-right"></div>
+const points = [
+	{ icon: "🎯", es: "Para qué es tu servidor", en: "What your server is for" },
+	{ icon: "🎨", es: "Diseño y temática", en: "Design and theme" },
+	{ icon: "🧩", es: "Estructura, roles y bots", en: "Structure, roles and bots" },
+	{ icon: "💸", es: "100% gratis, sin sorpresas", en: "100% free, no surprises" },
+];
 
+const quests = [
+	{
+		href: "/cuestionario",
+		icon: "💬",
+		code: "QUEST // DC",
+		title: { es: "Servicio de Discord", en: "Discord Service" },
+		text: { es: "Crear, configurar o rediseñar tu servidor.", en: "Create, configure or redesign your server." },
+	},
+	{
+		href: "/cuestionario-minecraft",
+		icon: "⛏️",
+		code: "QUEST // MC",
+		title: { es: "Servicio de Minecraft", en: "Minecraft Service" },
+		text: { es: "Permisos, rangos, optimización y parches.", en: "Permissions, ranks, optimization and patches." },
+	},
+];
+---
 
-	<div class="content reveal">
+<section class="section-sm">
 
-		<span class="badge">
-			<span data-lang="es">EMPIEZA TU PROYECTO</span>
-			<span data-lang="en">START YOUR PROJECT</span>
-		</span>
+	<div class="container">
 
+		<div class="panel reveal">
 
-		<h2>
-			<span data-lang="es">Cuéntanos tu visión</span>
-			<span data-lang="en">Tell us your vision</span>
-		</h2>
+			<div class="intro">
 
+				<span class="eyebrow">
+					<T es="Empieza tu proyecto" en="Start your project" />
+				</span>
 
-		<p class="description" data-lang="es">
-			Elige tu servicio y rellena el cuestionario correspondiente:
-			cuéntanos el diseño, la temática, el propósito y todo lo que
-			necesitas. Con esa información preparamos una propuesta a tu medida.
-		</p>
+				<h2 class="title">
+					<T es="Cuéntanos tu visión" en="Tell us your vision" />
+				</h2>
 
-		<p class="description" data-lang="en">
-			Pick your service and fill out the matching questionnaire: tell
-			us the design, theme, purpose and everything you need. With
-			that information we put together a proposal made for you.
-		</p>
+				<p class="lead">
+					<T
+						es="Elige tu servicio y rellena el cuestionario correspondiente: cuéntanos el diseño, la temática, el propósito y todo lo que necesitas. Con esa información preparamos una propuesta a tu medida."
+						en="Pick your service and fill out the matching questionnaire: tell us the design, theme, purpose and everything you need. With that information we put together a proposal made for you."
+					/>
+				</p>
 
+				<ul class="points">
+					{points.map((point) => (
+						<li>
+							<span class="tick" aria-hidden="true">{point.icon}</span>
+							<T es={point.es} en={point.en} />
+						</li>
+					))}
+				</ul>
 
-		<div class="points">
-
-			<div class="point">
-				<span class="dot">🎯</span>
-				<span data-lang="es">Para qué es tu servidor</span>
-				<span data-lang="en">What your server is for</span>
 			</div>
 
-			<div class="point">
-				<span class="dot">🎨</span>
-				<span data-lang="es">Diseño y temática</span>
-				<span data-lang="en">Design and theme</span>
+			<div class="quests">
+
+				<span class="quests-label">
+					<T es="Elige tu misión" en="Choose your quest" />
+				</span>
+
+				{quests.map((quest) => (
+					<a href={quest.href} class="quest">
+						<span class="quest-icon">{quest.icon}</span>
+						<span class="quest-text">
+							<small>{quest.code}</small>
+							<strong><T {...quest.title} /></strong>
+							<span><T {...quest.text} /></span>
+						</span>
+						<span class="quest-go" aria-hidden="true">▶</span>
+					</a>
+				))}
+
 			</div>
-
-			<div class="point">
-				<span class="dot">🧩</span>
-				<span data-lang="es">Estructura, roles y bots</span>
-				<span data-lang="en">Structure, roles and bots</span>
-			</div>
-
-			<div class="point">
-				<span class="dot">💸</span>
-				<span data-lang="es">100% gratis, sin sorpresas</span>
-				<span data-lang="en">100% free, no surprises</span>
-			</div>
-
-		</div>
-
-
-		<div class="buttons">
-
-			<a href="/cuestionario" class="primary discord">
-				<span class="btn-icon">💬</span>
-				<span data-lang="es">Servicio de Discord →</span>
-				<span data-lang="en">Discord Service →</span>
-			</a>
-
-			<a href="/cuestionario-minecraft" class="primary minecraft">
-				<span class="btn-icon">⛏️</span>
-				<span data-lang="es">Servicio de Minecraft →</span>
-				<span data-lang="en">Minecraft Service →</span>
-			</a>
 
 		</div>
 
@@ -80,385 +86,190 @@
 
 </section>
 
-
-
 <style>
 
-.q-cta {
+.panel {
+	position: relative;
 
-	position:relative;
+	display: grid;
+	grid-template-columns: 1.2fr 1fr;
+	gap: 48px;
 
-	margin:0 32px 60px;
-
-	padding:90px 60px;
-
-	border-radius:36px;
-
-	overflow:hidden;
-
+	padding: 56px;
 
 	background:
+		radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--primary) 18%, transparent), transparent 55%),
+		radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--primary-2) 16%, transparent), transparent 55%),
+		var(--bg-elevated);
+	border: 1px solid var(--primary-border);
+	border-radius: var(--radius-md);
 
-		var(--surface-1);
+	box-shadow: 0 40px 100px -40px var(--primary-glow);
 
-
-	border:
-
-		1px solid
-
-		var(--border-1);
-
-
-	backdrop-filter:
-
-		blur(22px);
-
+	overflow: hidden;
 }
 
-
-
-.content {
-
-	position:relative;
-
-	z-index:2;
-
-	max-width:800px;
-
-	margin:auto;
-
-	text-align:center;
-
+.panel::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background-image:
+		linear-gradient(var(--grid-line) 1px, transparent 1px),
+		linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+	background-size: 32px 32px;
+	mask-image: linear-gradient(90deg, transparent, #000);
 }
 
-
-
-.badge {
-
-	display:inline-flex;
-
-	align-items:center;
-
-	justify-content:center;
-
-	padding:10px 22px;
-
-	border-radius:999px;
-
-	background:
-
-		var(--primary-bg);
-
-	border:
-
-		1px solid
-
-		var(--primary-border);
-
-	color:var(--primary);
-
-	font-size:.82rem;
-
-	font-weight:700;
-
-	letter-spacing:3px;
-
+.intro,
+.quests {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
 }
-
-
-
-h2 {
-
-	margin-top:28px;
-
-	margin-bottom:0;
-
-	font-size:
-
-		clamp(2.5rem,5vw,3.6rem);
-
-	font-weight:800;
-
-	letter-spacing:-2px;
-
-	color:var(--text);
-
-}
-
-
-
-.description {
-
-	max-width:680px;
-
-	margin:28px auto 0;
-
-	color:var(--text-muted);
-
-	line-height:1.9;
-
-	font-size:1.05rem;
-
-}
-
-
 
 .points {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
 
-	margin-top:45px;
+	margin: 8px 0 0;
+	padding: 0;
 
-	display:flex;
-
-	justify-content:center;
-
-	flex-wrap:wrap;
-
-	gap:16px;
-
+	list-style: none;
 }
 
+.points li {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 
-
-.point {
-
-	display:flex;
-
-	align-items:center;
-
-	gap:10px;
-
-	padding:12px 20px;
-
-	border-radius:999px;
-
-	background:
-
-		var(--surface-2);
-
-	border:
-
-		1px solid
-
-		var(--border-1);
-
-	color:var(--text-muted);
-
-	font-size:.95rem;
-
-	font-weight:600;
-
+	font-size: .95rem;
+	color: var(--text);
 }
 
+.tick {
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
 
+	width: 32px;
+	height: 32px;
 
-.dot {
-
-	font-size:1.1rem;
-
+	background: var(--surface-2);
+	border: 1px solid var(--border-1);
+	border-radius: var(--radius-xs);
 }
 
-
-
-.buttons {
-
-	display:flex;
-
-	justify-content:center;
-
-	flex-wrap:wrap;
-
-	gap:18px;
-
-	margin-top:50px;
-
+.quests {
+	justify-content: center;
+	gap: 14px;
 }
 
-
-
-.primary {
-
-	display:inline-flex;
-
-	align-items:center;
-
-	justify-content:center;
-
-	gap:10px;
-
-	padding:18px 36px;
-
-	border-radius:16px;
-
-	text-decoration:none;
-
-	font-weight:700;
-
-	font-size:1.05rem;
-
-	color:white;
-
-	transition:.3s ease;
-
+.quests-label {
+	font-family: var(--font-pixel);
+	font-size: .74rem;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	color: var(--text-dim);
 }
 
+.quest {
+	display: flex;
+	align-items: center;
+	gap: 16px;
 
+	padding: 18px 20px;
 
-.btn-icon {
+	text-decoration: none;
+	color: var(--text);
 
-	font-size:1.15rem;
+	background: var(--surface-2);
+	border: 1px solid var(--border-2);
+	border-left: 3px solid var(--primary);
+	border-radius: var(--radius-xs);
 
+	transition:
+		transform var(--transition),
+		border-color var(--transition),
+		background var(--transition);
 }
 
-
-
-.primary.discord {
-
-	background:var(--primary);
-
+.quest:hover {
+	transform: translateX(6px);
+	background: var(--primary-bg);
+	border-color: var(--primary-border);
+	border-left-color: var(--primary);
 }
 
+.quest-icon {
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
 
+	width: 52px;
+	height: 52px;
 
-.primary.discord:hover {
+	font-size: 1.5rem;
 
-	transform:
-
-		translateY(-4px);
-
-	box-shadow:
-
-		0 20px 45px
-
-		var(--primary-glow);
-
+	background: var(--bg-sunken);
+	border: 1px solid var(--border-1);
+	border-radius: var(--radius-xs);
 }
 
-
-
-.primary.minecraft {
-
-	background:linear-gradient(135deg, var(--primary), #8B5CF6);
-
+.quest-text {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	flex-grow: 1;
 }
 
-
-
-.primary.minecraft:hover {
-
-	transform:
-
-		translateY(-4px);
-
-	box-shadow:
-
-		0 20px 45px
-
-		color-mix(in srgb, #8B5CF6 35%, transparent);
-
+.quest-text small {
+	font-family: var(--font-pixel);
+	font-size: .66rem;
+	letter-spacing: .06em;
+	color: var(--primary-light);
 }
 
-
-
-.background-glow {
-
-	position:absolute;
-
-	width:550px;
-
-	height:550px;
-
-	border-radius:50%;
-
-	filter:blur(90px);
-
-	pointer-events:none;
-
+.quest-text strong {
+	font-family: var(--font-display);
+	font-size: 1.2rem;
+	font-weight: 600;
 }
 
-
-
-.glow-left {
-
-	top:-220px;
-
-	left:-220px;
-
-	background:
-
-		radial-gradient(
-
-			circle,
-
-			color-mix(in srgb, var(--primary) 18%, transparent),
-
-			transparent 70%
-
-		);
-
+.quest-text > span {
+	font-size: .9rem;
+	color: var(--text-muted);
 }
 
-
-
-.glow-right {
-
-	right:-220px;
-
-	bottom:-220px;
-
-	background:
-
-		radial-gradient(
-
-			circle,
-
-			color-mix(in srgb, var(--primary) 14%, transparent),
-
-			transparent 70%
-
-		);
-
+.quest-go {
+	font-size: .9rem;
+	color: var(--primary-light);
+	transition: transform var(--transition);
 }
 
+.quest:hover .quest-go {
+	transform: translateX(4px);
+}
 
+@media (max-width: 960px) {
 
-@media (max-width:700px) {
+	.panel {
+		grid-template-columns: 1fr;
+		padding: 36px 28px;
+	}
+}
 
-	.q-cta {
+@media (max-width: 520px) {
 
-		margin:0 16px 40px;
-
-		padding:60px 28px;
-
+	.points {
+		grid-template-columns: 1fr;
 	}
 
-
-	h2 {
-
-		font-size:2.2rem;
-
+	.panel {
+		padding: 28px 20px;
 	}
-
-
-	.description {
-
-		font-size:1rem;
-
-	}
-
-
-	.buttons {
-
-		flex-direction:column;
-
-	}
-
-
-	.primary {
-
-		width:100%;
-
-	}
-
 }
 
 </style>

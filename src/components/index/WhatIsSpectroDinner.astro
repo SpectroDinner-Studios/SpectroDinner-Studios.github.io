@@ -1,44 +1,68 @@
-<section class="what-is">
+---
+import T from "../T.astro";
+import SectionHeader from "../SectionHeader.astro";
 
-	<div class="container">
+// Rendered as a config file — key / value pairs, value colored by type.
+const config = [
+	{ key: { es: "nombre", en: "name" }, value: { es: '"SpectroDinner Studios"' }, type: "string" },
+	{ key: { es: "tipo", en: "type" }, value: { es: '"independiente"', en: '"independent"' }, type: "string" },
+	{ key: { es: "fundado", en: "founded" }, value: { es: "2024" }, type: "number" },
+	{ key: { es: "areas", en: "areas" }, value: { es: "[software, juegos, minecraft, experimental]", en: "[software, games, minecraft, experimental]" }, type: "list" },
+	{ key: { es: "principios", en: "principles" }, value: { es: "[arquitectura_limpia, rendimiento, mantenibilidad]", en: "[clean_architecture, performance, maintainability]" }, type: "list" },
+	{ key: { es: "servicio_discord", en: "discord_service" }, value: { es: "gratis", en: "free" }, type: "bool" },
+];
+---
 
-		<div class="card reveal spotlight">
+<section class="section" id="estudio">
 
-			<span class="eyebrow">
-				<span data-lang="es">SOBRE NOSOTROS</span>
-				<span data-lang="en">ABOUT US</span>
-			</span>
+	<div class="container split">
 
-			<h2>
-				<span data-lang="es">¿Qué es SpectroDinner Studios?</span>
-				<span data-lang="en">What is SpectroDinner Studios?</span>
-			</h2>
+		<div>
 
-			<p data-lang="es">
-				SpectroDinner Studios es un estudio de desarrollo
-				independiente. No somos una gran corporación — somos
-				un equipo pequeño que construye software, videojuegos
-				y proyectos de Minecraft, y explora tecnología
-				experimental por el camino.
-			</p>
+			<SectionHeader
+				index="01"
+				eyebrow={{ es: "Sobre nosotros", en: "About us" }}
+				title={{ es: "¿Qué es SpectroDinner Studios?", en: "What is SpectroDinner Studios?" }}
+			/>
 
-			<p data-lang="en">
-				SpectroDinner Studios is an independent development
-				studio. We're not a large corporation — we're a small
-				team building software, games and Minecraft projects,
-				while exploring experimental technology along the way.
-			</p>
+			<div class="body reveal">
+				<p>
+					<T
+						es="SpectroDinner Studios es un estudio de desarrollo independiente. No somos una gran corporación — somos un equipo pequeño que construye software, videojuegos y proyectos de Minecraft, y explora tecnología experimental por el camino."
+						en="SpectroDinner Studios is an independent development studio. We're not a large corporation — we're a small team building software, games and Minecraft projects, while exploring experimental technology along the way."
+					/>
+				</p>
+				<p>
+					<T
+						es="Cada proyecto sigue los mismos principios: arquitectura limpia, rendimiento y mantenibilidad a largo plazo."
+						en="Every project follows the same principles: clean architecture, performance and long-term maintainability."
+					/>
+				</p>
+				<a href="/about" class="btn btn-ghost btn-sm">
+					<T es="Conócenos" en="Meet the studio" /> →
+				</a>
+			</div>
 
-			<p data-lang="es">
-				Cada proyecto sigue los mismos principios: arquitectura
-				limpia, rendimiento y mantenibilidad a largo plazo.
-			</p>
+		</div>
 
-			<p data-lang="en">
-				Every project follows the same principles: clean
-				architecture, performance and long-term
-				maintainability.
-			</p>
+		<div class="terminal reveal" aria-hidden="true">
+
+			<div class="terminal-bar">
+				<i></i><i></i><i></i>
+				<span>~/spectrodinner/<T es="estudio" en="studio" />.cfg</span>
+			</div>
+
+			<div class="terminal-body">
+				<p><span class="prompt">&gt;</span> cat <T es="estudio" en="studio" />.cfg</p>
+				{config.map((row) => (
+					<p class="row">
+						<span class="key"><T {...row.key} /></span>
+						<span class="eq">=</span>
+						<span class={`val ${row.type}`}><T {...row.value} /></span>
+					</p>
+				))}
+				<p><span class="prompt">&gt;</span> <span class="cursor"></span></p>
+			</div>
 
 		</div>
 
@@ -46,100 +70,88 @@
 
 </section>
 
-
 <style>
 
-.what-is {
-
-	padding:100px 32px;
-
+.split {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+	gap: 64px;
 }
 
-
-.container {
-
-	max-width:900px;
-
-	margin:auto;
-
+.split :global(.section-header) {
+	margin-bottom: 28px;
 }
 
+.body {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 18px;
 
-.card {
-
-	padding:56px;
-
-	border-radius:32px;
-
-	background:var(--surface-1);
-
-	border:1px solid var(--border-1);
-
-	backdrop-filter:blur(20px);
-
-	text-align:center;
-
+	color: var(--text-muted);
+	font-size: 1.05rem;
+	line-height: 1.8;
 }
 
-
-.eyebrow {
-
-	display:block;
-
-	font-size:.85rem;
-
-	letter-spacing:3px;
-
-	color:var(--primary);
-
-	font-weight:700;
-
+.body .btn {
+	margin-top: 8px;
 }
 
-
-h2 {
-
-	margin-top:20px;
-
-	font-size:clamp(2rem,4.5vw,3rem);
-
-	color:var(--text);
-
-	letter-spacing:-2px;
-
+.terminal {
+	box-shadow: 0 30px 80px -30px var(--primary-glow);
 }
 
-
-p {
-
-	max-width:680px;
-
-	margin:24px auto 0;
-
-	color:var(--text-muted);
-
-	font-size:1.08rem;
-
-	line-height:1.9;
-
+.row {
+	display: grid;
+	grid-template-columns: 9.5em auto 1fr;
+	gap: 10px;
 }
 
+.key {
+	color: var(--primary-light);
+}
 
-@media(max-width:700px) {
+.eq {
+	color: var(--text-dim);
+}
 
-	.what-is {
+.val.string {
+	color: var(--emerald);
+}
 
-		padding:70px 20px;
+.val.number,
+.val.bool {
+	color: var(--gold-text);
+}
 
+.val.list {
+	color: var(--text);
+}
+
+@media (max-width: 960px) {
+
+	.split {
+		grid-template-columns: 1fr;
+		gap: 40px;
+	}
+}
+
+@media (max-width: 560px) {
+
+	.terminal-body {
+		font-size: .82rem;
 	}
 
-
-	.card {
-
-		padding:36px 28px;
-
+	.row {
+		grid-template-columns: 1fr;
+		gap: 0;
+		margin-bottom: 6px;
 	}
 
+	.eq {
+		display: none;
+	}
 }
 
 </style>

@@ -1,0 +1,22 @@
+---
+/*
+	Bilingual text: renders the ES and EN variants, and the global
+	`html[lang]` rules in global.css show only the active one.
+
+	<T es="Proyectos" en="Projects" />
+	<T es="GitHub" />   ← same in both languages
+*/
+interface Props {
+	es: string;
+	en?: string;
+}
+
+const { es, en = es } = Astro.props;
+---
+
+{es === en ? es : (
+	<>
+		<span data-lang="es">{es}</span>
+		<span data-lang="en">{en}</span>
+	</>
+)}

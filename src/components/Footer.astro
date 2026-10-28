@@ -1,222 +1,215 @@
+---
+import T from "./T.astro";
+
+const year = new Date().getFullYear();
+
+type FooterLink = { href: string; es: string; en?: string; external?: boolean };
+
+const columns: { title: { es: string; en: string }; links: FooterLink[] }[] = [
+	{
+		title: { es: "Estudio", en: "Studio" },
+		links: [
+			{ href: "/projects", es: "Proyectos", en: "Projects" },
+			{ href: "/tep", es: "T.E.P." },
+			{ href: "/documentation", es: "Documentación", en: "Documentation" },
+			{ href: "/about", es: "Sobre nosotros", en: "About" },
+		],
+	},
+	{
+		title: { es: "Servicios", en: "Services" },
+		links: [
+			{ href: "/cuestionario", es: "Servidores de Discord", en: "Discord servers" },
+			{ href: "/cuestionario-minecraft", es: "Servidores de Minecraft", en: "Minecraft servers" },
+			{ href: "/voluntariado", es: "Voluntariado", en: "Volunteer" },
+			{ href: "/#valoraciones", es: "Valoraciones", en: "Reviews" },
+		],
+	},
+	{
+		title: { es: "Comunidad", en: "Community" },
+		links: [
+			{ href: "https://github.com/SpectroDinner-Studios", es: "GitHub del estudio ↗", en: "Studio GitHub ↗", external: true },
+			{ href: "https://github.com/Elmoderador", es: "GitHub de Elmoderador ↗", en: "Elmoderador's GitHub ↗", external: true },
+			{ href: "/#faq", es: "Preguntas frecuentes", en: "FAQ" },
+		],
+	},
+];
+---
+
 <footer class="footer">
 
-	<div class="container">
+	<div class="pixel-divider" aria-hidden="true"></div>
+
+	<div class="container grid">
 
 		<div class="brand">
 
-			<h2>
-				SpectroDinner™
-			</h2>
+			<a href="/" class="brand-link">
+				<img src="/logo.png" alt="" width="44" height="44" />
+				<span>SPECTRO<span>DINNER</span>™</span>
+			</a>
 
-			<p data-lang="es">
-				Estudio de desarrollo independiente — software, juegos,
-				Minecraft y tecnología experimental.
+			<p>
+				<T
+					es="Estudio de desarrollo independiente — software, juegos, Minecraft y tecnología experimental."
+					en="Independent development studio — software, games, Minecraft and experimental technology."
+				/>
 			</p>
 
-			<p data-lang="en">
-				Independent development studio — software, games,
-				Minecraft and experimental technology.
-			</p>
+			<div class="chips">
+				<span class="chip chip-primary">EST. 2024</span>
+				<span class="chip"><T es="Independiente" en="Independent" /></span>
+			</div>
 
 		</div>
 
+		{columns.map((column) => (
+			<nav class="column" aria-label={column.title.en}>
 
-		<div class="links">
+				<h2><T {...column.title} /></h2>
 
-			<a href="/">
-				<span data-lang="es">Inicio</span>
-				<span data-lang="en">Home</span>
-			</a>
+				{column.links.map((link) => (
+					<a
+						href={link.href}
+						target={link.external ? "_blank" : undefined}
+						rel={link.external ? "noopener noreferrer" : undefined}
+					>
+						<T es={link.es} en={link.en} />
+					</a>
+				))}
 
-			<a href="/projects">
-				<span data-lang="es">Proyectos</span>
-				<span data-lang="en">Projects</span>
-			</a>
-
-			<a href="/about">
-				<span data-lang="es">Sobre Nosotros</span>
-				<span data-lang="en">About</span>
-			</a>
-
-			<a href="/documentation">
-				<span data-lang="es">Documentación</span>
-				<span data-lang="en">Documentation</span>
-			</a>
-
-			<a href="/cuestionario">
-				<span data-lang="es">Discord</span>
-				<span data-lang="en">Discord</span>
-			</a>
-
-			<a href="/cuestionario-minecraft">
-				<span data-lang="es">Minecraft</span>
-				<span data-lang="en">Minecraft</span>
-			</a>
-
-			<a href="/voluntariado">
-				<span data-lang="es">Voluntariado</span>
-				<span data-lang="en">Volunteer</span>
-			</a>
-
-			<a
-				href="https://github.com/SpectroDinner-Studios"
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				GitHub
-			</a>
-
-		</div>
-
+			</nav>
+		))}
 
 	</div>
 
-
-	<div class="bottom">
+	<div class="container bottom">
 
 		<p>
-			<span data-lang="es">© 2024 SpectroDinner™. Todos los derechos reservados.</span>
-			<span data-lang="en">© 2024 SpectroDinner™. All rights reserved.</span>
+			© 2024–{year} SpectroDinner™.
+			<T es="Todos los derechos reservados." en="All rights reserved." />
+		</p>
+
+		<p class="mono">
+			<span class="prompt">&gt;</span> <T es="gracias por jugar" en="thanks for playing" />_
 		</p>
 
 	</div>
 
 </footer>
 
-
 <style>
 
 .footer {
+	margin-top: 40px;
+	padding-bottom: 32px;
 
-	padding:80px 32px 30px;
-
-	border-top:
-		1px solid
-		var(--border-1);
-
+	background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--bg-sunken) 70%, transparent));
 }
 
+.grid {
+	display: grid;
+	grid-template-columns: 1.6fr repeat(3, 1fr);
+	gap: 48px;
 
-
-.container {
-
-	max-width:1200px;
-
-	margin:auto;
-
-	display:flex;
-
-	justify-content:space-between;
-
-	gap:40px;
-
+	padding-top: 64px;
+	padding-bottom: 48px;
 }
 
-
-
-.brand h2 {
-
-	margin:0;
-
-	color:var(--text);
-
-	font-size:1.8rem;
-
+.brand {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
 }
 
+.brand-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
 
+	font-family: var(--font-display);
+	font-size: 1.3rem;
+	font-weight: 700;
+	letter-spacing: .06em;
+	text-decoration: none;
+	color: var(--text);
+}
+
+.brand-link span span {
+	color: var(--primary-light);
+}
 
 .brand p {
-
-	margin-top:12px;
-
-	color:var(--text-muted);
-
+	max-width: 340px;
+	color: var(--text-muted);
+	line-height: 1.7;
 }
 
-
-
-.links {
-
-	display:flex;
-
-	flex-wrap:wrap;
-
-	justify-content:flex-end;
-
-	gap:16px 25px;
-
-	align-items:center;
-
+.column {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 }
 
+.column h2 {
+	margin-bottom: 4px;
 
-
-.links a {
-
-	color:var(--text-muted);
-
-	text-decoration:none;
-
-	transition:.25s ease;
-
+	font-family: var(--font-pixel);
+	font-size: .74rem;
+	font-weight: 400;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	color: var(--text-dim);
 }
 
+.column a {
+	width: fit-content;
 
+	font-size: .95rem;
+	text-decoration: none;
+	color: var(--text-muted);
 
-.links a:hover {
-
-	color:var(--text);
-
+	transition: color var(--transition);
 }
 
-
+.column a:hover {
+	color: var(--primary-light);
+}
 
 .bottom {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 12px;
 
-	margin-top:50px;
+	padding-top: 24px;
 
-	padding-top:25px;
+	font-size: .88rem;
+	color: var(--text-dim);
 
-	border-top:
-		1px solid
-		var(--border-1);
-
-	text-align:center;
-
+	border-top: 1px solid var(--border-1);
 }
 
-
-
-.bottom p {
-
-	color:var(--text-dim);
-
-	font-size:.9rem;
-
+.prompt {
+	color: var(--primary-light);
 }
 
+@media (max-width: 900px) {
 
-
-@media(max-width:700px) {
-
-	.container {
-
-		flex-direction:column;
-
-		text-align:center;
-
+	.grid {
+		grid-template-columns: 1fr 1fr;
+		gap: 36px;
 	}
 
-
-	.links {
-
-		justify-content:center;
-
-		flex-wrap:wrap;
-
+	.brand {
+		grid-column: 1 / -1;
 	}
+}
 
+@media (max-width: 520px) {
+
+	.grid {
+		grid-template-columns: 1fr;
+	}
 }
 
 </style>

@@ -1,105 +1,109 @@
 ---
 import LangToggle from "./LangToggle.astro";
 import SettingsPanel from "./SettingsPanel.astro";
+import T from "./T.astro";
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+
+const links = [
+	{ href: "/projects", es: "Proyectos", en: "Projects" },
+	{ href: "/tep", es: "T.E.P.", en: "T.E.P.", gold: true },
+	{ href: "/documentation", es: "Documentación", en: "Docs" },
+	{ href: "/about", es: "Nosotros", en: "About" },
+	{ href: "/voluntariado", es: "Voluntariado", en: "Volunteer" },
+];
+
+const onQuestionnaire = path.startsWith("/cuestionario");
 ---
 
-<nav class="navbar">
+<header class="navbar">
 
-	<a href="/" class="brand">
+	<div class="nav-inner">
 
-		<img src="/logo.png" alt="SpectroDinner Logo" class="logo"/>
+		<a href="/" class="brand" aria-label="SpectroDinner™">
 
-		<span>
-			SpectroDinner™
-		</span>
+			<img src="/logo.png" alt="" width="36" height="36" class="logo" />
 
-	</a>
+			<span class="wordmark">
+				SPECTRO<span>DINNER</span><sup>™</sup>
+			</span>
 
-
-	<button type="button" class="menu-toggle" aria-label="Menu" aria-expanded="false">
-		<span></span>
-		<span></span>
-		<span></span>
-	</button>
-
-
-	<div class="links">
-
-		<a href="/">
-			<span data-lang="es">Inicio</span>
-			<span data-lang="en">Home</span>
 		</a>
 
+		<nav class="links" aria-label="Principal / Main">
 
-		<a href="/projects">
-			<span data-lang="es">Proyectos</span>
-			<span data-lang="en">Projects</span>
-		</a>
-
-
-		<a href="/documentation">
-			<span data-lang="es">Documentación</span>
-			<span data-lang="en">Documentation</span>
-		</a>
-
-
-		<a href="/about">
-			<span data-lang="es">Sobre Nosotros</span>
-			<span data-lang="en">About</span>
-		</a>
-
-
-		<a href="/voluntariado">
-			<span data-lang="es">Voluntariado</span>
-			<span data-lang="en">Volunteer</span>
-		</a>
-
-
-		<a
-			href="https://github.com/elmoderador"
-			class="github"
-			target="_blank"
-			rel="noopener noreferrer"
-		>
-			GitHub ↗
-		</a>
-
-
-		<div class="cta-dropdown">
-
-			<button type="button" class="cta cta-toggle" aria-expanded="false">
-				<span data-lang="es">Cuestionario</span>
-				<span data-lang="en">Questionnaire</span>
-				<span class="caret">▾</span>
-			</button>
-
-			<div class="cta-panel">
-
-				<a href="/cuestionario">
-					<span class="cta-panel-icon">💬</span>
-					<span data-lang="es">Servicio de Discord</span>
-					<span data-lang="en">Discord Service</span>
+			{links.map((link) => (
+				<a
+					href={link.href}
+					class:list={["nav-link", { gold: link.gold }]}
+					aria-current={path === link.href ? "page" : undefined}
+				>
+					<T es={link.es} en={link.en} />
+					{link.gold && <span class="gold-dot" aria-hidden="true"></span>}
 				</a>
+			))}
 
-				<a href="/cuestionario-minecraft">
-					<span class="cta-panel-icon">⛏️</span>
-					<span data-lang="es">Servicio de Minecraft</span>
-					<span data-lang="en">Minecraft Service</span>
-				</a>
+			<a
+				href="https://github.com/elmoderador"
+				class="nav-link"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				GitHub ↗
+			</a>
+
+			<div class="cta-dropdown">
+
+				<button
+					type="button"
+					class:list={["cta", "cta-toggle", { current: onQuestionnaire }]}
+					aria-expanded="false"
+				>
+					<T es="Cuestionario" en="Questionnaire" />
+					<span class="caret" aria-hidden="true">▾</span>
+				</button>
+
+				<div class="cta-panel">
+
+					<a href="/cuestionario">
+						<span class="cta-panel-icon">💬</span>
+						<span class="cta-panel-text">
+							<strong><T es="Servicio de Discord" en="Discord Service" /></strong>
+							<small><T es="Crear, configurar o rediseñar" en="Create, configure or redesign" /></small>
+						</span>
+					</a>
+
+					<a href="/cuestionario-minecraft">
+						<span class="cta-panel-icon">⛏️</span>
+						<span class="cta-panel-text">
+							<strong><T es="Servicio de Minecraft" en="Minecraft Service" /></strong>
+							<small><T es="Permisos, rangos y optimización" en="Permissions, ranks and optimization" /></small>
+						</span>
+					</a>
+
+				</div>
 
 			</div>
 
+		</nav>
+
+		<div class="tools">
+
+			<LangToggle />
+
+			<SettingsPanel />
+
+			<button type="button" class="menu-toggle" aria-label="Menu" aria-expanded="false">
+				<span></span>
+				<span></span>
+				<span></span>
+			</button>
+
 		</div>
-
-
-		<LangToggle />
-
-		<SettingsPanel />
 
 	</div>
 
-</nav>
-
+</header>
 
 <script>
 	const toggle = document.querySelector(".navbar .menu-toggle");
@@ -120,7 +124,6 @@ import SettingsPanel from "./SettingsPanel.astro";
 	links?.querySelectorAll("a").forEach((a) => {
 		a.addEventListener("click", closeMenu);
 	});
-
 
 	const ctaToggle = document.querySelector<HTMLButtonElement>(".cta-toggle");
 	const ctaPanel = document.querySelector<HTMLElement>(".cta-panel");
@@ -145,591 +148,488 @@ import SettingsPanel from "./SettingsPanel.astro";
 			closeCta();
 		}
 	});
-</script>
 
+	document.addEventListener("keydown", (e) => {
+		if (e.key !== "Escape") return;
+		closeCta();
+		closeMenu();
+	});
+</script>
 
 <style>
 
 .navbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 50;
 
-	max-width:1400px;
+	height: var(--header-h);
 
-	margin:24px auto;
-
-	padding:20px 32px;
-
-
-	display:flex;
-
-	justify-content:space-between;
-
-	align-items:center;
-
-
-	background:
-		var(--surface-2);
-
-
-	border:
-		1px solid
-		var(--border-2);
-
-
-	border-radius:18px;
-
-
-	backdrop-filter:
-		blur(15px);
-
-
-	box-shadow:
-		0 10px 40px
-		var(--shadow-color);
-
-
-	position:sticky;
-
-	top:16px;
-
-	z-index:100;
-
+	border-bottom: 1px solid transparent;
 
 	transition:
-		background .3s ease,
-		box-shadow .3s ease,
-		border-color .3s ease;
-
+		background var(--transition),
+		border-color var(--transition),
+		backdrop-filter var(--transition);
 }
-
-
 
 .navbar.scrolled {
+	background: color-mix(in srgb, var(--background) 78%, transparent);
+	border-bottom-color: var(--border-1);
+	backdrop-filter: blur(16px) saturate(1.2);
+}
 
-	background:
-		color-mix(in srgb, var(--bg-elevated) 75%, transparent);
+.navbar.scrolled::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -1px;
+	height: 1px;
+	background: linear-gradient(90deg, transparent, var(--primary), var(--primary-2), transparent);
+	opacity: .6;
+}
 
+.nav-inner {
+	display: flex;
+	align-items: center;
+	gap: 24px;
 
-	border-color:
-		var(--border-3);
-
-
-	box-shadow:
-		0 15px 45px
-		var(--shadow-color);
-
+	height: 100%;
+	max-width: 1320px;
+	margin: 0 auto;
+	padding: 0 28px;
 }
 
 
+/* Brand */
 
 .brand {
+	display: flex;
+	align-items: center;
+	gap: 12px;
 
-	display:flex;
+	text-decoration: none;
+	flex-shrink: 0;
+}
 
-	align-items:center;
+.logo {
+	width: 36px;
+	height: 36px;
+	filter: drop-shadow(0 0 10px var(--primary-glow));
+	transition: transform .6s cubic-bezier(.2, .8, .2, 1);
+}
 
-	gap:14px;
+.brand:hover .logo {
+	transform: rotate(90deg);
+}
 
+.wordmark {
+	font-family: var(--font-display);
+	font-size: 1.12rem;
+	font-weight: 700;
+	letter-spacing: .06em;
+	color: var(--text);
+}
 
-	color:var(--text);
+.wordmark span {
+	color: var(--primary-light);
+}
 
-	text-decoration:none;
-
-
-	font-weight:700;
-
-	font-size:1.2rem;
-
-
-	transition:.25s ease;
-
+.wordmark sup {
+	font-size: .55em;
+	color: var(--text-dim);
+	margin-left: 1px;
 }
 
 
-
-.brand:hover {
-
-	transform:
-		translateY(-2px);
-
-}
-
-
-
-.brand img {
-
-	width:44px;
-
-	height:44px;
-
-
-	object-fit:contain;
-
-
-	border-radius:12px;
-
-
-	transition:.25s ease;
-
-}
-
-
-
-.brand:hover img {
-
-	filter:
-		drop-shadow(
-			0 0 12px
-			color-mix(in srgb, var(--primary) 60%, transparent)
-		);
-
-}
-
-
+/* Links */
 
 .links {
+	display: flex;
+	align-items: center;
+	gap: 4px;
 
-	display:flex;
+	margin-left: auto;
+}
 
-	align-items:center;
+.nav-link {
+	position: relative;
 
-	gap:16px;
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
 
+	padding: 9px 12px;
+
+	font-size: .93rem;
+	font-weight: 500;
+	text-decoration: none;
+	color: var(--text-muted);
+
+	border-radius: var(--radius-xs);
+
+	transition:
+		color var(--transition),
+		background var(--transition);
+}
+
+.nav-link::after {
+	content: "";
+	position: absolute;
+	left: 12px;
+	right: 12px;
+	bottom: 3px;
+	height: 2px;
+	background: var(--primary);
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform var(--transition);
+}
+
+.nav-link:hover {
+	color: var(--text);
+	background: var(--surface-1);
+}
+
+.nav-link:hover::after,
+.nav-link[aria-current="page"]::after {
+	transform: scaleX(1);
+}
+
+.nav-link[aria-current="page"] {
+	color: var(--text);
+}
+
+.nav-link.gold::after {
+	background: var(--gold);
+}
+
+.gold-dot {
+	width: 6px;
+	height: 6px;
+	background: var(--gold);
+	box-shadow: 0 0 8px var(--gold);
 }
 
 
-
-.links a {
-
-	text-decoration:none;
-
-	color:var(--text-muted);
-
-
-	font-weight:500;
-
-
-	transition:.25s ease;
-
-}
-
-
-
-.links a:hover {
-
-	color:var(--primary);
-
-}
-
-
-
-.github {
-
-	color:var(--text-muted);
-
-
-	font-weight:500;
-
-}
-
-
-
-.github:hover {
-
-	color:var(--primary);
-
-}
-
-
+/* Questionnaire dropdown */
 
 .cta-dropdown {
-
-	position:relative;
-
+	position: relative;
+	margin-left: 8px;
 }
-
-
 
 .cta {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
 
-	display:flex;
+	min-height: 40px;
+	padding: 0 16px;
 
-	align-items:center;
+	font-family: var(--font-display);
+	font-size: .93rem;
+	font-weight: 600;
+	color: #FFFFFF;
 
-	gap:6px;
+	background: linear-gradient(135deg, var(--primary), var(--primary-2));
+	border: 0;
 
+	cursor: pointer;
 
-	padding:
-		10px 18px;
+	clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+	box-shadow:
+		inset 0 2px 0 rgba(255, 255, 255, .16),
+		inset 0 -3px 0 rgba(0, 0, 0, .3);
 
-
-	background:
-		var(--primary);
-
-
-	border:none;
-
-
-	border-radius:
-		12px;
-
-
-	color:white !important;
-
-
-	font-weight:600 !important;
-
-	font-family:inherit;
-
-	font-size:1rem;
-
-	cursor:pointer;
-
-	transition:.25s ease;
-
+	transition:
+		filter var(--transition),
+		transform var(--transition);
 }
-
-
 
 .cta:hover {
-
-	background:
-		var(--primary-hover);
-
-
-	transform:
-		translateY(-2px);
-
-
-	box-shadow:
-		0 10px 25px
-		var(--primary-glow);
-
+	filter: brightness(1.12);
+	transform: translateY(-1px);
 }
 
-
+.cta:focus-visible {
+	clip-path: none;
+}
 
 .caret {
-
-	font-size:.75rem;
-
-	transition:transform .25s ease;
-
+	font-size: .8em;
+	transition: transform var(--transition);
 }
 
-
-
-.cta-toggle[aria-expanded="true"] .caret {
-
-	transform:rotate(180deg);
-
+.cta[aria-expanded="true"] .caret {
+	transform: rotate(180deg);
 }
-
-
 
 .cta-panel {
+	position: absolute;
+	top: calc(100% + 12px);
+	right: 0;
 
-	position:absolute;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 
-	top:calc(100% + 12px);
+	width: 290px;
+	padding: 8px;
 
-	right:0;
+	background: var(--bg-elevated);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-sm);
+	box-shadow: 0 24px 60px var(--shadow-color);
 
-	width:240px;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(-6px);
 
-	padding:10px;
-
-	display:flex;
-
-	flex-direction:column;
-
-	gap:6px;
-
-	border-radius:16px;
-
-	background:var(--bg-elevated);
-
-	border:1px solid var(--border-2);
-
-	backdrop-filter:blur(20px);
-
-	box-shadow:0 20px 50px var(--shadow-color);
-
-	opacity:0;
-
-	visibility:hidden;
-
-	transform:translateY(-8px);
-
-	transition:opacity .25s ease, transform .25s ease, visibility .25s;
-
-	pointer-events:none;
-
-	z-index:200;
-
+	transition:
+		opacity .2s ease,
+		transform .2s ease,
+		visibility .2s;
 }
-
-
 
 .cta-panel.open {
-
-	opacity:1;
-
-	visibility:visible;
-
-	transform:none;
-
-	pointer-events:auto;
-
+	opacity: 1;
+	visibility: visible;
+	transform: none;
 }
-
-
 
 .cta-panel a {
+	display: flex;
+	align-items: center;
+	gap: 12px;
 
-	display:flex;
+	padding: 10px 12px;
 
-	align-items:center;
+	text-decoration: none;
+	color: var(--text);
 
-	gap:10px;
+	border: 1px solid transparent;
+	border-radius: var(--radius-xs);
 
-	padding:12px 14px;
-
-	border-radius:10px;
-
-	color:var(--text) !important;
-
-	font-weight:600 !important;
-
-	text-decoration:none;
-
-	transition:.2s ease;
-
+	transition:
+		background var(--transition),
+		border-color var(--transition);
 }
-
-
 
 .cta-panel a:hover {
-
-	background:var(--surface-hover);
-
-	color:var(--primary) !important;
-
+	background: var(--primary-bg);
+	border-color: var(--primary-border);
 }
-
-
 
 .cta-panel-icon {
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
 
-	font-size:1.05rem;
+	width: 38px;
+	height: 38px;
 
+	font-size: 1.15rem;
+
+	background: var(--surface-2);
+	border: 1px solid var(--border-1);
+	border-radius: var(--radius-xs);
+}
+
+.cta-panel-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.cta-panel-text strong {
+	font-size: .93rem;
+	font-weight: 600;
+}
+
+.cta-panel-text small {
+	font-size: .8rem;
+	color: var(--text-dim);
 }
 
 
+/* Tools */
+
+.tools {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
+
+/* Mobile menu toggle */
 
 .menu-toggle {
+	display: none;
 
-	display:none;
+	flex-direction: column;
+	justify-content: center;
+	gap: 5px;
 
-	flex-direction:column;
+	width: 42px;
+	height: 42px;
+	padding: 0 11px;
 
-	justify-content:center;
+	background: var(--surface-2);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-xs);
 
-	align-items:center;
-
-	gap:5px;
-
-
-	width:38px;
-
-	height:38px;
-
-
-	background:
-		var(--surface-2);
-
-
-	border:
-		1px solid
-		var(--border-2);
-
-
-	border-radius:10px;
-
-
-	cursor:pointer;
-
+	cursor: pointer;
 }
-
-
 
 .menu-toggle span {
-
-	width:18px;
-
-	height:2px;
-
-	border-radius:999px;
-
-	background:var(--text);
-
-	transition:.3s ease;
-
+	display: block;
+	height: 2px;
+	background: var(--text);
+	transition:
+		transform var(--transition),
+		opacity var(--transition);
 }
-
-
 
 .menu-toggle.active span:nth-child(1) {
-
-	transform:translateY(7px) rotate(45deg);
-
+	transform: translateY(7px) rotate(45deg);
 }
-
-
 
 .menu-toggle.active span:nth-child(2) {
-
-	opacity:0;
-
+	opacity: 0;
 }
-
-
 
 .menu-toggle.active span:nth-child(3) {
-
-	transform:translateY(-7px) rotate(-45deg);
-
+	transform: translateY(-7px) rotate(-45deg);
 }
 
 
+@media (max-width: 1100px) {
 
-@media(max-width:1100px) {
-
-
-	.navbar {
-
-		margin:15px;
-
-		padding:14px 18px;
-
+	.nav-inner {
+		gap: 12px;
+		padding: 0 20px;
 	}
 
-
+	.tools {
+		margin-left: auto;
+	}
 
 	.menu-toggle {
-
-		display:flex;
-
+		display: flex;
 	}
-
-
 
 	.links {
+		position: absolute;
+		top: calc(var(--header-h) - 1px);
+		left: 0;
+		right: 0;
 
-		position:absolute;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 2px;
 
-		top:calc(100% + 12px);
+		max-height: calc(100vh - var(--header-h));
+		overflow-y: auto;
 
-		left:0;
+		margin: 0;
+		padding: 14px 20px 22px;
 
-		right:0;
+		background: var(--bg-elevated);
+		border-bottom: 1px solid var(--border-2);
+		box-shadow: 0 30px 60px var(--shadow-color);
 
-
-		flex-direction:column;
-
-		align-items:stretch;
-
-		gap:14px;
-
-
-		padding:22px;
-
-
-		background:
-			color-mix(in srgb, var(--bg-elevated) 95%, transparent);
-
-
-		border:
-			1px solid
-			var(--border-2);
-
-
-		border-radius:18px;
-
-
-		backdrop-filter:
-			blur(20px);
-
-
-		opacity:0;
-
-		visibility:hidden;
-
-		transform:translateY(-10px);
-
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(-8px);
 
 		transition:
-			opacity .25s ease,
-			transform .25s ease,
-			visibility .25s;
-
-
-		pointer-events:none;
-
+			opacity .2s ease,
+			transform .2s ease,
+			visibility .2s;
 	}
-
-
 
 	.links.open {
-
-		opacity:1;
-
-		visibility:visible;
-
-		transform:none;
-
-		pointer-events:auto;
-
+		opacity: 1;
+		visibility: visible;
+		transform: none;
 	}
 
-
-
-	.links a {
-
-		text-align:center;
-
-		padding:10px 0;
-
+	.nav-link {
+		padding: 13px 12px;
+		font-size: 1rem;
 	}
 
-
-
-	.brand {
-
-		font-size:1.1rem;
-
+	.nav-link::after {
+		left: 0;
+		right: auto;
+		top: 10px;
+		bottom: 10px;
+		width: 3px;
+		height: auto;
+		transform: scaleY(0);
 	}
 
+	.nav-link:hover::after,
+	.nav-link[aria-current="page"]::after {
+		transform: scaleY(1);
+	}
 
+	.cta-dropdown {
+		margin: 10px 0 0;
+	}
+
+	.cta {
+		width: 100%;
+		justify-content: center;
+		min-height: 46px;
+	}
 
 	.cta-panel {
-
-		right:auto;
-
-		left:50%;
-
-		transform:translate(-50%,-8px);
-
+		position: static;
+		width: 100%;
+		margin-top: 8px;
+		display: none;
+		box-shadow: none;
 	}
-
-
 
 	.cta-panel.open {
-
-		transform:translate(-50%,0);
-
+		display: flex;
 	}
-
 }
 
+@media (max-width: 480px) {
+
+	.nav-inner {
+		padding: 0 14px;
+		gap: 10px;
+	}
+
+	.brand {
+		gap: 10px;
+	}
+
+	.logo {
+		width: 32px;
+		height: 32px;
+	}
+
+	.wordmark {
+		font-size: .92rem;
+		letter-spacing: .03em;
+	}
+
+	.wordmark sup {
+		display: none;
+	}
+
+	.tools {
+		gap: 6px;
+	}
+}
 
 </style>

@@ -1,394 +1,141 @@
 ---
+import { Image } from "astro:assets";
+import tepLogo from "../../assets/tep.png";
+import T from "../T.astro";
 import ProjectStatus from "./ProjectStatus.astro";
 ---
 
-<section class="flagship">
+<article class="project hud-card gold interactive reveal">
 
-	<div class="container">
+	<a href="/tep" class="preview" tabindex="-1" aria-hidden="true">
+		<Image src={tepLogo} alt="" widths={[280, 560]} sizes="280px" class="tep" />
+	</a>
 
+	<div class="info">
 
-		<span class="eyebrow reveal">
-			<span data-lang="es">PROYECTO PRINCIPAL</span>
-			<span data-lang="en">FLAGSHIP PROJECT</span>
-		</span>
-
-
-		<div class="card reveal spotlight">
-
-
-			<div class="preview">
-
-				<img
-					src="/TEP.png"
-					alt="TimeEconomyPlugin Preview"
-					class="TEP"
-				/>
-
-				<div class="status">
-					<ProjectStatus status="in-development" />
-				</div>
-
-			</div>
-
-
-
-			<div class="info">
-
-				<h2>
-					TimeEconomyPlugin
-				</h2>
-
-
-				<p>
-					<span data-lang="es">
-						Un plugin de Minecraft a gran escala construido
-						con la Paper API, que introduce una economía
-						basada en tiempo y un sistema de progresión
-						sobre mecánicas de juego personalizadas y
-						funciones avanzadas del lado del servidor.
-						Diseñado para el rendimiento, la escalabilidad
-						y el mantenimiento a largo plazo.
-					</span>
-					<span data-lang="en">
-						A large-scale Minecraft plugin built with the
-						Paper API, introducing a time-based economy and
-						progression system on top of custom gameplay
-						mechanics and advanced server-side features.
-						Designed for performance, scalability and
-						long-term maintainability.
-					</span>
-				</p>
-
-
-				<div class="tags">
-
-					<span>Java</span>
-
-					<span>Paper API</span>
-
-					<span>Minecraft</span>
-
-					<span>Plugin Development</span>
-
-				</div>
-
-
-				<div class="buttons">
-
-					<a
-						href="https://github.com/elmoderador"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="primary"
-					>
-						<span data-lang="es">Perfil de GitHub ↗</span>
-						<span data-lang="en">GitHub Profile ↗</span>
-					</a>
-
-					<a
-						href="/documentation"
-						class="secondary"
-					>
-						<span data-lang="es">Documentación</span>
-						<span data-lang="en">Documentation</span>
-					</a>
-
-				</div>
-
-			</div>
-
-
+		<div class="meta">
+			<span class="code">PRJ-001</span>
+			<ProjectStatus status="reviving" />
 		</div>
 
+		<h3>
+			<a href="/tep">TimeEconomy<span>Plugin</span></a>
+		</h3>
+
+		<p>
+			<T
+				es="Un plugin de Minecraft a gran escala construido con la Paper API, que introduce una economía basada en tiempo y un sistema de progresión sobre mecánicas de juego personalizadas y funciones avanzadas del lado del servidor."
+				en="A large-scale Minecraft plugin built with the Paper API, introducing a time-based economy and progression system on top of custom gameplay mechanics and advanced server-side features."
+			/>
+		</p>
+
+		<div class="chips">
+			<span class="chip">Java</span>
+			<span class="chip">Paper API</span>
+			<span class="chip">Minecraft</span>
+			<span class="chip"><T es="Plugin" /></span>
+		</div>
+
+		<div class="actions">
+			<a href="/tep" class="btn btn-gold btn-sm">
+				<T es="Ver T.E.P." en="View T.E.P." /> →
+			</a>
+			<a
+				href="https://github.com/elmoderador"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="btn btn-ghost btn-sm"
+			>
+				GitHub ↗
+			</a>
+		</div>
 
 	</div>
 
-</section>
-
-
+</article>
 
 <style>
 
-.flagship {
+.project {
+	display: grid;
+	grid-template-columns: 260px 1fr;
+	align-items: center;
+	gap: 36px;
 
-	padding:100px 32px 0;
-
+	padding: 32px;
 }
-
-
-
-.container {
-
-	max-width:1200px;
-
-	margin:auto;
-
-}
-
-
-
-.eyebrow {
-
-	display:block;
-
-	font-size:.85rem;
-
-	letter-spacing:3px;
-
-	color:var(--primary);
-
-	font-weight:700;
-
-	margin-bottom:30px;
-
-}
-
-
-
-.card {
-
-	display:grid;
-
-	grid-template-columns:1fr 1fr;
-
-	gap:50px;
-
-	padding:50px;
-
-	border-radius:30px;
-
-	background:
-
-		var(--surface-1);
-
-	border:
-
-		1px solid
-
-		var(--border-1);
-
-	backdrop-filter:
-
-		blur(20px);
-
-}
-
-
 
 .preview {
+	display: grid;
+	place-items: center;
 
-	position:relative;
+	aspect-ratio: 1;
 
-	display:flex;
-
-	align-items:center;
-
-	justify-content:center;
-
-	min-width:0;
-
+	background:
+		radial-gradient(circle, color-mix(in srgb, var(--gold) 22%, transparent), transparent 70%),
+		var(--bg-sunken);
+	border: 1px solid var(--gold-border);
+	border-radius: var(--radius-xs);
 }
 
-
-
-.preview img {
-
-	width:75%;
-
-	max-height:280px;
-
-	object-fit:contain;
-
-	border-radius:18px;
-
-	box-shadow:
-
-		0 15px 40px
-
-		var(--shadow-color);
-
+.tep {
+	width: 92%;
+	height: auto;
+	filter: drop-shadow(0 10px 24px rgba(0, 0, 0, .5));
+	transition: transform .5s cubic-bezier(.2, .8, .2, 1);
 }
 
-
-
-.status {
-
-	position:absolute;
-
-	bottom:10px;
-
-	left:50%;
-
-	transform:translateX(-50%);
-
+.project:hover .tep {
+	transform: scale(1.04) rotate(-2deg);
 }
-
-
 
 .info {
-
-	min-width:0;
-
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 }
 
-
-
-.info h2 {
-
-	margin:0 0 20px;
-
-	font-size:2.2rem;
-
-	color:var(--text);
-
-	letter-spacing:-1px;
-
+.meta {
+	display: flex;
+	align-items: center;
+	gap: 12px;
 }
 
-
-
-.info p {
-
-	color:var(--text-muted);
-
-	line-height:1.8;
-
+.code {
+	font-family: var(--font-pixel);
+	font-size: .72rem;
+	letter-spacing: .06em;
+	color: var(--text-dim);
 }
 
-
-
-.tags {
-
-	display:flex;
-
-	flex-wrap:wrap;
-
-	gap:12px;
-
-	margin-top:30px;
-
+h3 {
+	font-size: clamp(1.7rem, 3vw, 2.3rem);
+	font-weight: 700;
 }
 
-
-
-.tags span {
-
-	padding:8px 16px;
-
-	border-radius:999px;
-
-	background:
-
-		var(--primary-bg);
-
-	color:var(--primary-light);
-
-	font-size:.9rem;
-
+h3 a {
+	text-decoration: none;
 }
 
-
-
-.buttons {
-
-	display:flex;
-
-	gap:15px;
-
-	margin-top:40px;
-
+h3 span {
+	color: var(--gold-text);
 }
 
-
-
-.buttons a {
-
-	padding:14px 28px;
-
-	border-radius:14px;
-
-	text-decoration:none;
-
-	font-weight:600;
-
-	transition:.25s ease;
-
+p {
+	color: var(--text-muted);
+	line-height: 1.75;
 }
 
+@media (max-width: 760px) {
 
-
-.primary {
-
-	background:var(--primary);
-
-	color:white;
-
-}
-
-
-
-.primary:hover {
-
-	transform:translateY(-3px);
-
-	box-shadow:
-
-		0 15px 40px
-
-		var(--primary-glow);
-
-}
-
-
-
-.secondary {
-
-	border:
-
-		1px solid
-
-		var(--border-2);
-
-	color:var(--text);
-
-}
-
-
-
-.secondary:hover {
-
-	background:
-
-		var(--surface-3);
-
-	transform:translateY(-3px);
-
-}
-
-
-
-@media(max-width:900px) {
-
-	.card {
-
-		grid-template-columns:1fr;
-
-		padding:30px;
-
+	.project {
+		grid-template-columns: 1fr;
+		padding: 24px;
 	}
 
-	.buttons {
-
-		flex-direction:column;
-
+	.preview {
+		max-width: 220px;
 	}
-
-	.preview img {
-
-		width:90%;
-
-	}
-
 }
 
 </style>

@@ -1,0 +1,34 @@
+---
+import T from "./T.astro";
+
+type Text = { es: string; en?: string };
+
+interface Props {
+	index?: string;
+	eyebrow: Text;
+	title: Text;
+	center?: boolean;
+	as?: "h1" | "h2";
+}
+
+const { index, eyebrow, title, center = false, as: Heading = "h2" }: Props = Astro.props;
+---
+
+<header class:list={["section-header", "reveal", { center }]}>
+
+	<span class="eyebrow">
+		{index && <span class="idx">{index} //</span>}
+		<T {...eyebrow} />
+	</span>
+
+	<Heading class={Heading === "h1" ? "display" : "title"}>
+		<T {...title} />
+	</Heading>
+
+	{Astro.slots.has("default") && (
+		<p class="lead">
+			<slot />
+		</p>
+	)}
+
+</header>

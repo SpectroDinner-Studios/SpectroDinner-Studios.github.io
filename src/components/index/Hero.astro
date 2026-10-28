@@ -1,315 +1,410 @@
+---
+import T from "../T.astro";
+
+// Floating "pixel particles" around the emblem: [x%, y%, size px, delay s]
+const particles: [number, number, number, number][] = [
+	[8, 18, 10, 0],
+	[88, 12, 8, 1.2],
+	[94, 58, 12, 2.1],
+	[4, 72, 8, 0.6],
+	[74, 92, 10, 1.6],
+	[22, 94, 6, 2.6],
+	[60, 4, 6, 0.9],
+];
+---
+
 <section class="hero">
-	<div class="glow"></div>
 
-	<div class="content">
-		<div class="logo-container">
-			<img
-				src="/logo.png" alt="SpectroDinner Logo" class="logo"
-			/>
+	<div class="container hero-grid">
+
+		<div class="copy">
+
+			<div class="status chip">
+				<span class="status-dot" aria-hidden="true"></span>
+				<T es="Estudio independiente · Est. 2024" en="Independent studio · Est. 2024" />
+			</div>
+
+			<h1 class="display">
+				Spectro<span class="grad-text">Dinner</span><sup>™</sup>
+			</h1>
+
+			<p class="terminal-line mono" aria-hidden="true">
+				<span class="prompt">&gt;</span>
+				<T
+					es="software · juegos · minecraft · tecnología experimental"
+					en="software · games · minecraft · experimental tech"
+				/><span class="cursor"></span>
+			</p>
+
+			<p class="sr-only">
+				<T
+					es="Software · Juegos · Minecraft · Tecnología Experimental"
+					en="Software · Games · Minecraft · Experimental Technology"
+				/>
+			</p>
+
+			<p class="lead">
+				<T
+					es="SpectroDinner Studios diseña y construye software, videojuegos y proyectos de Minecraft, además de explorar tecnología experimental. También ofrecemos un servicio gratuito de configuración de servidores de Discord."
+					en="SpectroDinner Studios designs and builds software, games and Minecraft projects, while also exploring experimental technology. We also offer a free Discord server setup service."
+				/>
+			</p>
+
+			<div class="actions">
+				<a href="/projects" class="btn btn-primary">
+					<T es="Explorar proyectos" en="Explore projects" /> →
+				</a>
+				<a href="#servicios" class="btn btn-ghost">
+					<T es="Trabaja con nosotros" en="Work with us" />
+				</a>
+			</div>
+
+			<dl class="hud-stats">
+				<div>
+					<dt><T es="Áreas" en="Areas" /></dt>
+					<dd>04</dd>
+				</div>
+				<div>
+					<dt><T es="Servicios" en="Services" /></dt>
+					<dd><T es="Gratis" en="Free" /></dd>
+				</div>
+				<div>
+					<dt><T es="Fundación" en="Founded" /></dt>
+					<dd>2024</dd>
+				</div>
+			</dl>
+
 		</div>
 
-		<h1>
-			SpectroDinner™
-		</h1>
+		<div class="emblem" aria-hidden="true">
 
-		<div class="badge">
-			<span data-lang="es">ESTUDIO DE DESARROLLO INDEPENDIENTE</span>
-			<span data-lang="en">INDEPENDENT DEVELOPMENT STUDIO</span>
+			<svg class="rings" viewBox="0 0 400 400">
+				<circle class="ring ring-outer" cx="200" cy="200" r="190" />
+				<circle class="ring ring-mid" cx="200" cy="200" r="158" />
+				<circle class="ring ring-inner" cx="200" cy="200" r="128" />
+				<g class="ticks">
+					<rect x="198" y="2" width="4" height="18" />
+					<rect x="198" y="380" width="4" height="18" />
+					<rect x="2" y="198" width="18" height="4" />
+					<rect x="380" y="198" width="18" height="4" />
+				</g>
+			</svg>
+
+			<div class="core">
+				<img src="/logo.png" alt="" width="220" height="220" />
+			</div>
+
+			<span class="label label-tl">SD//01</span>
+			<span class="label label-br">SYS.ONLINE</span>
+
+			<i class="bracket b-tl"></i>
+			<i class="bracket b-tr"></i>
+			<i class="bracket b-bl"></i>
+			<i class="bracket b-br"></i>
+
+			{particles.map(([x, y, size, delay]) => (
+				<i
+					class="particle"
+					style={`left:${x}%;top:${y}%;width:${size}px;height:${size}px;animation-delay:${delay}s`}
+				></i>
+			))}
+
 		</div>
 
-		<h2>
-			<span data-lang="es">Software · Juegos · Minecraft · Tecnología Experimental</span>
-			<span data-lang="en">Software · Games · Minecraft · Experimental Technology</span>
-		</h2>
-
-		<p class="description" data-lang="es">
-			SpectroDinner Studios diseña y construye software, videojuegos
-			y proyectos de Minecraft, además de explorar tecnología
-			experimental. También ofrecemos un servicio gratuito de
-			configuración de servidores de Discord.
-		</p>
-
-		<p class="description" data-lang="en">
-			SpectroDinner Studios designs and builds software, games and
-			Minecraft projects, while also exploring experimental
-			technology. We also offer a free Discord server setup
-			service.
-		</p>
-
-		<div class="buttons">
-			<a
-				href="/projects"
-				class="primary"
-			>
-				<span data-lang="es">Explorar Proyectos →</span>
-				<span data-lang="en">Explore Projects →</span>
-			</a>
-
-			<a
-				href="#servicios"
-				class="secondary"
-			>
-				<span data-lang="es">Trabaja con Nosotros</span>
-				<span data-lang="en">Work With Us</span>
-			</a>
-		</div>
 	</div>
+
+	<a href="#estudio" class="scroll-cue" aria-label="Scroll">
+		<span>SCROLL</span>
+		<span class="arrow">▼</span>
+	</a>
+
 </section>
 
 <style>
 
 .hero {
-	min-height: 85vh;
-	width: 100%;
+	position: relative;
 
 	display: flex;
-	align-items: center;
+	flex-direction: column;
 	justify-content: center;
 
-	position: relative;
-	overflow: hidden;
-
-	padding: 80px 32px;
+	min-height: 100svh;
+	padding: calc(var(--header-h) + 48px) 0 96px;
 }
 
-.glow {
+.hero-grid {
+	display: grid;
+	grid-template-columns: 1.15fr 1fr;
+	align-items: center;
+	gap: 56px;
+}
+
+
+/* Copy */
+
+.copy {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 26px;
+}
+
+.status {
+	gap: 10px;
+	padding: 7px 12px;
+	color: var(--text-muted);
+}
+
+.display sup {
+	font-size: .32em;
+	vertical-align: super;
+	color: var(--text-dim);
+	-webkit-text-fill-color: var(--text-dim);
+}
+
+.terminal-line {
+	font-size: clamp(.92rem, 1.4vw, 1.05rem);
+	line-height: 1.6;
+	color: var(--text-muted);
+}
+
+.terminal-line .prompt {
+	margin-right: 10px;
+	color: var(--primary-light);
+	font-weight: 700;
+}
+
+.lead {
+	max-width: 600px;
+}
+
+.hud-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+
+	margin: 8px 0 0;
+}
+
+.hud-stats div {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+
+	min-width: 112px;
+	padding: 12px 16px;
+
+	background: var(--surface-1);
+	border: 1px solid var(--border-1);
+	border-left: 3px solid var(--primary);
+	border-radius: var(--radius-xs);
+}
+
+.hud-stats dt {
+	font-family: var(--font-pixel);
+	font-size: .68rem;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--text-dim);
+}
+
+.hud-stats dd {
+	margin: 0;
+	font-family: var(--font-display);
+	font-size: 1.45rem;
+	font-weight: 700;
+	line-height: 1;
+}
+
+
+/* Emblem */
+
+.emblem {
+	position: relative;
+	aspect-ratio: 1;
+	width: 100%;
+	max-width: 480px;
+	justify-self: center;
+}
+
+.rings {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+.ring {
+	fill: none;
+	transform-origin: 200px 200px;
+}
+
+.ring-outer {
+	stroke: var(--border-2);
+	stroke-width: 1.5;
+	stroke-dasharray: 2 10;
+	animation: spin 60s linear infinite;
+}
+
+.ring-mid {
+	stroke: var(--primary);
+	stroke-width: 3;
+	stroke-dasharray: 120 40 20 40;
+	opacity: .75;
+	animation: spin 24s linear infinite reverse;
+}
+
+.ring-inner {
+	stroke: var(--primary-2);
+	stroke-width: 1.5;
+	stroke-dasharray: 6 6;
+	opacity: .6;
+	animation: spin 40s linear infinite;
+}
+
+.ticks rect {
+	fill: var(--primary-light);
+	opacity: .8;
+}
+
+@keyframes spin {
+	to { transform: rotate(360deg); }
+}
+
+.core {
+	position: absolute;
+	inset: 22%;
+
+	display: grid;
+	place-items: center;
+
+	border-radius: 50%;
+	background: radial-gradient(circle, color-mix(in srgb, var(--primary) 22%, transparent), transparent 70%);
+}
+
+.core img {
+	width: 100%;
+	height: auto;
+	filter: drop-shadow(0 0 28px var(--primary-glow));
+	animation: hover 6s ease-in-out infinite;
+}
+
+@keyframes hover {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-10px); }
+}
+
+.label {
 	position: absolute;
 
-	width: 650px;
-	height: 650px;
+	padding: 4px 8px;
 
-	background:
-		radial-gradient(
-			circle,
-			color-mix(in srgb, var(--primary) 15%, transparent),
-			transparent 70%
-		);
+	font-family: var(--font-pixel);
+	font-size: .66rem;
+	letter-spacing: .06em;
+	color: var(--text-dim);
 
-	filter: blur(70px);
-
-	z-index: -1;
-
-	animation: glowFloat 8s ease-in-out infinite;
+	background: var(--bg-elevated);
+	border: 1px solid var(--border-1);
 }
 
-@keyframes glowFloat {
-	0%, 100% {
-		transform: translate(0, 0) scale(1);
-	}
-
-	50% {
-		transform: translate(0, -20px) scale(1.06);
-	}
+.label-tl {
+	top: 6%;
+	left: 0;
 }
 
-.content {
-	width: 100%;
-	max-width: 900px;
+.label-br {
+	right: 0;
+	bottom: 8%;
+	color: var(--emerald);
+}
+
+.bracket {
+	position: absolute;
+	width: 26px;
+	height: 26px;
+	border: 2px solid var(--primary);
+	opacity: .7;
+}
+
+.b-tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.b-tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+.b-bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+.b-br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+
+.particle {
+	position: absolute;
+	background: var(--primary);
+	box-shadow: 0 0 10px var(--primary-glow);
+	opacity: .8;
+	animation: float 7s ease-in-out infinite;
+}
+
+.particle:nth-of-type(3n) {
+	background: var(--gold);
+	box-shadow: 0 0 10px color-mix(in srgb, var(--gold) 60%, transparent);
+}
+
+.particle:nth-of-type(3n + 1) {
+	background: var(--primary-2);
+}
+
+@keyframes float {
+	0%, 100% { transform: translateY(0) rotate(0deg); opacity: .8; }
+	50% { transform: translateY(-18px) rotate(45deg); opacity: .4; }
+}
+
+
+/* Scroll cue */
+
+.scroll-cue {
+	position: absolute;
+	left: 50%;
+	bottom: 28px;
+	transform: translateX(-50%);
 
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	gap: 6px;
 
-	text-align: center;
-}
-
-.content > * {
-	animation: heroFadeUp .8s cubic-bezier(.16,1,.3,1) both;
-}
-
-.content > *:nth-child(1) { animation-delay: .05s; }
-.content > *:nth-child(2) { animation-delay: .18s; }
-.content > *:nth-child(3) { animation-delay: .30s; }
-.content > *:nth-child(4) { animation-delay: .42s; }
-.content > *:nth-child(5) { animation-delay: .52s; }
-.content > *:nth-child(6) { animation-delay: .64s; }
-
-@keyframes heroFadeUp {
-	from {
-		opacity: 0;
-		transform: translateY(26px);
-	}
-
-	to {
-		opacity: 1;
-		transform: none;
-	}
-}
-
-.logo-container {
-	width: 120px;
-	height: 120px;
-
-	margin-bottom: 45px;
-
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	perspective: 1000px;
-}
-
-.logo {
-	width: 100%;
-	height: 100%;
-
-	object-fit: contain;
-
-	filter:
-		drop-shadow(
-			0 0 20px
-			var(--primary-glow)
-		);
-
-	transform-style: preserve-3d;
-
-	animation:
-		logoSpin 18s linear infinite;
-}
-
-@keyframes logoSpin {
-	from {
-		transform: rotateY(0deg);
-	}
-
-	to {
-		transform: rotateY(360deg);
-	}
-}
-
-h1 {
-	margin: 0;
-
-	font-size: clamp(3rem,7vw,5.5rem);
-	font-weight: 800;
-
-	letter-spacing: -3px;
-
-	color: var(--text);
-}
-
-.badge {
-	margin-top: 22px;
-
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-
-	padding: 10px 20px;
-
-	border-radius: 999px;
-
-	background: var(--primary-bg);
-
-	border: 1px solid var(--primary-border);
-
-	color: var(--primary);
-
-	font-size: .8rem;
-	font-weight: 700;
-
-	letter-spacing: 2px;
-	text-align: center;
-}
-
-h2 {
-	margin: 24px 0 0;
-
-	font-size: clamp(1.4rem,3.4vw,2.2rem);
-	font-weight: 500;
-
-	color: var(--text-muted);
-
-	letter-spacing: -.5px;
-}
-
-.description {
-	margin-top: 28px;
-
-	max-width: 700px;
-
-	font-size: 1.1rem;
-	line-height: 1.8;
-
-	color: var(--text-muted);
-
-	letter-spacing: -.2px;
-}
-
-.buttons {
-	display: flex;
-
-	gap: 20px;
-
-	margin-top: 46px;
-}
-
-.buttons a {
-	padding: 15px 32px;
-
-	border-radius: 14px;
-
+	font-family: var(--font-pixel);
+	font-size: .66rem;
+	letter-spacing: .12em;
 	text-decoration: none;
-
-	font-weight: 600;
-
-	transition: .25s ease;
+	color: var(--text-dim);
 }
 
-.primary {
-	background: var(--primary);
-	color: white;
+.scroll-cue .arrow {
+	color: var(--primary-light);
+	animation: bob 1.6s steps(2, jump-none) infinite;
 }
 
-.primary:hover {
-	transform: translateY(-3px);
-
-	box-shadow:
-		0 15px 40px
-		var(--primary-glow);
+@keyframes bob {
+	50% { transform: translateY(4px); }
 }
 
-.secondary {
-	background:
-		var(--surface-2);
 
-	border:
-		1px solid
-		var(--border-2);
-
-	color: var(--text);
-}
-
-.secondary:hover {
-	background:
-		var(--surface-hover);
-
-	transform: translateY(-3px);
-}
-
-@media (max-width: 768px) {
+@media (max-width: 960px) {
 
 	.hero {
-		padding: 60px 24px;
+		min-height: auto;
 	}
 
-	.logo-container {
-		width: 90px;
-		height: 90px;
+	.hero-grid {
+		grid-template-columns: 1fr;
+		gap: 40px;
 	}
 
-	.description {
-		font-size: 1rem;
-		line-height: 1.7;
+	.emblem {
+		order: -1;
+		max-width: 300px;
 	}
 
-	.buttons {
-		flex-direction: column;
-		width: 100%;
-	}
-
-	.buttons a {
-		width: 100%;
+	.scroll-cue {
+		display: none;
 	}
 }
 

@@ -1,4 +1,8 @@
 ---
+import "../../styles/forms.css";
+import T from "../T.astro";
+import SectionHeader from "../SectionHeader.astro";
+
 /*
 	Añade aquí las valoraciones reales de tus clientes.
 	Ejemplo:
@@ -42,60 +46,52 @@ const stars = (rating: number) =>
 	"★".repeat(rating) + "☆".repeat(5 - rating);
 ---
 
-<section class="reviews" id="valoraciones">
+<section class="section" id="valoraciones">
 
 	<div class="container">
 
-
-		<div class="header reveal">
-
-			<span>
-				<span data-lang="es">VALORACIONES</span>
-				<span data-lang="en">REVIEWS</span>
-			</span>
-
-			<h2>
-				<span data-lang="es">Lo que opinan nuestros clientes</span>
-				<span data-lang="en">What our clients say</span>
-			</h2>
-
-			<p data-lang="es">
-				Cada valoración es de un cliente real que ha usado nuestro
-				servicio. Si ya trabajamos juntos, ¡nos encantaría leer tu opinión!
-			</p>
-
-			<p data-lang="en">
-				Every review comes from a real client who used our service.
-				If we've already worked together, we'd love to hear your feedback!
-			</p>
-
-		</div>
-
+		<SectionHeader
+			index="05"
+			eyebrow={{ es: "Valoraciones", en: "Reviews" }}
+			title={{ es: "Lo que opinan nuestros clientes", en: "What our clients say" }}
+		>
+			<T
+				es="Cada valoración es de un cliente real que ha usado nuestro servicio. Si ya trabajamos juntos, ¡nos encantaría leer tu opinión!"
+				en="Every review comes from a real client who used our service. If we've already worked together, we'd love to hear your feedback!"
+			/>
+		</SectionHeader>
 
 		{
 			count > 0 ? (
 				<>
 					<div class="summary reveal">
-						<span class="score-stars">{stars(Math.round(average))}</span>
-						<span class="score-number">{average.toFixed(1)} / 5</span>
-						<span class="score-count">
-							<span data-lang="es">basado en {count} valoraciones</span>
-							<span data-lang="en">based on {count} reviews</span>
-						</span>
+						<strong class="score-number">{average.toFixed(1)}</strong>
+						<div class="score-meta">
+							<span class="score-stars" aria-hidden="true">{stars(Math.round(average))}</span>
+							<span class="score-count">
+								<T es={`basado en ${count} valoraciones`} en={`based on ${count} reviews`} />
+							</span>
+						</div>
+						<a href="#review-form" class="btn btn-ghost btn-sm">
+							<T es="Deja la tuya" en="Leave yours" /> ↓
+						</a>
 					</div>
 
 					{count > 3 ? (
 						<div class="carousel reveal">
 							<div class="carousel-track">
 								{reviews.map((review) => (
-									<div class="card spotlight">
-										<span class="card-stars">{stars(review.rating)}</span>
-										<p class="text">"{review.text}"</p>
+									<article class="card hud-card gold">
 										<div class="author">
-											<strong>{review.name}</strong>
-											{review.service && <span>{review.service}</span>}
+											<span class="avatar" aria-hidden="true">{review.name.charAt(0)}</span>
+											<div>
+												<strong>{review.name}</strong>
+												{review.service && <span>{review.service}</span>}
+											</div>
 										</div>
-									</div>
+										<span class="card-stars" aria-label={`${review.rating}/5`}>{stars(review.rating)}</span>
+										<p class="text">"{review.text}"</p>
+									</article>
 								))}
 							</div>
 
@@ -111,165 +107,159 @@ const stars = (rating: number) =>
 						</div>
 					) : (
 						<div class="grid">
-							{reviews.map((review) => (
-								<div class="card reveal spotlight">
-									<span class="card-stars">{stars(review.rating)}</span>
-									<p class="text">"{review.text}"</p>
+							{reviews.map((review, i) => (
+								<article class="card hud-card gold interactive reveal" style={`--reveal-delay:${i * 80}ms`}>
 									<div class="author">
-										<strong>{review.name}</strong>
-										{review.service && <span>{review.service}</span>}
+										<span class="avatar" aria-hidden="true">{review.name.charAt(0)}</span>
+										<div>
+											<strong>{review.name}</strong>
+											{review.service && <span>{review.service}</span>}
+										</div>
 									</div>
-								</div>
+									<span class="card-stars" aria-label={`${review.rating}/5`}>{stars(review.rating)}</span>
+									<p class="text">"{review.text}"</p>
+								</article>
 							))}
 						</div>
 					)}
 				</>
 			) : (
-				<div class="empty reveal">
-					<p data-lang="es">
-						Todavía no tenemos valoraciones publicadas —
-						¡sé el primero en dejar la tuya!
-					</p>
-					<p data-lang="en">
-						We don't have any published reviews yet —
-						be the first to leave one!
+				<div class="empty hud-card reveal">
+					<p>
+						<T
+							es="Todavía no tenemos valoraciones publicadas — ¡sé el primero en dejar la tuya!"
+							en="We don't have any published reviews yet — be the first to leave one!"
+						/>
 					</p>
 				</div>
 			)
 		}
 
+		<div class="leave form-ui">
 
-		<div class="form-card reveal">
-
-			<h3>
-				<span data-lang="es">Deja tu valoración</span>
-				<span data-lang="en">Leave your review</span>
-			</h3>
-
-			<form id="review-form" novalidate>
-
-				<div class="grid-fields">
-
-					<label>
-						<span data-lang="es">Apodo *</span>
-						<span data-lang="en">Nickname *</span>
-						<input
-							type="text"
-							name="nombre"
-							placeholder="Ej. Elmoderador / e.g. Elmoderador"
-							autocomplete="username"
-							maxlength="60"
-							required
-							aria-describedby="err-nombre"
-						/>
-						<span id="err-nombre" class="field-error" aria-live="polite"></span>
-					</label>
-
-					<label>
-						<span data-lang="es">Servicio recibido (opcional)</span>
-						<span data-lang="en">Service received (optional)</span>
-						<input
-							type="text"
-							name="servicio"
-							placeholder="Ej. Creación de servidor"
-							autocomplete="off"
-							maxlength="120"
-						/>
-					</label>
-
-				</div>
-
-				<label>
-					<span data-lang="es">Valoración *</span>
-					<span data-lang="en">Rating *</span>
-
-					<select name="rating" required aria-describedby="err-rating">
-						<option value="" disabled selected>-- </option>
-						<option value="5">★★★★★ (5/5)</option>
-						<option value="4">★★★★☆ (4/5)</option>
-						<option value="3">★★★☆☆ (3/5)</option>
-						<option value="2">★★☆☆☆ (2/5)</option>
-						<option value="1">★☆☆☆☆ (1/5)</option>
-					</select>
-					<span id="err-rating" class="field-error" aria-live="polite"></span>
-				</label>
-
-				<label>
-					<span data-lang="es">Tu comentario *</span>
-					<span data-lang="en">Your comment *</span>
-					<textarea
-						name="comentario"
-						rows="4"
-						maxlength="1000"
-						required
-						aria-describedby="err-comentario"
-					></textarea>
-					<span id="err-comentario" class="field-error" aria-live="polite"></span>
-				</label>
-
-				<div class="honeypot" aria-hidden="true">
-					<label for="review-website">Website</label>
-					<input
-						type="text"
-						id="review-website"
-						name="website"
-						tabindex="-1"
-						autocomplete="off"
+			<div class="leave-copy reveal">
+				<span class="eyebrow"><T es="Tu turno" en="Your turn" /></span>
+				<h3 class="title"><T es="¿Ya trabajamos juntos?" en="Have we worked together?" /></h3>
+				<p>
+					<T
+						es="Cuéntanos qué tal fue. Revisamos cada valoración antes de publicarla aquí."
+						en="Tell us how it went. We review every review before publishing it here."
 					/>
-				</div>
-
-				<p id="review-error-summary" class="status error" role="alert" hidden></p>
-
-				<button type="submit" class="submit">
-					<span class="submit-label">
-						<span data-lang="es">Enviar valoración →</span>
-						<span data-lang="en">Submit review →</span>
-					</span>
-					<span class="submit-label submit-loading" hidden>
-						<span data-lang="es">Enviando…</span>
-						<span data-lang="en">Sending…</span>
-					</span>
-				</button>
-
-				<p class="hint">
-					<span data-lang="es">
-						Tu valoración se envía directamente a nuestro equipo —
-						la publicaremos en cuanto la revisemos. Nunca compartas
-						contraseñas, claves de API ni otros datos secretos aquí.
-					</span>
-					<span data-lang="en">
-						Your review is sent straight to our team —
-						we'll publish it once we review it. Never share
-						passwords, API keys or other secrets here.
-					</span>
 				</p>
+			</div>
 
-				<p id="review-status" class="status" hidden>
-					<span data-lang="es">
-						✅ ¡Gracias! Hemos recibido tu valoración.
-					</span>
-					<span data-lang="en">
-						✅ Thanks! We received your review.
-					</span>
-				</p>
+			<div class="form-card reveal">
 
-				<p id="review-error" class="status error" hidden>
-					<span data-lang="es">
-						⚠️ No hemos podido enviar tu valoración. Inténtalo de nuevo en unos segundos.
-					</span>
-					<span data-lang="en">
-						⚠️ We couldn't send your review. Please try again in a moment.
-					</span>
-				</p>
+				<h3>
+					<T es="Deja tu valoración" en="Leave your review" />
+				</h3>
 
-			</form>
+				<form id="review-form" novalidate>
+
+					<div class="grid-fields">
+
+						<label>
+							<T es="Apodo *" en="Nickname *" />
+							<input
+								type="text"
+								name="nombre"
+								placeholder="Ej. Elmoderador / e.g. Elmoderador"
+								autocomplete="username"
+								maxlength="60"
+								required
+								aria-describedby="err-nombre"
+							/>
+							<span id="err-nombre" class="field-error" aria-live="polite"></span>
+						</label>
+
+						<label>
+							<T es="Servicio recibido (opcional)" en="Service received (optional)" />
+							<input
+								type="text"
+								name="servicio"
+								placeholder="Ej. Creación de servidor"
+								autocomplete="off"
+								maxlength="120"
+							/>
+						</label>
+
+					</div>
+
+					<label>
+						<T es="Valoración *" en="Rating *" />
+
+						<select name="rating" required aria-describedby="err-rating">
+							<option value="" disabled selected>-- </option>
+							<option value="5">★★★★★ (5/5)</option>
+							<option value="4">★★★★☆ (4/5)</option>
+							<option value="3">★★★☆☆ (3/5)</option>
+							<option value="2">★★☆☆☆ (2/5)</option>
+							<option value="1">★☆☆☆☆ (1/5)</option>
+						</select>
+						<span id="err-rating" class="field-error" aria-live="polite"></span>
+					</label>
+
+					<label>
+						<T es="Tu comentario *" en="Your comment *" />
+						<textarea
+							name="comentario"
+							rows="4"
+							maxlength="1000"
+							required
+							aria-describedby="err-comentario"
+						></textarea>
+						<span id="err-comentario" class="field-error" aria-live="polite"></span>
+					</label>
+
+					<div class="honeypot" aria-hidden="true">
+						<label for="review-website">Website</label>
+						<input
+							type="text"
+							id="review-website"
+							name="website"
+							tabindex="-1"
+							autocomplete="off"
+						/>
+					</div>
+
+					<p id="review-error-summary" class="status error" role="alert" hidden></p>
+
+					<button type="submit" class="submit">
+						<span class="submit-label">
+							<T es="Enviar valoración →" en="Submit review →" />
+						</span>
+						<span class="submit-label submit-loading" hidden>
+							<T es="Enviando…" en="Sending…" />
+						</span>
+					</button>
+
+					<p class="hint">
+						<T
+							es="Tu valoración se envía directamente a nuestro equipo — la publicaremos en cuanto la revisemos. Nunca compartas contraseñas, claves de API ni otros datos secretos aquí."
+							en="Your review is sent straight to our team — we'll publish it once we review it. Never share passwords, API keys or other secrets here."
+						/>
+					</p>
+
+					<p id="review-status" class="status" hidden>
+						<T es="✅ ¡Gracias! Hemos recibido tu valoración." en="✅ Thanks! We received your review." />
+					</p>
+
+					<p id="review-error" class="status error" hidden>
+						<T
+							es="⚠️ No hemos podido enviar tu valoración. Inténtalo de nuevo en unos segundos."
+							en="⚠️ We couldn't send your review. Please try again in a moment."
+						/>
+					</p>
+
+				</form>
+
+			</div>
 
 		</div>
 
 	</div>
 
 </section>
-
 
 <script>
 	const prefersReducedMotion = window.matchMedia(
@@ -467,654 +457,250 @@ const stars = (rating: number) =>
 	});
 </script>
 
-
 <style>
 
-.reviews {
-
-	padding:120px 32px;
-
-}
-
-
-.container {
-
-	max-width:1100px;
-
-	margin:auto;
-
-}
-
-
-.header {
-
-	text-align:center;
-
-	margin-bottom:60px;
-
-}
-
-
-.header span:first-child {
-
-	font-size:.85rem;
-
-	font-weight:700;
-
-	letter-spacing:3px;
-
-	color:var(--primary);
-
-}
-
-
-.header h2 {
-
-	margin-top:20px;
-
-	font-size:clamp(2.5rem,5vw,4rem);
-
-	color:var(--text);
-
-	letter-spacing:-2px;
-
-}
-
-
-.header p {
-
-	max-width:650px;
-
-	margin:20px auto 0;
-
-	color:var(--text-muted);
-
-	line-height:1.8;
-
-	font-size:1.05rem;
-
-}
-
+/* Summary */
 
 .summary {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 22px;
 
-	display:flex;
+	margin-bottom: 26px;
+	padding: 20px 24px;
 
-	flex-direction:column;
-
-	align-items:center;
-
-	gap:8px;
-
-	margin-bottom:50px;
-
+	background: var(--gold-bg);
+	border: 1px solid var(--gold-border);
+	border-radius: var(--radius-sm);
 }
-
-
-.score-stars {
-
-	font-size:2.2rem;
-
-	color:#FFC94A;
-
-	letter-spacing:4px;
-
-}
-
 
 .score-number {
-
-	font-size:1.3rem;
-
-	font-weight:800;
-
-	color:var(--text);
-
+	font-family: var(--font-display);
+	font-size: 3rem;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--gold-text);
 }
 
+.score-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	flex-grow: 1;
+}
+
+.score-stars,
+.card-stars {
+	color: var(--gold);
+	letter-spacing: 3px;
+	text-shadow: 0 0 12px color-mix(in srgb, var(--gold) 50%, transparent);
+}
+
+.score-stars {
+	font-size: 1.5rem;
+}
 
 .score-count {
-
-	color:var(--text-muted);
-
-	font-size:.95rem;
-
+	font-family: var(--font-pixel);
+	font-size: .72rem;
+	letter-spacing: .05em;
+	text-transform: uppercase;
+	color: var(--text-muted);
 }
 
 
-.empty {
-
-	text-align:center;
-
-	padding:40px;
-
-	margin-bottom:50px;
-
-	border-radius:22px;
-
-	background:var(--surface-1);
-
-	border:1px solid var(--border-1);
-
-	color:var(--text-muted);
-
-	font-size:1.05rem;
-
-}
-
+/* Cards */
 
 .grid {
-
-	display:grid;
-
-	grid-template-columns:repeat(3,1fr);
-
-	gap:24px;
-
-	margin-bottom:50px;
-
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 18px;
 }
-
 
 .card {
-
-	padding:30px;
-
-	border-radius:22px;
-
-	background:var(--surface-1);
-
-	border:1px solid var(--border-1);
-
-	display:flex;
-
-	flex-direction:column;
-
-	gap:16px;
-
-	transition:.3s ease;
-
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 }
-
-
-.card:hover {
-
-	transform:translateY(-6px);
-
-	border-color:var(--primary-border);
-
-	box-shadow:0 20px 45px color-mix(in srgb, var(--primary) 15%, transparent);
-
-}
-
-
-.grid .card:nth-child(2) { transition-delay: .08s; }
-.grid .card:nth-child(3) { transition-delay: .16s; }
-
-
-.carousel {
-
-	margin-bottom:50px;
-
-}
-
-
-.carousel-track {
-
-	display:flex;
-
-	gap:24px;
-
-	overflow-x:auto;
-
-	scroll-snap-type:x mandatory;
-
-	scrollbar-width:none;
-
-	padding-bottom:4px;
-
-}
-
-
-.carousel-track::-webkit-scrollbar {
-
-	display:none;
-
-}
-
-
-.carousel-track .card {
-
-	scroll-snap-align:start;
-
-	flex:0 0 calc((100% - 48px) / 3);
-
-	min-width:260px;
-
-}
-
-
-.carousel-dots {
-
-	display:flex;
-
-	justify-content:center;
-
-	gap:10px;
-
-	margin-top:24px;
-
-}
-
-
-.dot {
-
-	width:9px;
-
-	height:9px;
-
-	padding:0;
-
-	border-radius:50%;
-
-	border:none;
-
-	background:var(--border-2);
-
-	cursor:pointer;
-
-	transition:.25s ease;
-
-}
-
-
-.dot:hover {
-
-	background:var(--primary-light);
-
-}
-
-
-.dot.active {
-
-	background:var(--primary);
-
-	width:22px;
-
-	border-radius:999px;
-
-}
-
-
-.card-stars {
-
-	color:#FFC94A;
-
-	font-size:1.2rem;
-
-	letter-spacing:2px;
-
-}
-
-
-.card .text {
-
-	color:var(--text-muted);
-
-	line-height:1.8;
-
-	font-size:.95rem;
-
-	flex-grow:1;
-
-}
-
 
 .author {
-
-	display:flex;
-
-	flex-direction:column;
-
-	gap:2px;
-
+	display: flex;
+	align-items: center;
+	gap: 12px;
 }
 
+.avatar {
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
+
+	width: 44px;
+	height: 44px;
+
+	font-family: var(--font-pixel);
+	font-size: 1.2rem;
+	text-transform: uppercase;
+	color: #1C1305;
+
+	background: linear-gradient(135deg, #F8C552, #E39B1B);
+	border-radius: var(--radius-xs);
+	box-shadow:
+		inset 0 2px 0 rgba(255, 255, 255, .3),
+		inset 0 -3px 0 rgba(0, 0, 0, .25);
+}
+
+.author div {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
 
 .author strong {
+	font-family: var(--font-display);
+	font-size: 1.05rem;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
 
-	color:var(--text);
+.author div span {
+	font-size: .82rem;
+	line-height: 1.4;
+	color: var(--text-dim);
+}
 
-	font-size:.95rem;
+.card-stars {
+	font-size: 1.1rem;
+}
 
+.text {
+	flex-grow: 1;
+	font-size: 1rem;
+	line-height: 1.7;
+	color: var(--text);
+}
+
+.empty {
+	text-align: center;
+	color: var(--text-muted);
 }
 
 
-.author span {
+/* Carousel (4+ reviews) */
 
-	color:var(--primary-light);
+.carousel-track {
+	display: flex;
+	gap: 18px;
 
-	font-size:.85rem;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
 
+	padding: 4px 2px 8px;
+}
+
+.carousel-track::-webkit-scrollbar {
+	display: none;
+}
+
+.carousel-track .card {
+	flex: 0 0 calc((100% - 36px) / 3);
+	scroll-snap-align: start;
+}
+
+.carousel-dots {
+	display: flex;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 18px;
+}
+
+.dot {
+	width: 10px;
+	height: 10px;
+	padding: 0;
+
+	background: var(--border-2);
+	border: 0;
+
+	cursor: pointer;
+
+	transition:
+		background var(--transition),
+		width var(--transition);
+}
+
+.dot.active {
+	width: 26px;
+	background: var(--gold);
 }
 
 
-.form-card {
+/* Leave a review */
 
-	padding:44px;
+.leave {
+	display: grid;
+	grid-template-columns: .8fr 1.2fr;
+	align-items: start;
+	gap: 48px;
 
-	border-radius:28px;
-
-	background:var(--surface-1);
-
-	border:1px solid var(--border-1);
-
-	backdrop-filter:blur(15px);
-
+	margin-top: 72px;
 }
 
-
-.form-card h3 {
-
-	margin:0 0 26px;
-
-	color:var(--text);
-
-	font-size:1.5rem;
-
+.leave-copy {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	position: sticky;
+	top: calc(var(--header-h) + 32px);
 }
 
+.leave-copy .title {
+	font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+}
+
+.leave-copy p {
+	color: var(--text-muted);
+	line-height: 1.8;
+}
 
 #review-form {
-
-	display:flex;
-
-	flex-direction:column;
-
-	gap:20px;
-
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
 }
 
 
-.grid-fields {
-
-	display:grid;
-
-	grid-template-columns:1fr 1fr;
-
-	gap:20px;
-
-}
-
-
-label {
-
-	display:flex;
-
-	flex-direction:column;
-
-	gap:8px;
-
-	color:var(--text-muted);
-
-	font-size:.95rem;
-
-	font-weight:600;
-
-}
-
-
-input[type="text"],
-select,
-textarea {
-
-	padding:12px 14px;
-
-	border-radius:12px;
-
-	background:var(--surface-2);
-
-	border:1px solid var(--border-2);
-
-	color:var(--text);
-
-	font-family:inherit;
-
-	font-size:.95rem;
-
-	font-weight:400;
-
-	transition:.2s ease;
-
-}
-
-
-input[type="text"]:focus,
-select:focus,
-textarea:focus {
-
-	outline:none;
-
-	border-color:color-mix(in srgb, var(--primary) 60%, transparent);
-
-	background:var(--surface-3);
-
-}
-
-
-input[type="text"]:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-
-	box-shadow:0 0 0 3px var(--primary-bg), 0 0 0 1px var(--primary);
-
-}
-
-
-textarea {
-
-	resize:vertical;
-
-}
-
-
-input[aria-invalid="true"],
-select[aria-invalid="true"],
-textarea[aria-invalid="true"] {
-
-	border-color:var(--danger);
-
-}
-
-
-.field-error {
-
-	color:var(--danger);
-
-	font-size:.85rem;
-
-	font-weight:500;
-
-}
-
-
-.field-error:empty {
-
-	display:none;
-
-}
-
-
-.honeypot {
-
-	position:absolute;
-
-	width:1px;
-
-	height:1px;
-
-	overflow:hidden;
-
-	clip:rect(0 0 0 0);
-
-	white-space:nowrap;
-
-}
-
-
-.submit {
-
-	position:relative;
-
-	align-self:flex-start;
-
-	padding:15px 32px;
-
-	border-radius:14px;
-
-	border:none;
-
-	background:var(--primary);
-
-	color:white;
-
-	font-weight:700;
-
-	font-size:1rem;
-
-	cursor:pointer;
-
-	transition:.25s ease;
-
-}
-
-
-.submit:hover {
-
-	transform:translateY(-3px);
-
-	box-shadow:0 15px 40px var(--primary-glow);
-
-}
-
-
-.submit:disabled {
-
-	opacity:.6;
-
-	cursor:not-allowed;
-
-	transform:none;
-
-}
-
-
-.hint {
-
-	color:var(--text-muted);
-
-	font-size:.88rem;
-
-	line-height:1.6;
-
-}
-
-
-.status {
-
-	padding:14px 18px;
-
-	border-radius:14px;
-
-	background:var(--primary-bg);
-
-	border:1px solid var(--primary-border);
-
-	color:var(--primary-light);
-
-	font-size:.92rem;
-
-}
-
-
-.status.error {
-
-	background:color-mix(in srgb, var(--danger) 12%, transparent);
-
-	border-color:color-mix(in srgb, var(--danger) 40%, transparent);
-
-	color:var(--danger);
-
-}
-
-
-@media (max-width:900px) {
+@media (max-width: 1000px) {
 
 	.grid {
-
-		grid-template-columns:1fr;
-
+		grid-template-columns: 1fr 1fr;
 	}
-
 
 	.carousel-track .card {
-
-		flex-basis:calc((100% - 24px) / 2);
-
+		flex-basis: calc((100% - 18px) / 2);
 	}
 
+	.leave {
+		grid-template-columns: 1fr;
+		gap: 28px;
+	}
+
+	.leave-copy {
+		position: static;
+	}
 }
 
+@media (max-width: 640px) {
 
-@media (max-width:700px) {
-
-	.reviews {
-
-		padding:90px 20px;
-
+	.grid {
+		grid-template-columns: 1fr;
 	}
-
-
-	.form-card {
-
-		padding:28px;
-
-	}
-
-
-	.grid-fields {
-
-		grid-template-columns:1fr;
-
-	}
-
-
-	.submit {
-
-		width:100%;
-
-	}
-
 
 	.carousel-track .card {
-
-		flex-basis:88%;
-
-		min-width:0;
-
+		flex-basis: 88%;
 	}
-
-}
-
-
-/*
-	#FFC94A only reaches ~1.4:1 contrast against the light theme's
-	near-white background (fails WCAG both for large and normal
-	text). Darker gold restores accessible contrast there.
-*/
-:global([data-theme="light"]) .score-stars,
-:global([data-theme="light"]) .card-stars {
-	color:#8C6600;
 }
 
 </style>

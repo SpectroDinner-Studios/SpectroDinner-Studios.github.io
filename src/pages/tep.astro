@@ -1,0 +1,783 @@
+---
+import { Image } from "astro:assets";
+import tepLogo from "../assets/tep.png";
+
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import CTABanner from "../components/CTABanner.astro";
+import ProjectStatus, { type Status } from "../components/projects/ProjectStatus.astro";
+
+/*
+	Estado de T.E.P. — edita aquí cuando avance el proyecto.
+	status: "reviving" | "in-development" | "active" | "planned" | "archived"
+	quest.state: "done" | "active" | "locked"
+*/
+const status: Status = "reviving";
+
+const quests: { state: "done" | "active" | "locked"; title: { es: string; en: string }; text: { es: string; en: string } }[] = [
+	{
+		state: "done",
+		title: { es: "Concepto e identidad", en: "Concept & identity" },
+		text: {
+			es: "La idea de una economía basada en tiempo y la identidad visual del plugin.",
+			en: "The idea of a time-based economy and the plugin's visual identity.",
+		},
+	},
+	{
+		state: "active",
+		title: { es: "Retomar el desarrollo", en: "Resume development" },
+		text: {
+			es: "Volver a poner en marcha el núcleo del plugin sobre la Paper API.",
+			en: "Getting the plugin's core running again on the Paper API.",
+		},
+	},
+	{
+		state: "locked",
+		title: { es: "Documentación técnica", en: "Technical documentation" },
+		text: {
+			es: "Guías y referencia para instalarlo y configurarlo en tu servidor.",
+			en: "Guides and reference to install and configure it on your server.",
+		},
+	},
+	{
+		state: "locked",
+		title: { es: "Versión pública", en: "Public release" },
+		text: {
+			es: "Una primera versión estable disponible para servidores.",
+			en: "A first stable version available for servers.",
+		},
+	},
+];
+
+const questsDone = quests.filter((q) => q.state === "done").length;
+const questProgress = Math.round((questsDone / quests.length) * 100);
+
+const pillars = [
+	{
+		icon: "⏳",
+		title: { es: "Economía basada en tiempo", en: "Time-based economy" },
+		text: {
+			es: "El tiempo como recurso central de la economía del servidor.",
+			en: "Time as the central resource of the server's economy.",
+		},
+	},
+	{
+		icon: "📈",
+		title: { es: "Sistema de progresión", en: "Progression system" },
+		text: {
+			es: "Una progresión construida sobre esa economía de tiempo.",
+			en: "Progression built on top of that time economy.",
+		},
+	},
+	{
+		icon: "⚔️",
+		title: { es: "Mecánicas personalizadas", en: "Custom mechanics" },
+		text: {
+			es: "Mecánicas de juego propias y funciones avanzadas del lado del servidor.",
+			en: "Custom gameplay mechanics and advanced server-side features.",
+		},
+	},
+	{
+		icon: "⚡",
+		title: { es: "Rendimiento y escalabilidad", en: "Performance & scalability" },
+		text: {
+			es: "Diseñado para el rendimiento, la escalabilidad y el mantenimiento a largo plazo.",
+			en: "Designed for performance, scalability and long-term maintainability.",
+		},
+	},
+];
+
+const loadout = [
+	{ icon: "☕", name: "Java", note: { es: "Lenguaje", en: "Language" } },
+	{ icon: "📄", name: "Paper API", note: { es: "Plataforma", en: "Platform" } },
+	{ icon: "⛏️", name: "Minecraft", note: { es: "Servidor", en: "Server-side" } },
+	{ icon: "🧩", name: "Plugin", note: { es: "Formato", en: "Format" } },
+];
+---
+
+<Layout
+	title="T.E.P. — TimeEconomyPlugin | SpectroDinner™"
+	description="TimeEconomyPlugin (T.E.P.) — a large-scale Minecraft plugin by SpectroDinner Studios, built on the Paper API around a time-based economy and progression system."
+>
+
+	<Navbar />
+
+	<main class="tep-page">
+
+		<!-- Hero -->
+		<section class="page-top hero">
+
+			<div class="container hero-grid">
+
+				<div class="copy">
+
+					<div class="meta reveal">
+						<span class="chip chip-gold">PRJ-001 · MINECRAFT PLUGIN</span>
+						<ProjectStatus status={status} />
+					</div>
+
+					<h1 class="display reveal">
+						<span class="time">Time</span><span class="economy">Economy</span>
+						<small>Plugin</small>
+					</h1>
+
+					<p class="tagline mono reveal">
+						<span class="prompt">&gt;</span>
+						<T es="el tiempo es la moneda" en="time is the currency" /><span class="cursor"></span>
+					</p>
+
+					<p class="lead reveal">
+						<T
+							es="T.E.P. es un plugin de Minecraft a gran escala construido con la Paper API, que introduce una economía basada en tiempo y un sistema de progresión sobre mecánicas de juego personalizadas y funciones avanzadas del lado del servidor."
+							en="T.E.P. is a large-scale Minecraft plugin built with the Paper API, introducing a time-based economy and progression system on top of custom gameplay mechanics and advanced server-side features."
+						/>
+					</p>
+
+					<div class="actions reveal">
+						<a href="#estado" class="btn btn-gold">
+							<T es="Ver el estado" en="See the status" /> ↓
+						</a>
+						<a
+							href="https://github.com/elmoderador"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="btn btn-ghost"
+						>
+							<T es="Seguir en GitHub ↗" en="Follow on GitHub ↗" />
+						</a>
+					</div>
+
+				</div>
+
+				<div class="emblem reveal" aria-hidden="true">
+
+					<svg class="clock" viewBox="0 0 400 400">
+						<circle class="clock-ring" cx="200" cy="200" r="188" />
+						<g class="clock-ticks">
+							{Array.from({ length: 12 }).map((_, i) => (
+								<rect
+									x="196"
+									y="6"
+									width="8"
+									height={i % 3 === 0 ? 26 : 14}
+									transform={`rotate(${i * 30} 200 200)`}
+								/>
+							))}
+						</g>
+						<line class="clock-hand" x1="200" y1="200" x2="200" y2="40" />
+					</svg>
+
+					<div class="logo-wrap">
+						<Image
+							src={tepLogo}
+							alt=""
+							widths={[320, 520, 760]}
+							sizes="(max-width: 960px) 300px, 460px"
+							loading="eager"
+						/>
+					</div>
+
+					{Array.from({ length: 6 }).map((_, i) => (
+						<i class="coin" style={`--i:${i}`}></i>
+					))}
+
+				</div>
+
+			</div>
+
+		</section>
+
+
+		<!-- Concept -->
+		<section class="section">
+
+			<div class="container">
+
+				<SectionHeader
+					index="01"
+					eyebrow={{ es: "El concepto", en: "The concept" }}
+					title={{ es: "Un servidor donde el tiempo vale.", en: "A server where time has value." }}
+				>
+					<T
+						es="T.E.P. gira alrededor de una idea: que el tiempo sea la base de la economía y de la progresión del servidor. Todo lo demás se construye encima, pensado para el rendimiento y para durar."
+						en="T.E.P. revolves around one idea: making time the foundation of the server's economy and progression. Everything else is built on top, designed for performance and to last."
+					/>
+				</SectionHeader>
+
+				<div class="pillars">
+					{pillars.map((pillar, i) => (
+						<article class="hud-card interactive reveal" style={`--reveal-delay:${i * 70}ms`}>
+							<span class="icon-tile">{pillar.icon}</span>
+							<h3><T {...pillar.title} /></h3>
+							<p><T {...pillar.text} /></p>
+						</article>
+					))}
+				</div>
+
+			</div>
+
+		</section>
+
+
+		<!-- Loadout -->
+		<section class="section-sm">
+
+			<div class="container">
+
+				<div class="loadout reveal">
+
+					<div class="loadout-copy">
+						<span class="eyebrow"><span class="idx">02 //</span> <T es="Equipamiento" en="Loadout" /></span>
+						<h2 class="title"><T es="Construido con" en="Built with" /></h2>
+					</div>
+
+					<div class="slots">
+						{loadout.map((item) => (
+							<div class="slot">
+								<span class="slot-icon" aria-hidden="true">{item.icon}</span>
+								<strong>{item.name}</strong>
+								<small><T {...item.note} /></small>
+							</div>
+						))}
+					</div>
+
+				</div>
+
+			</div>
+
+		</section>
+
+
+		<!-- Status / quest log -->
+		<section class="section" id="estado">
+
+			<div class="container status-grid">
+
+				<div>
+
+					<SectionHeader
+						index="03"
+						eyebrow={{ es: "Estado del proyecto", en: "Project status" }}
+						title={{ es: "Registro de misiones.", en: "Quest log." }}
+					>
+						<T
+							es="Así va T.E.P. Esta página se actualiza a medida que el proyecto avanza — sin fechas inventadas ni promesas que no podamos cumplir."
+							en="Here's where T.E.P. stands. This page is updated as the project moves forward — no made-up dates or promises we can't keep."
+						/>
+					</SectionHeader>
+
+					<div class="progress reveal">
+						<div class="progress-top">
+							<span><T es="Misiones completadas" en="Quests completed" /></span>
+							<span class="gold-text">{questsDone} / {quests.length}</span>
+						</div>
+						<div class="xpbar" role="progressbar" aria-valuenow={questProgress} aria-valuemin="0" aria-valuemax="100">
+							<div class="xpbar-fill" style={`--value:${questProgress}%`}></div>
+						</div>
+					</div>
+
+				</div>
+
+				<ol class="quests">
+					{quests.map((quest, i) => (
+						<li class={`quest ${quest.state} reveal`} style={`--reveal-delay:${i * 80}ms`}>
+							<span class="quest-marker" aria-hidden="true">
+								{quest.state === "done" ? "✓" : quest.state === "active" ? "!" : "?"}
+							</span>
+							<div class="quest-body">
+								<span class="quest-state">
+									{quest.state === "done" && <T es="Completada" en="Completed" />}
+									{quest.state === "active" && <T es="En curso" en="In progress" />}
+									{quest.state === "locked" && <T es="Pendiente" en="Pending" />}
+								</span>
+								<h3><T {...quest.title} /></h3>
+								<p><T {...quest.text} /></p>
+							</div>
+						</li>
+					))}
+				</ol>
+
+			</div>
+
+		</section>
+
+
+		<CTABanner
+			eyebrow={{ es: "Servidores de Minecraft", en: "Minecraft servers" }}
+			title={{ es: "¿Tienes un servidor de Minecraft?", en: "Running a Minecraft server?" }}
+			text={{
+				es: "Mientras T.E.P. vuelve a la vida, te ayudamos gratis con tu servidor: permisos, rangos, optimización de lag y parches de exploits.",
+				en: "While T.E.P. comes back to life, we'll help you with your server for free: permissions, ranks, lag optimization and exploit patches.",
+			}}
+		>
+			<a href="/cuestionario-minecraft" class="btn btn-gold">
+				<T es="Cuestionario de Minecraft" en="Minecraft questionnaire" /> →
+			</a>
+			<a href="/projects" class="btn btn-ghost">
+				<T es="Otros proyectos" en="Other projects" />
+			</a>
+		</CTABanner>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+<style>
+
+/* T.E.P. runs on gold: re-derive the accent tokens inside the page. */
+.tep-page {
+	--primary: var(--gold);
+	--primary-2: color-mix(in oklab, var(--gold) 55%, #E3641B);
+	--primary-glow: color-mix(in srgb, var(--gold) 40%, transparent);
+	--primary-bg: color-mix(in srgb, var(--gold) 12%, transparent);
+	--primary-border: color-mix(in srgb, var(--gold) 40%, transparent);
+	--primary-light: var(--gold-text);
+}
+
+
+/* Hero */
+
+.hero-grid {
+	display: grid;
+	grid-template-columns: 1.1fr 1fr;
+	align-items: center;
+	gap: 48px;
+}
+
+.copy {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 24px;
+}
+
+.meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+h1 {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	column-gap: .05em;
+}
+
+.time {
+	color: var(--gold-text);
+	text-shadow: 0 0 40px color-mix(in srgb, var(--gold) 35%, transparent);
+}
+
+.economy {
+	color: #5CC8F5;
+	text-shadow: 0 0 40px rgba(92, 200, 245, .3);
+}
+
+:global([data-theme="light"]) .economy {
+	color: #0B6E99;
+}
+
+h1 small {
+	flex-basis: 100%;
+	margin-top: 10px;
+
+	font-family: var(--font-pixel);
+	font-size: clamp(1rem, 2vw, 1.4rem);
+	font-weight: 400;
+	letter-spacing: .3em;
+	color: var(--text-muted);
+}
+
+.tagline {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--text-muted);
+}
+
+.tagline .prompt {
+	color: var(--gold-text);
+	font-weight: 700;
+}
+
+.lead {
+	max-width: 600px;
+}
+
+
+/* Emblem */
+
+.emblem {
+	position: relative;
+	aspect-ratio: 1;
+	width: 100%;
+	max-width: 500px;
+	justify-self: center;
+}
+
+.clock {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.clock-ring {
+	fill: none;
+	stroke: var(--gold-border);
+	stroke-width: 2;
+	stroke-dasharray: 4 8;
+}
+
+.clock-ticks rect {
+	fill: var(--gold);
+	opacity: .55;
+}
+
+.clock-hand {
+	stroke: var(--gold);
+	stroke-width: 4;
+	stroke-linecap: square;
+	opacity: .5;
+	transform-origin: 200px 200px;
+	animation: sweep 12s steps(60) infinite;
+}
+
+@keyframes sweep {
+	to { transform: rotate(360deg); }
+}
+
+.logo-wrap {
+	position: absolute;
+	inset: 6%;
+
+	display: grid;
+	place-items: center;
+
+	border-radius: 50%;
+	background: radial-gradient(circle, color-mix(in srgb, var(--gold) 20%, transparent), transparent 68%);
+}
+
+.logo-wrap :global(img) {
+	width: 100%;
+	height: auto;
+	filter: drop-shadow(0 18px 40px rgba(0, 0, 0, .55));
+	animation: hover 6s ease-in-out infinite;
+}
+
+@keyframes hover {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-10px); }
+}
+
+.coin {
+	position: absolute;
+	top: calc(12% + var(--i) * 13%);
+	left: calc(var(--i) * 17%);
+
+	width: 10px;
+	height: 10px;
+
+	background: var(--gold);
+	box-shadow:
+		inset -2px -2px 0 rgba(0, 0, 0, .25),
+		0 0 10px color-mix(in srgb, var(--gold) 60%, transparent);
+
+	animation: coinFloat 6s ease-in-out infinite;
+	animation-delay: calc(var(--i) * -.9s);
+}
+
+.coin:nth-of-type(even) {
+	left: auto;
+	right: calc(var(--i) * 8%);
+}
+
+@keyframes coinFloat {
+	0%, 100% { transform: translateY(0) rotate(0deg); opacity: .9; }
+	50% { transform: translateY(-16px) rotate(45deg); opacity: .4; }
+}
+
+
+/* Pillars */
+
+.pillars {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 18px;
+}
+
+.pillars .hud-card {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.pillars h3 {
+	font-size: 1.2rem;
+	font-weight: 600;
+}
+
+.pillars p {
+	color: var(--text-muted);
+	line-height: 1.7;
+}
+
+
+/* Loadout */
+
+.loadout {
+	display: grid;
+	grid-template-columns: .7fr 1.3fr;
+	align-items: center;
+	gap: 40px;
+
+	padding: 36px 40px;
+
+	background: var(--bg-elevated);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-sm);
+}
+
+.loadout-copy {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.loadout .title {
+	font-size: clamp(1.8rem, 3.4vw, 2.5rem);
+}
+
+.slots {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 10px;
+}
+
+.slot {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+
+	padding: 18px 10px;
+
+	text-align: center;
+
+	background: var(--bg-sunken);
+	border: 2px solid var(--border-1);
+	box-shadow:
+		inset 2px 2px 0 rgba(0, 0, 0, .35),
+		inset -2px -2px 0 rgba(255, 255, 255, .04);
+
+	transition: border-color var(--transition);
+}
+
+.slot:hover {
+	border-color: var(--gold-border);
+}
+
+.slot-icon {
+	font-size: 1.7rem;
+}
+
+.slot strong {
+	font-family: var(--font-display);
+	font-size: 1.02rem;
+}
+
+.slot small {
+	font-family: var(--font-pixel);
+	font-size: .64rem;
+	letter-spacing: .05em;
+	text-transform: uppercase;
+	color: var(--text-dim);
+}
+
+
+/* Quest log */
+
+.status-grid {
+	display: grid;
+	grid-template-columns: 1fr 1.15fr;
+	align-items: start;
+	gap: 56px;
+}
+
+.progress {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.progress-top {
+	display: flex;
+	justify-content: space-between;
+
+	font-family: var(--font-pixel);
+	font-size: .74rem;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--text-muted);
+}
+
+.quests {
+	position: relative;
+
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+
+	margin: 0;
+	padding: 0;
+
+	list-style: none;
+}
+
+.quests::before {
+	content: "";
+	position: absolute;
+	top: 24px;
+	bottom: 24px;
+	left: 21px;
+	width: 2px;
+	background: repeating-linear-gradient(180deg, var(--border-3) 0 6px, transparent 6px 12px);
+}
+
+.quest {
+	position: relative;
+
+	display: flex;
+	gap: 18px;
+
+	padding: 18px 20px 18px 0;
+}
+
+.quest-marker {
+	position: relative;
+	z-index: 1;
+
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
+
+	width: 44px;
+	height: 44px;
+
+	font-family: var(--font-pixel);
+	font-size: 1.1rem;
+
+	background: var(--bg-elevated);
+	border: 2px solid var(--border-2);
+}
+
+.quest-body {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+
+	flex-grow: 1;
+	padding: 16px 20px;
+
+	background: var(--surface-1);
+	border: 1px solid var(--border-1);
+	border-radius: var(--radius-xs);
+}
+
+.quest-state {
+	font-family: var(--font-pixel);
+	font-size: .68rem;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--text-dim);
+}
+
+.quest h3 {
+	font-size: 1.15rem;
+	font-weight: 600;
+}
+
+.quest p {
+	color: var(--text-muted);
+	font-size: .95rem;
+	line-height: 1.6;
+}
+
+.quest.done .quest-marker {
+	color: #1C1305;
+	background: var(--gold);
+	border-color: var(--gold);
+}
+
+.quest.done .quest-state {
+	color: var(--gold-text);
+}
+
+.quest.active .quest-marker {
+	color: var(--gold-text);
+	border-color: var(--gold);
+	box-shadow: 0 0 18px color-mix(in srgb, var(--gold) 45%, transparent);
+	animation: statusBlink 2.4s steps(2, jump-none) infinite;
+}
+
+.quest.active .quest-body {
+	border-color: var(--gold-border);
+	background: var(--gold-bg);
+}
+
+.quest.active .quest-state {
+	color: var(--gold-text);
+}
+
+.quest.locked {
+	opacity: .7;
+}
+
+.quest.locked .quest-marker {
+	color: var(--text-dim);
+}
+
+
+@media (max-width: 1060px) {
+
+	.pillars {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 960px) {
+
+	.hero-grid,
+	.status-grid,
+	.loadout {
+		grid-template-columns: 1fr;
+	}
+
+	.emblem {
+		order: -1;
+		max-width: 320px;
+	}
+
+	.loadout {
+		padding: 28px 24px;
+	}
+}
+
+@media (max-width: 560px) {
+
+	.pillars {
+		grid-template-columns: 1fr;
+	}
+
+	.slots {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+</style>

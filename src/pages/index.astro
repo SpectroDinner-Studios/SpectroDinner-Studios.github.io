@@ -3,10 +3,11 @@ import Layout from "../layouts/Layout.astro";
 
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+import CTABanner from "../components/CTABanner.astro";
 
 import Hero from "../components/index/Hero.astro";
 import WhatIsSpectroDinner from "../components/index/WhatIsSpectroDinner.astro";
-import FeaturedProjectCard from "../components/projects/FeaturedProjectCard.astro";
 import WhatWeBuild from "../components/index/WhatWeBuild.astro";
 import DiscordServices from "../components/index/DiscordServices.astro";
 import QuestionnaireCTA from "../components/index/QuestionnaireCTA.astro";
@@ -26,7 +27,6 @@ import FAQ from "../components/faq/FAQ.astro";
 	<main>
 		<Hero />
 		<WhatIsSpectroDinner />
-		<FeaturedProjectCard />
 		<WhatWeBuild />
 		<DiscordServices />
 		<QuestionnaireCTA />
@@ -34,6 +34,22 @@ import FAQ from "../components/faq/FAQ.astro";
 		<Reviews />
 		<Leadership />
 		<FAQ />
+
+		<CTABanner
+			eyebrow={{ es: "Sigue explorando", en: "Continue exploring" }}
+			title={{ es: "Descubre más de SpectroDinner Studios", en: "Discover more from SpectroDinner Studios" }}
+			text={{
+				es: "Explora nuestros proyectos y documentación a través de nuestras plataformas oficiales. Cada proyecto refleja nuestro compromiso con la calidad, el rendimiento y la mantenibilidad a largo plazo.",
+				en: "Explore our projects and documentation through our official platforms. Every project reflects our commitment to quality, performance and long-term maintainability.",
+			}}
+		>
+			<a href="https://github.com/elmoderador" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+				<T es="Perfil de GitHub ↗" en="GitHub Profile ↗" />
+			</a>
+			<a href="/documentation" class="btn btn-ghost">
+				<T es="Documentación" en="Documentation" /> →
+			</a>
+		</CTABanner>
 	</main>
 
 	<Footer />
