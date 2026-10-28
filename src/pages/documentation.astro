@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import T from "../components/T.astro";
 import SectionHeader from "../components/SectionHeader.astro";
+import { TEP_LINKS } from "../data/tep";
 ---
 
 <Layout
@@ -48,45 +49,38 @@ import SectionHeader from "../components/SectionHeader.astro";
 					<div class="terminal-body">
 
 						<p><span class="prompt">&gt;</span> ls docs/</p>
-						<p class="empty"><T es="(vacío)" en="(empty)" /></p>
+						<p class="listing">timeeconomyplugin/README.md</p>
 
-						<p><span class="prompt">&gt;</span> status</p>
+						<p><span class="prompt">&gt;</span> cat timeeconomyplugin/README.md</p>
 
 						<div class="message">
 
-							<span class="chip chip-gold">
-								<T es="Próximamente" en="Coming soon" />
-							</span>
+							<span class="chip chip-gold">TimeEconomyPlugin</span>
 
 							<h2>
-								<T es="Todavía no hay documentación pública" en="No public documentation yet" />
+								<T es="Documentación de T.E.P." en="T.E.P. documentation" />
 							</h2>
 
 							<p>
 								<T
-									es="Estamos preparando documentación técnica para nuestros proyectos, empezando por TimeEconomyPlugin. De momento no hay guías, referencias de API ni tutoriales publicados — no queremos mostrar documentación que no existe todavía."
-									en="We're working on technical documentation for our projects, starting with TimeEconomyPlugin. There are no guides, API references or tutorials published yet — we'd rather show nothing than documentation that doesn't actually exist."
+									es="La documentación de TimeEconomyPlugin está en el README de su repositorio: requisitos, compatibilidad, instalación, compilación desde el código, sistemas y licencia."
+									en="TimeEconomyPlugin's documentation lives in its repository README: requirements, compatibility, installation, building from source, systems and license."
 								/>
 							</p>
 
 							<p>
 								<T
-									es="Mientras tanto, puedes seguir el desarrollo a través de nuestro perfil de GitHub."
-									en="In the meantime, you can follow development through our GitHub profile."
+									es="Estamos ampliándola con más guías. El resto de proyectos todavía no tiene documentación pública."
+									en="We're expanding it with more guides. Our other projects don't have public documentation yet."
 								/>
 							</p>
 
 							<div class="actions">
-								<a
-									href="https://github.com/elmoderador"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="btn btn-primary"
-								>
-									<T es="Perfil de GitHub ↗" en="GitHub Profile ↗" />
+								<a href={TEP_LINKS.readme} target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+									<T es="Leer el README ↗" en="Read the README ↗" />
 								</a>
 								<a href="/tep" class="btn btn-ghost">
-									<T es="Estado de T.E.P." en="T.E.P. status" /> →
+									<T es="Página de T.E.P." en="T.E.P. page" /> →
 								</a>
 							</div>
 
@@ -115,8 +109,8 @@ import SectionHeader from "../components/SectionHeader.astro";
 	box-shadow: 0 30px 80px -30px var(--primary-glow);
 }
 
-.empty {
-	color: var(--text-dim);
+.listing {
+	color: var(--emerald);
 	margin-bottom: 12px;
 }
 

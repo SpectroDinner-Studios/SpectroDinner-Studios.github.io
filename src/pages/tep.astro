@@ -9,98 +9,161 @@ import T from "../components/T.astro";
 import SectionHeader from "../components/SectionHeader.astro";
 import CTABanner from "../components/CTABanner.astro";
 import ProjectStatus, { type Status } from "../components/projects/ProjectStatus.astro";
+import { TEP_LINKS, formatDate, getTepRelease, minecraftRange } from "../data/tep";
 
-/*
-	Estado de T.E.P. — edita aquí cuando avance el proyecto.
-	status: "reviving" | "in-development" | "active" | "planned" | "archived"
-	quest.state: "done" | "active" | "locked"
-*/
-const status: Status = "reviving";
+const release = await getTepRelease();
+const mcRange = minecraftRange(release.gameVersions);
 
-const quests: { state: "done" | "active" | "locked"; title: { es: string; en: string }; text: { es: string; en: string } }[] = [
+// Per-system status, from the plugin's README (Development Status table).
+const systems: { icon: string; status: Status; title: { es: string; en: string }; text: { es: string; en: string } }[] = [
+	{
+		icon: "⏳",
+		status: "in-development",
+		title: { es: "Economía de tiempo", en: "Time Economy" },
+		text: {
+			es: "El núcleo: una progresión basada en tiempo que premia la actividad, con límites configurables y datos persistentes.",
+			en: "The core: time-based progression that rewards activity, with configurable limits and persistent data.",
+		},
+	},
+	{
+		icon: "⚔️",
+		status: "in-development",
+		title: { es: "Clases de jugador", en: "Player Classes" },
+		text: {
+			es: "Roles con mecánicas propias y fortalezas y debilidades equilibradas, para distintos estilos de juego.",
+			en: "Roles with their own mechanics and balanced strengths and weaknesses, for different playstyles.",
+		},
+	},
+	{
+		icon: "🗡️",
+		status: "in-development",
+		title: { es: "Armas legendarias", en: "Legendary Weapons" },
+		text: {
+			es: "Armas con comportamiento, habilidades y lore propios, diseñadas pensando en el equilibrio.",
+			en: "Weapons with their own behaviour, abilities and lore, designed with balance in mind.",
+		},
+	},
+	{
+		icon: "🏰",
+		status: "released",
+		title: { es: "Sistema de clanes", en: "Clan System" },
+		text: {
+			es: "Crea clanes, invita jugadores y personaliza sus ajustes, con soporte para integración con Discord.",
+			en: "Create clans, invite players and customise their settings, with Discord integration support.",
+		},
+	},
+	{
+		icon: "🔐",
+		status: "released",
+		title: { es: "Autenticación", en: "Authentication" },
+		text: {
+			es: "Registro e inicio de sesión para proteger las cuentas, con ajustes configurables.",
+			en: "Registration and login to protect accounts, with configurable settings.",
+		},
+	},
+	{
+		icon: "🤖",
+		status: "in-development",
+		title: { es: "Integración con Discord", en: "Discord Integration" },
+		text: {
+			es: "Comunicación entre Minecraft y Discord y sincronización de eventos con tu comunidad.",
+			en: "Minecraft ↔ Discord communication and event sync with your community.",
+		},
+	},
+	{
+		icon: "🌐",
+		status: "in-development",
+		title: { es: "Integración REST", en: "REST Integration" },
+		text: {
+			es: "Una capa HTTP para conectar el servidor con aplicaciones externas.",
+			en: "An HTTP layer to connect the server with external applications.",
+		},
+	},
+];
+
+const requirements = [
+	{ icon: "☕", name: "Java 21+", note: { es: "Runtime", en: "Runtime" } },
+	{ icon: "📄", name: "Paper", note: { es: `Minecraft ${mcRange}`, en: `Minecraft ${mcRange}` } },
+	{ icon: "👥", name: "Citizens", note: { es: "Obligatorio", en: "Required" } },
+];
+
+const compatibility = [
+	{ es: "Java Edition", en: "Java Edition" },
+	{ es: "Bedrock (Geyser + Floodgate)", en: "Bedrock (Geyser + Floodgate)" },
+	{ es: "Modo offline", en: "Offline mode" },
+];
+
+const recommended = ["Geyser", "Floodgate", "ViaVersion", "ViaBackwards", "ViaRewind", "Velocity"];
+
+const install = [
+	{
+		es: "Descarga la última versión desde Modrinth o GitHub Releases.",
+		en: "Download the latest release from Modrinth or GitHub Releases.",
+	},
+	{
+		es: "Instala Citizens, que es obligatorio, en tu servidor Paper.",
+		en: "Install Citizens, which is required, on your Paper server.",
+	},
+	{
+		es: "Copia el .jar de TimeEconomyPlugin en la carpeta plugins.",
+		en: "Drop the TimeEconomyPlugin .jar into the plugins folder.",
+	},
+	{
+		es: "Arranca o reinicia el servidor y ajusta la configuración si lo necesitas.",
+		en: "Start or restart the server and tweak the config if needed.",
+	},
+];
+
+const quests: { state: "done" | "active"; title: { es: string; en: string }; text: { es: string; en: string } }[] = [
 	{
 		state: "done",
-		title: { es: "Concepto e identidad", en: "Concept & identity" },
+		title: { es: "Primera versión pública", en: "First public release" },
 		text: {
-			es: "La idea de una economía basada en tiempo y la identidad visual del plugin.",
-			en: "The idea of a time-based economy and the plugin's visual identity.",
+			es: `Publicado en Modrinth y GitHub el ${formatDate(release.published, "es")}.`,
+			en: `Published on Modrinth and GitHub on ${formatDate(release.published, "en")}.`,
+		},
+	},
+	{
+		state: "done",
+		title: { es: "Núcleo estable, clanes y autenticación", en: "Stable core, clans & authentication" },
+		text: {
+			es: "El núcleo del plugin es estable y los sistemas de clanes y autenticación ya están publicados.",
+			en: "The plugin core is stable and the clan and authentication systems are released.",
 		},
 	},
 	{
 		state: "active",
-		title: { es: "Retomar el desarrollo", en: "Resume development" },
+		title: { es: "Economía de tiempo, clases y armas legendarias", en: "Time economy, classes & legendary weapons" },
 		text: {
-			es: "Volver a poner en marcha el núcleo del plugin sobre la Paper API.",
-			en: "Getting the plugin's core running again on the Paper API.",
+			es: "Los sistemas de juego principales siguen creciendo con cada versión.",
+			en: "The main gameplay systems keep growing with every release.",
 		},
 	},
 	{
-		state: "locked",
-		title: { es: "Documentación técnica", en: "Technical documentation" },
+		state: "active",
+		title: { es: "Integraciones con Discord y REST", en: "Discord & REST integrations" },
 		text: {
-			es: "Guías y referencia para instalarlo y configurarlo en tu servidor.",
-			en: "Guides and reference to install and configure it on your server.",
+			es: "Conectar el servidor con tu comunidad y con aplicaciones externas.",
+			en: "Connecting the server with your community and external apps.",
 		},
 	},
 	{
-		state: "locked",
-		title: { es: "Versión pública", en: "Public release" },
+		state: "active",
+		title: { es: "Documentación ampliada", en: "Expanded documentation" },
 		text: {
-			es: "Una primera versión estable disponible para servidores.",
-			en: "A first stable version available for servers.",
+			es: "Más guías además del README del repositorio.",
+			en: "More guides beyond the repository README.",
 		},
 	},
 ];
 
 const questsDone = quests.filter((q) => q.state === "done").length;
 const questProgress = Math.round((questsDone / quests.length) * 100);
-
-const pillars = [
-	{
-		icon: "⏳",
-		title: { es: "Economía basada en tiempo", en: "Time-based economy" },
-		text: {
-			es: "El tiempo como recurso central de la economía del servidor.",
-			en: "Time as the central resource of the server's economy.",
-		},
-	},
-	{
-		icon: "📈",
-		title: { es: "Sistema de progresión", en: "Progression system" },
-		text: {
-			es: "Una progresión construida sobre esa economía de tiempo.",
-			en: "Progression built on top of that time economy.",
-		},
-	},
-	{
-		icon: "⚔️",
-		title: { es: "Mecánicas personalizadas", en: "Custom mechanics" },
-		text: {
-			es: "Mecánicas de juego propias y funciones avanzadas del lado del servidor.",
-			en: "Custom gameplay mechanics and advanced server-side features.",
-		},
-	},
-	{
-		icon: "⚡",
-		title: { es: "Rendimiento y escalabilidad", en: "Performance & scalability" },
-		text: {
-			es: "Diseñado para el rendimiento, la escalabilidad y el mantenimiento a largo plazo.",
-			en: "Designed for performance, scalability and long-term maintainability.",
-		},
-	},
-];
-
-const loadout = [
-	{ icon: "☕", name: "Java", note: { es: "Lenguaje", en: "Language" } },
-	{ icon: "📄", name: "Paper API", note: { es: "Plataforma", en: "Platform" } },
-	{ icon: "⛏️", name: "Minecraft", note: { es: "Servidor", en: "Server-side" } },
-	{ icon: "🧩", name: "Plugin", note: { es: "Formato", en: "Format" } },
-];
 ---
 
 <Layout
 	title="T.E.P. — TimeEconomyPlugin | SpectroDinner™"
-	description="TimeEconomyPlugin (T.E.P.) — a large-scale Minecraft plugin by SpectroDinner Studios, built on the Paper API around a time-based economy and progression system."
+	description="TimeEconomyPlugin (T.E.P.) makes time your currency: a Paper plugin by SpectroDinner Studios with a time economy, player classes, legendary weapons, clans and more. Available on Modrinth and GitHub."
 >
 
 	<Navbar />
@@ -115,8 +178,9 @@ const loadout = [
 				<div class="copy">
 
 					<div class="meta reveal">
-						<span class="chip chip-gold">PRJ-001 · MINECRAFT PLUGIN</span>
-						<ProjectStatus status={status} />
+						<span class="chip chip-gold">PRJ-001 · PAPER PLUGIN</span>
+						<ProjectStatus status="released" />
+						<span class="chip">v{release.version}</span>
 					</div>
 
 					<h1 class="display reveal">
@@ -126,29 +190,43 @@ const loadout = [
 
 					<p class="tagline mono reveal">
 						<span class="prompt">&gt;</span>
-						<T es="el tiempo es la moneda" en="time is the currency" /><span class="cursor"></span>
+						<T es="el tiempo es tu moneda" en="time is your currency" /><span class="cursor"></span>
 					</p>
 
 					<p class="lead reveal">
 						<T
-							es="T.E.P. es un plugin de Minecraft a gran escala construido con la Paper API, que introduce una economía basada en tiempo y un sistema de progresión sobre mecánicas de juego personalizadas y funciones avanzadas del lado del servidor."
-							en="T.E.P. is a large-scale Minecraft plugin built with the Paper API, introducing a time-based economy and progression system on top of custom gameplay mechanics and advanced server-side features."
+							es="TimeEconomyPlugin convierte el tiempo en tu moneda: los jugadores gestionan límites diarios, ganan horas extra e intercambian tiempo en una economía de servidor única — junto a clases, armas legendarias, clanes y más."
+							en="TimeEconomyPlugin makes time your currency: players manage daily limits, earn extra hours and trade time in a unique server economy — alongside classes, legendary weapons, clans and more."
 						/>
 					</p>
 
 					<div class="actions reveal">
-						<a href="#estado" class="btn btn-gold">
-							<T es="Ver el estado" en="See the status" /> ↓
+						<a href={TEP_LINKS.modrinth} target="_blank" rel="noopener noreferrer" class="btn btn-gold">
+							<T es="Descargar en Modrinth ↗" en="Download on Modrinth ↗" />
 						</a>
-						<a
-							href="https://github.com/elmoderador"
-							target="_blank"
-							rel="noopener noreferrer"
-							class="btn btn-ghost"
-						>
-							<T es="Seguir en GitHub ↗" en="Follow on GitHub ↗" />
+						<a href={TEP_LINKS.github} target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+							<T es="Código en GitHub ↗" en="Source on GitHub ↗" />
 						</a>
 					</div>
+
+					<dl class="hud-stats reveal">
+						<div>
+							<dt><T es="Versión" en="Version" /></dt>
+							<dd>v{release.version}</dd>
+						</div>
+						<div>
+							<dt>Minecraft</dt>
+							<dd>{mcRange}</dd>
+						</div>
+						<div>
+							<dt><T es="Versiones" en="Releases" /></dt>
+							<dd>{release.versionCount}</dd>
+						</div>
+						<div>
+							<dt><T es="Idiomas" en="Languages" /></dt>
+							<dd>5</dd>
+						</div>
+					</dl>
 
 				</div>
 
@@ -191,28 +269,34 @@ const loadout = [
 		</section>
 
 
-		<!-- Concept -->
-		<section class="section">
+		<!-- Systems -->
+		<section class="section" id="sistemas">
 
 			<div class="container">
 
 				<SectionHeader
 					index="01"
-					eyebrow={{ es: "El concepto", en: "The concept" }}
-					title={{ es: "Un servidor donde el tiempo vale.", en: "A server where time has value." }}
+					eyebrow={{ es: "Sistemas", en: "Systems" }}
+					title={{ es: "Un ecosistema, no un plugin suelto.", en: "An ecosystem, not a lone plugin." }}
 				>
 					<T
-						es="T.E.P. gira alrededor de una idea: que el tiempo sea la base de la economía y de la progresión del servidor. Todo lo demás se construye encima, pensado para el rendimiento y para durar."
-						en="T.E.P. revolves around one idea: making time the foundation of the server's economy and progression. Everything else is built on top, designed for performance and to last."
+						es="En lugar de juntar muchos plugins que no se conocen entre sí, T.E.P. reúne varios sistemas de juego que trabajan juntos, con una arquitectura modular pensada para crecer."
+						en="Instead of stacking many unrelated plugins, T.E.P. brings several gameplay systems together that work as one, on a modular architecture built to grow."
 					/>
 				</SectionHeader>
 
-				<div class="pillars">
-					{pillars.map((pillar, i) => (
-						<article class="hud-card interactive reveal" style={`--reveal-delay:${i * 70}ms`}>
-							<span class="icon-tile">{pillar.icon}</span>
-							<h3><T {...pillar.title} /></h3>
-							<p><T {...pillar.text} /></p>
+				<div class="systems">
+					{systems.map((system, i) => (
+						<article
+							class:list={["hud-card", "interactive", "reveal", { featured: i === 0 }]}
+							style={`--reveal-delay:${(i % 4) * 60}ms`}
+						>
+							<div class="system-top">
+								<span class="icon-tile">{system.icon}</span>
+								<ProjectStatus status={system.status} />
+							</div>
+							<h3><T {...system.title} /></h3>
+							<p><T {...system.text} /></p>
 						</article>
 					))}
 				</div>
@@ -222,26 +306,65 @@ const loadout = [
 		</section>
 
 
-		<!-- Loadout -->
+		<!-- Requirements & install -->
 		<section class="section-sm">
 
-			<div class="container">
+			<div class="container setup">
 
 				<div class="loadout reveal">
 
-					<div class="loadout-copy">
-						<span class="eyebrow"><span class="idx">02 //</span> <T es="Equipamiento" en="Loadout" /></span>
-						<h2 class="title"><T es="Construido con" en="Built with" /></h2>
-					</div>
+					<span class="eyebrow"><span class="idx">02 //</span> <T es="Requisitos" en="Requirements" /></span>
+					<h2 class="title"><T es="Lo que necesitas" en="What you need" /></h2>
 
 					<div class="slots">
-						{loadout.map((item) => (
+						{requirements.map((item) => (
 							<div class="slot">
 								<span class="slot-icon" aria-hidden="true">{item.icon}</span>
 								<strong>{item.name}</strong>
 								<small><T {...item.note} /></small>
 							</div>
 						))}
+					</div>
+
+					<div class="compat">
+						<span class="compat-label"><T es="Compatible con" en="Works with" /></span>
+						<ul>
+							{compatibility.map((c) => (
+								<li><span class="check" aria-hidden="true">✓</span><T {...c} /></li>
+							))}
+						</ul>
+					</div>
+
+					<div class="compat">
+						<span class="compat-label"><T es="Recomendados (opcionales)" en="Recommended (optional)" /></span>
+						<div class="chips">
+							{recommended.map((name) => <span class="chip">{name}</span>)}
+						</div>
+					</div>
+
+				</div>
+
+				<div class="install reveal">
+
+					<span class="eyebrow"><span class="idx">03 //</span> <T es="Instalación" en="Install" /></span>
+					<h2 class="title"><T es="En cuatro pasos" en="In four steps" /></h2>
+
+					<ol class="steps">
+						{install.map((step, i) => (
+							<li>
+								<span class="step-n">{i + 1}</span>
+								<p><T {...step} /></p>
+							</li>
+						))}
+					</ol>
+
+					<div class="actions">
+						<a href={TEP_LINKS.versions} target="_blank" rel="noopener noreferrer" class="btn btn-gold btn-sm">
+							<T es="Versiones en Modrinth ↗" en="Modrinth versions ↗" />
+						</a>
+						<a href={TEP_LINKS.readme} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">
+							<T es="Leer el README ↗" en="Read the README ↗" />
+						</a>
 					</div>
 
 				</div>
@@ -251,7 +374,7 @@ const loadout = [
 		</section>
 
 
-		<!-- Status / quest log -->
+		<!-- Roadmap / quest log -->
 		<section class="section" id="estado">
 
 			<div class="container status-grid">
@@ -259,13 +382,13 @@ const loadout = [
 				<div>
 
 					<SectionHeader
-						index="03"
-						eyebrow={{ es: "Estado del proyecto", en: "Project status" }}
+						index="04"
+						eyebrow={{ es: "Hoja de ruta", en: "Roadmap" }}
 						title={{ es: "Registro de misiones.", en: "Quest log." }}
 					>
 						<T
-							es="Así va T.E.P. Esta página se actualiza a medida que el proyecto avanza — sin fechas inventadas ni promesas que no podamos cumplir."
-							en="Here's where T.E.P. stands. This page is updated as the project moves forward — no made-up dates or promises we can't keep."
+							es={`Versión actual: v${release.version}, publicada el ${formatDate(release.updated, "es")}. T.E.P. sigue en desarrollo continuo: cada versión añade sistemas, mejoras y correcciones.`}
+							en={`Current version: v${release.version}, released on ${formatDate(release.updated, "en")}. T.E.P. is under continuous development: every release adds systems, improvements and fixes.`}
 						/>
 					</SectionHeader>
 
@@ -285,13 +408,11 @@ const loadout = [
 					{quests.map((quest, i) => (
 						<li class={`quest ${quest.state} reveal`} style={`--reveal-delay:${i * 80}ms`}>
 							<span class="quest-marker" aria-hidden="true">
-								{quest.state === "done" ? "✓" : quest.state === "active" ? "!" : "?"}
+								{quest.state === "done" ? "✓" : "!"}
 							</span>
 							<div class="quest-body">
 								<span class="quest-state">
-									{quest.state === "done" && <T es="Completada" en="Completed" />}
-									{quest.state === "active" && <T es="En curso" en="In progress" />}
-									{quest.state === "locked" && <T es="Pendiente" en="Pending" />}
+									{quest.state === "done" ? <T es="Completada" en="Completed" /> : <T es="En curso" en="In progress" />}
 								</span>
 								<h3><T {...quest.title} /></h3>
 								<p><T {...quest.text} /></p>
@@ -305,19 +426,45 @@ const loadout = [
 		</section>
 
 
+		<!-- License -->
+		<section class="section-sm">
+
+			<div class="container">
+
+				<div class="license hud-card reveal">
+					<span class="icon-tile">📜</span>
+					<div>
+						<h2><T es="Licencia" en="License" /></h2>
+						<p>
+							<T
+								es="El código del repositorio de GitHub se publica bajo la SpectroDinner Public Source License (código visible, uso no comercial). Las versiones de Modrinth se distribuyen bajo la GNU AGPL-3.0."
+								en="The GitHub repository's source is published under the SpectroDinner Public Source License (source-available, non-commercial). Modrinth releases are distributed under the GNU AGPL-3.0."
+							/>
+						</p>
+						<a href={TEP_LINKS.license} target="_blank" rel="noopener noreferrer">
+							<T es="Ver el archivo LICENSE ↗" en="Read the LICENSE file ↗" />
+						</a>
+					</div>
+				</div>
+
+			</div>
+
+		</section>
+
+
 		<CTABanner
-			eyebrow={{ es: "Servidores de Minecraft", en: "Minecraft servers" }}
-			title={{ es: "¿Tienes un servidor de Minecraft?", en: "Running a Minecraft server?" }}
+			eyebrow={{ es: "Pruébalo", en: "Try it" }}
+			title={{ es: "Lleva T.E.P. a tu servidor.", en: "Bring T.E.P. to your server." }}
 			text={{
-				es: "Mientras T.E.P. vuelve a la vida, te ayudamos gratis con tu servidor: permisos, rangos, optimización de lag y parches de exploits.",
-				en: "While T.E.P. comes back to life, we'll help you with your server for free: permissions, ranks, lag optimization and exploit patches.",
+				es: "Descárgalo gratis en Modrinth. ¿Has encontrado un fallo o tienes una idea? Abre un issue en GitHub.",
+				en: "Download it for free on Modrinth. Found a bug or have an idea? Open an issue on GitHub.",
 			}}
 		>
-			<a href="/cuestionario-minecraft" class="btn btn-gold">
-				<T es="Cuestionario de Minecraft" en="Minecraft questionnaire" /> →
+			<a href={TEP_LINKS.modrinth} target="_blank" rel="noopener noreferrer" class="btn btn-gold">
+				<T es="Descargar en Modrinth ↗" en="Download on Modrinth ↗" />
 			</a>
-			<a href="/projects" class="btn btn-ghost">
-				<T es="Otros proyectos" en="Other projects" />
+			<a href={TEP_LINKS.issues} target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+				<T es="Reportar un bug ↗" en="Report a bug ↗" />
 			</a>
 		</CTABanner>
 
@@ -395,19 +542,53 @@ h1 small {
 }
 
 .tagline {
-	display: flex;
-	align-items: center;
-	gap: 10px;
 	color: var(--text-muted);
 }
 
 .tagline .prompt {
+	margin-right: 10px;
 	color: var(--gold-text);
 	font-weight: 700;
 }
 
 .lead {
 	max-width: 600px;
+}
+
+.hud-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 4px 0 0;
+}
+
+.hud-stats div {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+
+	padding: 12px 16px;
+
+	background: var(--surface-1);
+	border: 1px solid var(--border-1);
+	border-left: 3px solid var(--gold);
+	border-radius: var(--radius-xs);
+}
+
+.hud-stats dt {
+	font-family: var(--font-pixel);
+	font-size: .68rem;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--text-dim);
+}
+
+.hud-stats dd {
+	margin: 0;
+	font-family: var(--font-display);
+	font-size: 1.3rem;
+	font-weight: 700;
+	line-height: 1;
 }
 
 
@@ -504,59 +685,74 @@ h1 small {
 }
 
 
-/* Pillars */
+/* Systems */
 
-.pillars {
+.systems {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	gap: 18px;
 }
 
-.pillars .hud-card {
+.systems .hud-card {
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
 }
 
-.pillars h3 {
+.systems .featured {
+	grid-column: span 2;
+	background:
+		radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--gold) 14%, transparent), transparent 60%),
+		linear-gradient(180deg, var(--surface-2), var(--surface-1));
+}
+
+.system-top {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.systems h3 {
 	font-size: 1.2rem;
 	font-weight: 600;
 }
 
-.pillars p {
+.systems p {
 	color: var(--text-muted);
 	line-height: 1.7;
 }
 
 
-/* Loadout */
+/* Requirements & install */
 
-.loadout {
+.setup {
 	display: grid;
-	grid-template-columns: .7fr 1.3fr;
-	align-items: center;
-	gap: 40px;
+	grid-template-columns: 1fr 1fr;
+	gap: 18px;
+}
 
-	padding: 36px 40px;
+.loadout,
+.install {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+
+	padding: 32px;
 
 	background: var(--bg-elevated);
 	border: 1px solid var(--border-2);
 	border-radius: var(--radius-sm);
 }
 
-.loadout-copy {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.loadout .title {
-	font-size: clamp(1.8rem, 3.4vw, 2.5rem);
+.loadout .title,
+.install .title {
+	font-size: clamp(1.6rem, 3vw, 2.2rem);
 }
 
 .slots {
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: repeat(3, 1fr);
 	gap: 10px;
 }
 
@@ -566,7 +762,7 @@ h1 small {
 	align-items: center;
 	gap: 6px;
 
-	padding: 18px 10px;
+	padding: 16px 8px;
 
 	text-align: center;
 
@@ -584,7 +780,7 @@ h1 small {
 }
 
 .slot-icon {
-	font-size: 1.7rem;
+	font-size: 1.6rem;
 }
 
 .slot strong {
@@ -594,10 +790,92 @@ h1 small {
 
 .slot small {
 	font-family: var(--font-pixel);
-	font-size: .64rem;
-	letter-spacing: .05em;
+	font-size: .62rem;
+	letter-spacing: .04em;
 	text-transform: uppercase;
 	color: var(--text-dim);
+}
+
+.compat {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.compat-label {
+	font-family: var(--font-pixel);
+	font-size: .7rem;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--text-dim);
+}
+
+.compat ul {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.compat li {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--text);
+}
+
+.check {
+	display: grid;
+	place-items: center;
+	width: 20px;
+	height: 20px;
+	font-size: .75rem;
+	color: #04150D;
+	background: var(--emerald);
+}
+
+.steps {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.steps li {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+}
+
+.step-n {
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
+
+	width: 34px;
+	height: 34px;
+
+	font-family: var(--font-pixel);
+	color: #1C1305;
+
+	background: linear-gradient(135deg, #F8C552, #E39B1B);
+	box-shadow:
+		inset 0 2px 0 rgba(255, 255, 255, .3),
+		inset 0 -3px 0 rgba(0, 0, 0, .25);
+}
+
+.steps p {
+	padding-top: 5px;
+	color: var(--text-muted);
+	line-height: 1.6;
+}
+
+.install .actions {
+	margin-top: auto;
 }
 
 
@@ -652,11 +930,8 @@ h1 small {
 
 .quest {
 	position: relative;
-
 	display: flex;
 	gap: 18px;
-
-	padding: 18px 20px 18px 0;
 }
 
 .quest-marker {
@@ -669,6 +944,7 @@ h1 small {
 
 	width: 44px;
 	height: 44px;
+	margin-top: 14px;
 
 	font-family: var(--font-pixel);
 	font-size: 1.1rem;
@@ -723,7 +999,6 @@ h1 small {
 	color: var(--gold-text);
 	border-color: var(--gold);
 	box-shadow: 0 0 18px color-mix(in srgb, var(--gold) 45%, transparent);
-	animation: statusBlink 2.4s steps(2, jump-none) infinite;
 }
 
 .quest.active .quest-body {
@@ -735,18 +1010,46 @@ h1 small {
 	color: var(--gold-text);
 }
 
-.quest.locked {
-	opacity: .7;
+
+/* License */
+
+.license {
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
 }
 
-.quest.locked .quest-marker {
-	color: var(--text-dim);
+.license div {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.license h2 {
+	font-size: 1.3rem;
+	font-weight: 600;
+}
+
+.license p {
+	color: var(--text-muted);
+	line-height: 1.7;
+}
+
+.license a {
+	width: fit-content;
+	color: var(--gold-text);
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.license a:hover {
+	text-decoration: underline;
 }
 
 
 @media (max-width: 1060px) {
 
-	.pillars {
+	.systems {
 		grid-template-columns: repeat(2, 1fr);
 	}
 }
@@ -755,7 +1058,7 @@ h1 small {
 
 	.hero-grid,
 	.status-grid,
-	.loadout {
+	.setup {
 		grid-template-columns: 1fr;
 	}
 
@@ -763,20 +1066,25 @@ h1 small {
 		order: -1;
 		max-width: 320px;
 	}
-
-	.loadout {
-		padding: 28px 24px;
-	}
 }
 
 @media (max-width: 560px) {
 
-	.pillars {
+	.systems {
 		grid-template-columns: 1fr;
 	}
 
-	.slots {
-		grid-template-columns: 1fr 1fr;
+	.systems .featured {
+		grid-column: auto;
+	}
+
+	.loadout,
+	.install {
+		padding: 24px 20px;
+	}
+
+	.license {
+		flex-direction: column;
 	}
 }
 

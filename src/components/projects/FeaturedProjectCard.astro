@@ -3,6 +3,9 @@ import { Image } from "astro:assets";
 import tepLogo from "../../assets/tep.png";
 import T from "../T.astro";
 import ProjectStatus from "./ProjectStatus.astro";
+import { TEP_LINKS, getTepRelease, minecraftRange } from "../../data/tep";
+
+const release = await getTepRelease();
 ---
 
 <article class="project hud-card gold interactive reveal">
@@ -15,7 +18,8 @@ import ProjectStatus from "./ProjectStatus.astro";
 
 		<div class="meta">
 			<span class="code">PRJ-001</span>
-			<ProjectStatus status="reviving" />
+			<ProjectStatus status="released" />
+			<span class="chip">v{release.version}</span>
 		</div>
 
 		<h3>
@@ -24,28 +28,26 @@ import ProjectStatus from "./ProjectStatus.astro";
 
 		<p>
 			<T
-				es="Un plugin de Minecraft a gran escala construido con la Paper API, que introduce una economía basada en tiempo y un sistema de progresión sobre mecánicas de juego personalizadas y funciones avanzadas del lado del servidor."
-				en="A large-scale Minecraft plugin built with the Paper API, introducing a time-based economy and progression system on top of custom gameplay mechanics and advanced server-side features."
+				es="Un plugin para servidores Paper que convierte el tiempo en tu moneda: límites diarios, horas extra y comercio de tiempo, junto a clases, armas legendarias, clanes y autenticación."
+				en="A Paper server plugin that makes time your currency: daily limits, extra hours and time trading, alongside classes, legendary weapons, clans and authentication."
 			/>
 		</p>
 
 		<div class="chips">
-			<span class="chip">Java</span>
-			<span class="chip">Paper API</span>
-			<span class="chip">Minecraft</span>
-			<span class="chip"><T es="Plugin" /></span>
+			<span class="chip">Java 21</span>
+			<span class="chip">Paper</span>
+			<span class="chip">Minecraft {minecraftRange(release.gameVersions)}</span>
+			<span class="chip">Modrinth</span>
 		</div>
 
 		<div class="actions">
 			<a href="/tep" class="btn btn-gold btn-sm">
 				<T es="Ver T.E.P." en="View T.E.P." /> →
 			</a>
-			<a
-				href="https://github.com/elmoderador"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="btn btn-ghost btn-sm"
-			>
+			<a href={TEP_LINKS.modrinth} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">
+				Modrinth ↗
+			</a>
+			<a href={TEP_LINKS.github} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">
 				GitHub ↗
 			</a>
 		</div>

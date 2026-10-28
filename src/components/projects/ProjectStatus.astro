@@ -1,7 +1,7 @@
 ---
 import T from "../T.astro";
 
-export type Status = "active" | "in-development" | "reviving" | "experimental" | "planned" | "archived";
+export type Status = "released" | "active" | "in-development" | "experimental" | "planned" | "archived";
 
 interface Props {
 	status: Status;
@@ -10,9 +10,9 @@ interface Props {
 const { status } = Astro.props;
 
 const labels: Record<Status, { es: string; en: string }> = {
+	released: { es: "Publicado", en: "Released" },
 	active: { es: "Activo", en: "Active" },
 	"in-development": { es: "En desarrollo", en: "In development" },
-	reviving: { es: "En reactivación", en: "Being revived" },
 	experimental: { es: "Experimental", en: "Experimental" },
 	planned: { es: "Planeado", en: "Planned" },
 	archived: { es: "Archivado", en: "Archived" },
@@ -54,9 +54,9 @@ const labels: Record<Status, { es: string; en: string }> = {
 	animation: statusBlink 2.4s steps(2, jump-none) infinite;
 }
 
+.status-released,
 .status-active { --status-color: var(--emerald); }
-.status-in-development,
-.status-reviving { --status-color: var(--gold); }
+.status-in-development { --status-color: var(--gold); }
 .status-experimental { --status-color: var(--violet); }
 .status-planned { --status-color: var(--primary-light); }
 .status-archived { --status-color: var(--text-dim); }
