@@ -1,0 +1,290 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Acceso | SpectroDinner™" description="Acceso restringido." noindex>
+
+	<main class="gate">
+
+		<form id="gate-form" class="gate-card" novalidate>
+
+			<a href="/" class="gate-brand" aria-label="SpectroDinner™">
+				<img src="/logo.png" alt="" width="44" height="44" />
+			</a>
+
+			<span class="eyebrow">Acceso restringido</span>
+
+			<h1>Identifícate</h1>
+
+			<p id="gate-notice" class="gate-notice" hidden></p>
+
+			<label for="gate-password">Contraseña</label>
+			<div class="gate-input">
+				<input
+					id="gate-password"
+					type="password"
+					name="password"
+					autocomplete="current-password"
+					required
+					disabled
+				/>
+				<button type="button" class="gate-eye" id="gate-eye" aria-label="Mostrar contraseña" aria-pressed="false">
+					<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+						<circle cx="12" cy="12" r="3" />
+					</svg>
+				</button>
+			</div>
+
+			<p id="gate-error" class="gate-error" role="alert" hidden></p>
+
+			<button type="submit" class="btn btn-primary" id="gate-submit" disabled>Entrar →</button>
+
+		</form>
+
+	</main>
+
+</Layout>
+
+<script>
+	const form = document.getElementById("gate-form") as HTMLFormElement;
+	const input = document.getElementById("gate-password") as HTMLInputElement;
+	const submit = document.getElementById("gate-submit") as HTMLButtonElement;
+	const error = document.getElementById("gate-error")!;
+	const notice = document.getElementById("gate-notice")!;
+
+	const NOTICES: Record<string, string> = {
+		out: "Sesión cerrada.",
+		timeout: "Se cerró la sesión por inactividad.",
+		expired: "Tu sesión ha caducado. Vuelve a entrar.",
+	};
+
+	const params = new URLSearchParams(location.search);
+	for (const [key, text] of Object.entries(NOTICES)) {
+		if (params.has(key)) {
+			notice.textContent = text;
+			notice.hidden = false;
+		}
+	}
+
+	const showError = (text: string) => {
+		error.textContent = text;
+		error.hidden = false;
+	};
+
+	const setReady = (ready: boolean) => {
+		input.disabled = !ready;
+		submit.disabled = !ready;
+		if (ready) input.focus();
+	};
+
+	const unavailable = () => {
+		setReady(false);
+		showError("El acceso no está disponible en este momento.");
+	};
+
+	// Already signed in? Go straight in. No backend here? Say so.
+	fetch("/api/admin/session", { credentials: "same-origin" })
+		.then((res) => {
+			if (res.ok) location.replace("/admin/");
+			else if (res.status === 401) setReady(true);
+			else unavailable();
+		})
+		.catch(unavailable);
+
+	document.getElementById("gate-eye")?.addEventListener("click", (e) => {
+		const button = e.currentTarget as HTMLButtonElement;
+		const show = input.type === "password";
+		input.type = show ? "text" : "password";
+		button.setAttribute("aria-pressed", String(show));
+		button.setAttribute("aria-label", show ? "Ocultar contraseña" : "Mostrar contraseña");
+	});
+
+	form.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		error.hidden = true;
+
+		if (!input.value) {
+			showError("Escribe la contraseña.");
+			input.focus();
+			return;
+		}
+
+		submit.disabled = true;
+		submit.textContent = "Comprobando…";
+
+		try {
+			const res = await fetch("/api/admin/login", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ password: input.value }),
+				credentials: "same-origin",
+			});
+
+			if (res.ok) {
+				input.value = "";
+				location.replace("/admin/");
+				return;
+			}
+
+			const body = await res.json().catch(() => ({}));
+
+			if (res.status === 401) {
+				const left = typeof body.remaining === "number" ? body.remaining : null;
+				showError(
+					left === 0
+						? "Contraseña incorrecta. El acceso se bloqueará temporalmente."
+						: `Contraseña incorrecta.${left !== null ? ` Te quedan ${left} intentos.` : ""}`
+				);
+				input.select();
+			} else if (res.status === 429) {
+				showError(`Demasiados intentos fallidos. Vuelve a intentarlo en ${body.retryMinutes ?? 15} minutos.`);
+			} else {
+				unavailable();
+			}
+		} catch {
+			showError("No se pudo conectar. Revisa tu conexión.");
+		} finally {
+			submit.disabled = input.disabled;
+			submit.textContent = "Entrar →";
+		}
+	});
+</script>
+
+<style>
+
+.gate {
+	display: grid;
+	place-items: center;
+	min-height: 100svh;
+	padding: 40px 20px;
+}
+
+.gate-card {
+	position: relative;
+
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+
+	width: 100%;
+	max-width: 400px;
+	padding: 36px 32px;
+
+	background: var(--bg-elevated);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-sm);
+	box-shadow: 0 40px 100px -40px var(--primary-glow);
+}
+
+.gate-card::before,
+.gate-card::after {
+	content: "";
+	position: absolute;
+	width: 18px;
+	height: 18px;
+	border: 2px solid var(--primary);
+}
+
+.gate-card::before {
+	top: -1px;
+	left: -1px;
+	border-right: 0;
+	border-bottom: 0;
+}
+
+.gate-card::after {
+	right: -1px;
+	bottom: -1px;
+	border-left: 0;
+	border-top: 0;
+}
+
+.gate-brand img {
+	filter: drop-shadow(0 0 14px var(--primary-glow));
+}
+
+h1 {
+	font-size: 2rem;
+	font-weight: 700;
+	margin-bottom: 6px;
+}
+
+label {
+	font-weight: 600;
+	font-size: .95rem;
+}
+
+.gate-input {
+	position: relative;
+}
+
+.gate-input input {
+	width: 100%;
+	padding: 13px 48px 13px 15px;
+
+	font: inherit;
+	color: var(--text);
+
+	background: var(--bg-sunken);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-xs);
+}
+
+.gate-input input:focus {
+	border-color: var(--primary);
+	outline: none;
+	box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.gate-eye {
+	position: absolute;
+	top: 50%;
+	right: 8px;
+	translate: 0 -50%;
+
+	display: grid;
+	place-items: center;
+
+	width: 34px;
+	height: 34px;
+
+	color: var(--text-dim);
+
+	background: transparent;
+	border: 0;
+	border-radius: var(--radius-xs);
+
+	cursor: pointer;
+}
+
+.gate-eye:hover,
+.gate-eye:focus-visible,
+.gate-eye[aria-pressed="true"] {
+	color: var(--primary);
+}
+
+.gate-error,
+.gate-notice {
+	padding: 10px 12px;
+	font-size: .9rem;
+	border-radius: var(--radius-xs);
+}
+
+.gate-error {
+	color: var(--text);
+	background: color-mix(in srgb, var(--danger) 12%, transparent);
+	border-left: 3px solid var(--danger);
+}
+
+.gate-notice {
+	color: var(--text);
+	background: var(--primary-bg);
+	border-left: 3px solid var(--primary);
+}
+
+.btn {
+	margin-top: 6px;
+}
+
+</style>

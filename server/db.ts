@@ -17,6 +17,25 @@ const SCHEMA = [
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_submissions_form_status ON submissions (form, status)`,
 	`CREATE INDEX IF NOT EXISTS idx_submissions_ip_time ON submissions (ip_hash, created_at)`,
+
+	// Admin sessions: only a salted hash of the cookie token is stored.
+	`CREATE TABLE IF NOT EXISTS admin_sessions (
+		token_hash TEXT PRIMARY KEY,
+		created_at TEXT NOT NULL DEFAULT (datetime('now')),
+		expires_at TEXT NOT NULL,
+		last_seen TEXT NOT NULL DEFAULT (datetime('now')),
+		user_agent TEXT
+	)`,
+
+	// Access log: login_ok | login_fail | logout | revoke_others | revoke_all
+	`CREATE TABLE IF NOT EXISTS admin_events (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		at TEXT NOT NULL DEFAULT (datetime('now')),
+		kind TEXT NOT NULL,
+		ip_hash TEXT,
+		user_agent TEXT
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_admin_events_kind_ip ON admin_events (kind, ip_hash, at)`,
 ];
 
 export type SubmissionRow = {

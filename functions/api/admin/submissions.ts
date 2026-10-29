@@ -26,13 +26,19 @@ export const onRequestGet: PagesHandler = async ({ request, env }) => {
 				)
 				.all<SubmissionRow>();
 
-	const counts = await db
-		.prepare(`SELECT form, status, COUNT(*) AS n FROM submissions GROUP BY form, status`)
-		.all<{ form: string; status: string; n: number }>();
+	const [counts, recent] = await Promise.all([
+		db
+			.prepare(`SELECT form, status, COUNT(*) AS n FROM submissions GROUP BY form, status`)
+			.all<{ form: string; status: string; n: number }>(),
+		db
+			.prepare(`SELECT form, COUNT(*) AS n FROM submissions WHERE created_at > datetime('now', '-7 days') GROUP BY form`)
+			.all<{ form: string; n: number }>(),
+	]);
 
 	return json({
 		submissions: rows.results.map((row) => ({ ...row, data: JSON.parse(row.data) })),
 		counts: counts.results,
+		recent: recent.results,
 	});
 };
 
@@ -50,6 +56,14 @@ export const onRequestPost: PagesHandler = async ({ request, env }) => {
 	const body = await readJsonObject(request, 1000);
 	const id = Number(body?.id);
 	const action = String(body?.action ?? "");
+
+	// Bulk: mark every new submission of one (non-review) form as read.
+	if (action === "read-all") {
+		const form = String(body?.form ?? "");
+		if (!FORM_IDS.includes(form) || form === "review") return json({ error: "invalid_form" }, 400);
+		await db.prepare(`UPDATE submissions SET status = 'read' WHERE form = ? AND status = 'new'`).bind(form).run();
+		return json({ ok: true });
+	}
 
 	if (!Number.isInteger(id)) return json({ error: "invalid_id" }, 400);
 

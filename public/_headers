@@ -1,0 +1,14 @@
+# Cloudflare Pages response headers (ignored by GitHub Pages).
+# /admin and /api/admin/* get their private headers from the Functions.
+
+/acceso
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  Cache-Control: no-store
+
+/acceso/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  Cache-Control: no-store

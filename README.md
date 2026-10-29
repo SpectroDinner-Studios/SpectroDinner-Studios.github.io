@@ -16,7 +16,7 @@ npm run dev
 
 - `POST /api/submit` — every site form (reviews, Discord, Minecraft, volunteering) is stored in D1 and forwarded to the existing Make scenario.
 - `GET /api/reviews` — reviews approved in the admin panel, shown on the homepage next to the hard-coded ones.
-- `/admin` — password-protected panel to read submissions and publish/hide reviews.
+- `/admin` — private panel to read, search and export submissions, publish/hide reviews and see who has signed in. Login is at `/acceso`.
 
 If the backend isn't reachable (GitHub Pages, or D1 not set up yet) the forms post straight to Make, so nothing breaks. Tables are created automatically on first use — no migrations.
 
@@ -31,12 +31,21 @@ In the Cloudflare dashboard:
    - `SESSION_SECRET` — a long random string (e.g. from a password manager).
 4. **Deployments → Retry deployment** (bindings only apply to new deployments).
 
-Then open `https://spectrodinner-studios.pages.dev/admin`.
+Then open `https://spectrodinner-studios.pages.dev/acceso`.
+
+### How the admin panel stays private
+
+- The panel page only exists in Cloudflare builds (`CF_PAGES` is set there). GitHub Pages and every public asset contain none of its code.
+- [`functions/admin/[[path]].ts`](functions/admin/%5B%5Bpath%5D%5D.ts) serves `/admin` only to a valid session. Anyone else — person, crawler or AI — gets a redirect to `/acceso` and never receives a byte of the panel or its data.
+- Sessions are stored server-side in D1 (the cookie holds a random token; only its hash is stored). They last 12 h, end after 2 h idle (30 min in the open panel) and can be closed from **Seguridad**.
+- 5 wrong passwords from one IP lock it out for 15 min; 30 wrong passwords in an hour from anywhere lock the login for everyone.
+- Every login, failure and logout is in the access log (**Seguridad** tab).
+- Changing `ADMIN_PASSWORD` doesn't sign out open sessions: press **Cerrar todas** in **Seguridad** (or change `SESSION_SECRET`, which invalidates them all).
 
 ### Testing the backend locally
 
 ```bash
-npm run build
+ADMIN_BUILD=1 npm run build   # include the admin panel, as Cloudflare does
 npx wrangler@4 pages dev dist --d1 DB=spectrodinner-local
 ```
 

@@ -1,23 +1,18 @@
+import type { D1Database } from "./types";
+
 const encoder = new TextEncoder();
 
-export const SESSION_COOKIE = "sd_admin";
-const SESSION_TTL_S = 60 * 60 * 24 * 7; // 7 days
+// `__Host-` cookies must be Secure, Path=/ and host-only: no subdomain can set or read them.
+export const SESSION_COOKIE = "__Host-sd_admin";
 
-function toBase64Url(bytes: ArrayBuffer): string {
+const SESSION_TTL_S = 60 * 60 * 12; // a session never lives longer than 12 h
+const IDLE_TTL_S = 60 * 60 * 2; // …and ends after 2 h without activity
+const TOUCH_EVERY_S = 60 * 5; // how often last_seen is refreshed
+
+function toBase64Url(bytes: ArrayBuffer | Uint8Array): string {
 	let binary = "";
 	for (const byte of new Uint8Array(bytes)) binary += String.fromCharCode(byte);
 	return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
-
-async function hmac(secret: string, data: string): Promise<string> {
-	const key = await crypto.subtle.importKey(
-		"raw",
-		encoder.encode(secret),
-		{ name: "HMAC", hash: "SHA-256" },
-		false,
-		["sign"]
-	);
-	return toBase64Url(await crypto.subtle.sign("HMAC", key, encoder.encode(data)));
 }
 
 export async function sha256(value: string): Promise<string> {
@@ -31,14 +26,34 @@ export function timingSafeEqual(a: string, b: string): boolean {
 	return result === 0;
 }
 
-export async function createSessionCookie(secret: string): Promise<string> {
-	const expires = String(Date.now() + SESSION_TTL_S * 1000);
-	const token = `${expires}.${await hmac(secret, expires)}`;
-	return `${SESSION_COOKIE}=${token}; Path=/api/admin; Max-Age=${SESSION_TTL_S}; HttpOnly; Secure; SameSite=Strict`;
+// Compares digests, so neither the content nor the length of the password leaks.
+export async function passwordMatches(candidate: string, expected: string): Promise<boolean> {
+	return timingSafeEqual(await sha256(candidate), await sha256(expected));
 }
 
-export function clearSessionCookie(): string {
-	return `${SESSION_COOKIE}=; Path=/api/admin; Max-Age=0; HttpOnly; Secure; SameSite=Strict`;
+export function ipHash(request: Request, secret: string): Promise<string> {
+	return sha256(`${request.headers.get("CF-Connecting-IP") ?? "unknown"}|${secret}`);
+}
+
+// "Chrome · Windows" — enough to recognise a device in the access log.
+export function shortUserAgent(ua: string | null): string {
+	if (!ua) return "Desconocido";
+	const browser =
+		/Edg\//.test(ua) ? "Edge" :
+		/OPR\/|Opera/.test(ua) ? "Opera" :
+		/Firefox\//.test(ua) ? "Firefox" :
+		/Chrome\//.test(ua) ? "Chrome" :
+		/Safari\//.test(ua) ? "Safari" :
+		/curl|wget|python|node|Go-http/i.test(ua) ? "Script" :
+		"Navegador";
+	const os =
+		/Windows/.test(ua) ? "Windows" :
+		/Android/.test(ua) ? "Android" :
+		/iPhone|iPad|iOS/.test(ua) ? "iOS" :
+		/Mac OS X|Macintosh/.test(ua) ? "macOS" :
+		/Linux/.test(ua) ? "Linux" :
+		"";
+	return os ? `${browser} · ${os}` : browser;
 }
 
 function readCookie(request: Request, name: string): string | undefined {
@@ -50,18 +65,86 @@ function readCookie(request: Request, name: string): string | undefined {
 	return undefined;
 }
 
-export async function isAuthenticated(request: Request, secret: string | undefined): Promise<boolean> {
-	// Without a secret every signature would be forgeable — never accept a session.
-	if (!secret) return false;
+const hashToken = (token: string, secret: string) => sha256(`${token}|${secret}`);
+
+export type Session = {
+	token_hash: string;
+	created_at: string;
+	expires_at: string;
+	last_seen: string;
+};
+
+export async function createSession(db: D1Database, secret: string, request: Request): Promise<string> {
+	const token = toBase64Url(crypto.getRandomValues(new Uint8Array(32)));
+
+	await db
+		.prepare(
+			`INSERT INTO admin_sessions (token_hash, expires_at, user_agent)
+				VALUES (?, datetime('now', ?), ?)`
+		)
+		.bind(await hashToken(token, secret), `+${SESSION_TTL_S} seconds`, shortUserAgent(request.headers.get("User-Agent")))
+		.run();
+
+	return `${SESSION_COOKIE}=${token}; Path=/; Max-Age=${SESSION_TTL_S}; HttpOnly; Secure; SameSite=Strict`;
+}
+
+export function clearSessionCookie(): string {
+	return `${SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict`;
+}
+
+export async function getSession(
+	request: Request,
+	db: D1Database,
+	secret: string | undefined
+): Promise<Session | null> {
+	// Without a secret nothing can be verified — never accept a session.
+	if (!secret) return null;
 
 	const token = readCookie(request, SESSION_COOKIE);
-	if (!token) return false;
+	if (!token || token.length > 100) return null;
 
-	const [expires, signature] = token.split(".");
-	if (!expires || !signature) return false;
+	const tokenHash = await hashToken(token, secret);
 
-	if (!timingSafeEqual(await hmac(secret, expires), signature)) return false;
+	const session = await db
+		.prepare(
+			`SELECT token_hash, created_at, expires_at, last_seen FROM admin_sessions
+				WHERE token_hash = ?
+					AND expires_at > datetime('now')
+					AND last_seen > datetime('now', ?)`
+		)
+		.bind(tokenHash, `-${IDLE_TTL_S} seconds`)
+		.first<Session>();
 
-	const expiresAt = Number(expires);
-	return Number.isFinite(expiresAt) && Date.now() < expiresAt;
+	if (!session) return null;
+
+	await db
+		.prepare(
+			`UPDATE admin_sessions SET last_seen = datetime('now')
+				WHERE token_hash = ? AND last_seen < datetime('now', ?)`
+		)
+		.bind(tokenHash, `-${TOUCH_EVERY_S} seconds`)
+		.run();
+
+	return session;
+}
+
+export async function destroySession(request: Request, db: D1Database, secret: string): Promise<void> {
+	const token = readCookie(request, SESSION_COOKIE);
+	if (!token) return;
+	await db.prepare(`DELETE FROM admin_sessions WHERE token_hash = ?`).bind(await hashToken(token, secret)).run();
+}
+
+export async function logEvent(db: D1Database, kind: string, request: Request, secret: string): Promise<void> {
+	await db
+		.prepare(`INSERT INTO admin_events (kind, ip_hash, user_agent) VALUES (?, ?, ?)`)
+		.bind(kind, await ipHash(request, secret), shortUserAgent(request.headers.get("User-Agent")))
+		.run();
+}
+
+// Drops expired sessions and access-log entries older than 90 days.
+export async function pruneAuthTables(db: D1Database): Promise<void> {
+	await db.batch([
+		db.prepare(`DELETE FROM admin_sessions WHERE expires_at <= datetime('now') OR last_seen <= datetime('now', ?)`).bind(`-${IDLE_TTL_S} seconds`),
+		db.prepare(`DELETE FROM admin_events WHERE at <= datetime('now', '-90 days')`),
+	]);
 }

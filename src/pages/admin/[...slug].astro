@@ -1,0 +1,677 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+// The panel only ships in Cloudflare builds, where functions/admin/[[path]].ts
+// serves it exclusively to a valid session. GitHub Pages has no server to
+// guard it, so there the page is simply not generated (404).
+// Styles and script are inlined (is:inline) so no public /_astro/ file
+// contains any of the panel's code.
+export function getStaticPaths() {
+	const env = (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {};
+	return env.CF_PAGES || env.ADMIN_BUILD ? [{ params: { slug: undefined } }] : [];
+}
+---
+
+<Layout title="Panel | SpectroDinner™" description="Panel privado." noindex>
+
+	<div class="adm" id="adm">
+
+		<header class="adm-top">
+			<a href="/" class="adm-brand">
+				<img src="/logo.png" alt="" width="34" height="34" />
+				<span>SPECTRO<b>DINNER</b> <small>// PANEL</small></span>
+			</a>
+			<div class="adm-top-actions">
+				<span class="adm-session" id="adm-session" title="">🔒 Sesión segura</span>
+				<button type="button" class="btn btn-ghost btn-sm" id="adm-refresh" title="Actualizar (R)">⟳ Actualizar</button>
+				<button type="button" class="btn btn-ghost btn-sm" id="adm-logout">Cerrar sesión</button>
+			</div>
+		</header>
+
+		<p class="adm-previous" id="adm-previous" hidden></p>
+
+		<section class="adm-stats" id="adm-stats" aria-label="Resumen"></section>
+
+		<nav class="adm-tabs" id="adm-tabs" aria-label="Secciones"></nav>
+
+		<div id="adm-inbox">
+			<div class="adm-toolbar">
+				<input type="search" id="adm-search" placeholder="Buscar por nombre, email, texto…  ( / )" autocomplete="off" />
+				<div class="adm-filter" id="adm-filter" role="group" aria-label="Estado"></div>
+				<div class="adm-toolbar-actions">
+					<button type="button" class="btn btn-ghost btn-sm" id="adm-readall">✓ Marcar todo leído</button>
+					<button type="button" class="btn btn-ghost btn-sm" id="adm-export">⤓ Exportar CSV</button>
+				</div>
+			</div>
+			<p class="adm-count" id="adm-count"></p>
+			<div class="adm-list" id="adm-list" aria-live="polite"></div>
+		</div>
+
+		<section id="adm-security" class="adm-security" hidden>
+			<div class="adm-panel">
+				<div class="adm-panel-head">
+					<h2>Sesiones abiertas</h2>
+					<div class="adm-panel-actions">
+						<button type="button" class="btn btn-ghost btn-sm" id="adm-revoke-others">Cerrar las demás</button>
+						<button type="button" class="btn btn-sm adm-danger" id="adm-revoke-all">Cerrar todas</button>
+					</div>
+				</div>
+				<ul class="adm-sessions" id="adm-sessions"></ul>
+			</div>
+			<div class="adm-panel">
+				<div class="adm-panel-head">
+					<h2>Registro de accesos</h2>
+				</div>
+				<ul class="adm-events" id="adm-events"></ul>
+			</div>
+			<div class="adm-panel adm-tips">
+				<h2>Consejos</h2>
+				<ul>
+					<li>Las sesiones caducan a las 12 h y se cierran tras 2 h sin actividad (este panel cierra la tuya tras 30 min quieto).</li>
+					<li>Tras 5 contraseñas incorrectas desde un mismo sitio, el acceso se bloquea 15 minutos.</li>
+					<li>Si ves un acceso que no reconoces: cambia <code>ADMIN_PASSWORD</code> en Cloudflare y pulsa «Cerrar todas».</li>
+				</ul>
+			</div>
+		</section>
+
+		<div class="adm-toast" id="adm-toast" role="status" aria-live="polite" hidden></div>
+
+		<dialog class="adm-dialog" id="adm-dialog">
+			<p id="adm-dialog-text"></p>
+			<div class="adm-dialog-actions">
+				<button type="button" class="btn btn-ghost btn-sm" value="cancel" id="adm-dialog-cancel">Cancelar</button>
+				<button type="button" class="btn btn-sm adm-danger" value="ok" id="adm-dialog-ok">Eliminar</button>
+			</div>
+		</dialog>
+
+	</div>
+
+
+<style is:inline>
+.adm { max-width: 1120px; margin: 0 auto; padding: 24px 24px 80px; }
+.adm-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+.adm-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; letter-spacing: .05em; text-decoration: none; }
+.adm-brand b { color: var(--primary-light); }
+.adm-brand small { font-family: var(--font-pixel); font-weight: 400; font-size: .7rem; color: var(--text-dim); }
+.adm-top-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.adm-session { padding: 6px 10px; font-family: var(--font-pixel); font-size: .68rem; letter-spacing: .04em; color: var(--emerald); background: color-mix(in srgb, var(--emerald) 10%, transparent); border: 1px solid color-mix(in srgb, var(--emerald) 35%, transparent); }
+.adm-previous { margin: 0 0 18px; font-size: .86rem; color: var(--text-dim); }
+.adm-danger { --btn-bg: color-mix(in srgb, var(--danger) 14%, transparent); --btn-fg: var(--danger); --btn-ring: color-mix(in srgb, var(--danger) 45%, transparent); }
+
+.adm-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 22px; }
+.adm-stat { display: flex; flex-direction: column; gap: 6px; padding: 16px; text-align: left; font: inherit; color: var(--text); background: var(--surface-1); border: 1px solid var(--border-1); border-left: 3px solid var(--primary); border-radius: var(--radius-xs); cursor: pointer; transition: border-color var(--transition), background var(--transition); }
+.adm-stat:hover { background: var(--surface-2); border-color: var(--border-3); }
+.adm-stat.is-alert { border-left-color: var(--gold); }
+.adm-stat span { font-family: var(--font-pixel); font-size: .66rem; letter-spacing: .05em; text-transform: uppercase; color: var(--text-dim); }
+.adm-stat strong { font-family: var(--font-display); font-size: 1.8rem; line-height: 1; }
+.adm-stat small { font-size: .8rem; color: var(--text-muted); }
+.adm-stat small b { color: var(--gold-text); }
+
+.adm-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.adm-tab { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; font-family: var(--font-display); font-size: .95rem; font-weight: 600; color: var(--text-muted); background: var(--surface-1); border: 1px solid var(--border-1); border-radius: var(--radius-xs); cursor: pointer; }
+.adm-tab:hover { color: var(--text); }
+.adm-tab[aria-selected="true"] { color: var(--text); background: var(--primary-bg); border-color: var(--primary); box-shadow: inset 0 -2px 0 var(--primary); }
+.adm-badge { min-width: 22px; padding: 1px 6px; font-family: var(--font-pixel); font-size: .68rem; text-align: center; color: #1C1305; background: var(--gold); }
+
+.adm-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; }
+.adm-toolbar input[type="search"] { flex: 1 1 260px; padding: 11px 14px; font: inherit; color: var(--text); background: var(--bg-sunken); border: 1px solid var(--border-2); border-radius: var(--radius-xs); }
+.adm-toolbar input[type="search"]:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px var(--primary-bg); }
+.adm-filter { display: flex; border: 1px solid var(--border-2); border-radius: var(--radius-xs); overflow: hidden; }
+.adm-filter button { padding: 9px 12px; font: inherit; font-size: .85rem; color: var(--text-muted); background: var(--surface-1); border: 0; border-right: 1px solid var(--border-1); cursor: pointer; }
+.adm-filter button:last-child { border-right: 0; }
+.adm-filter button[aria-pressed="true"] { color: var(--text); background: var(--primary-bg); box-shadow: inset 0 -2px 0 var(--primary); }
+.adm-toolbar-actions { display: flex; gap: 8px; }
+.adm-count { margin: 0 0 12px; font-family: var(--font-pixel); font-size: .68rem; letter-spacing: .05em; text-transform: uppercase; color: var(--text-dim); }
+
+.adm-list { display: flex; flex-direction: column; gap: 10px; }
+.adm-card { position: relative; padding: 16px 18px; background: linear-gradient(180deg, var(--surface-2), var(--surface-1)); border: 1px solid var(--border-1); border-left: 3px solid var(--border-2); border-radius: var(--radius-xs); }
+.adm-card.is-new { border-left-color: var(--gold); }
+.adm-card.is-muted { opacity: .62; }
+.adm-card-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.adm-card-head strong { font-family: var(--font-display); font-size: 1.1rem; overflow-wrap: anywhere; }
+.adm-chip { padding: 2px 8px; font-family: var(--font-pixel); font-size: .62rem; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); background: var(--surface-2); border: 1px solid var(--border-1); }
+.adm-chip.gold { color: var(--gold-text); background: var(--gold-bg); border-color: var(--gold-border); }
+.adm-chip.green { color: var(--emerald); background: color-mix(in srgb, var(--emerald) 10%, transparent); border-color: color-mix(in srgb, var(--emerald) 35%, transparent); }
+.adm-meta { margin-left: auto; display: flex; gap: 10px; font-size: .82rem; color: var(--text-dim); }
+.adm-sub { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; font-size: .9rem; color: var(--text-muted); }
+.adm-sub a { color: var(--primary-light); text-decoration: none; }
+.adm-sub a:hover { text-decoration: underline; }
+.adm-stars { color: var(--gold); letter-spacing: 2px; }
+.adm-quote { margin: 10px 0 0; line-height: 1.65; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; }
+.adm-fields { display: grid; grid-template-columns: minmax(140px, 210px) 1fr; gap: 7px 16px; margin: 14px 0 0; padding-top: 12px; border-top: 1px dashed var(--border-2); }
+.adm-fields dt { font-family: var(--font-pixel); font-size: .64rem; letter-spacing: .04em; text-transform: uppercase; color: var(--primary-light); padding-top: 3px; }
+.adm-fields dd { margin: 0; font-size: .92rem; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; }
+.adm-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.adm-empty { padding: 40px 20px; text-align: center; color: var(--text-dim); background: var(--surface-1); border: 1px dashed var(--border-2); border-radius: var(--radius-xs); }
+.adm-skeleton { height: 92px; background: linear-gradient(90deg, var(--surface-1), var(--surface-3), var(--surface-1)); background-size: 200% 100%; border-radius: var(--radius-xs); animation: admShimmer 1.2s linear infinite; }
+@keyframes admShimmer { to { background-position: -200% 0; } }
+
+.adm-security { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.adm-panel { padding: 18px 20px; background: var(--bg-elevated); border: 1px solid var(--border-2); border-radius: var(--radius-xs); }
+.adm-panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.adm-panel h2 { font-size: 1.15rem; font-weight: 600; }
+.adm-panel-actions { display: flex; gap: 8px; }
+.adm-sessions, .adm-events { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.adm-sessions li, .adm-events li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 9px 12px; font-size: .88rem; background: var(--surface-1); border: 1px solid var(--border-1); border-radius: var(--radius-xs); }
+.adm-sessions small, .adm-events small { margin-left: auto; color: var(--text-dim); }
+.adm-events li.is-fail { border-left: 3px solid var(--danger); }
+.adm-events li.is-ok { border-left: 3px solid var(--emerald); }
+.adm-tips { grid-column: 1 / -1; }
+.adm-tips ul { margin: 10px 0 0; padding-left: 18px; color: var(--text-muted); line-height: 1.7; font-size: .9rem; }
+.adm-tips code { padding: 1px 5px; background: var(--bg-sunken); border: 1px solid var(--border-1); }
+
+.adm-toast { position: fixed; left: 50%; bottom: 24px; translate: -50% 0; z-index: 80; padding: 11px 16px; font-size: .92rem; color: var(--text); background: var(--bg-elevated); border: 1px solid var(--border-2); border-left: 3px solid var(--emerald); box-shadow: 0 20px 50px var(--shadow-color); }
+.adm-toast.is-error { border-left-color: var(--danger); }
+.adm-dialog { width: calc(100% - 32px); max-width: 420px; margin: auto; padding: 22px; color: var(--text); background: var(--bg-elevated); border: 1px solid var(--border-2); border-radius: var(--radius-sm); }
+.adm-dialog::backdrop { background: rgba(0, 0, 0, .6); backdrop-filter: blur(3px); }
+.adm-dialog p { margin: 0 0 18px; line-height: 1.6; }
+.adm-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+@media (max-width: 900px) {
+	.adm-stats { grid-template-columns: repeat(2, 1fr); }
+	.adm-security { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+	.adm { padding: 16px 14px 60px; }
+	.adm-fields { grid-template-columns: 1fr; gap: 2px; }
+	.adm-fields dd { margin-bottom: 8px; }
+	.adm-meta { margin-left: 0; width: 100%; }
+}
+</style>
+
+<script is:inline>
+(() => {
+	"use strict";
+
+	// ---------- Config ----------
+
+	const FORMS = {
+		review: { label: "Valoraciones", icon: "⭐", fresh: "pending", filters: [["all", "Todas"], ["pending", "Pendientes"], ["approved", "Publicadas"], ["hidden", "Ocultas"]] },
+		discord: { label: "Discord", icon: "💬", fresh: "new", filters: [["all", "Todos"], ["new", "Nuevos"], ["read", "Leídos"]] },
+		minecraft: { label: "Minecraft", icon: "⛏️", fresh: "new", filters: [["all", "Todos"], ["new", "Nuevos"], ["read", "Leídos"]] },
+		voluntariado: { label: "Voluntariado", icon: "🤝", fresh: "new", filters: [["all", "Todos"], ["new", "Nuevos"], ["read", "Leídos"]] },
+	};
+
+	const STATUS = {
+		pending: ["Pendiente", "gold"],
+		approved: ["Publicada", "green"],
+		hidden: ["Oculta", ""],
+		new: ["Nuevo", "gold"],
+		read: ["Leído", ""],
+	};
+
+	const LABELS = {
+		nombre: "Nombre", nickname: "Apodo", email: "Email", discord: "Discord", tipo: "Tipo de servicio",
+		invite: "Invitación", proposito: "Propósito", proposito_detalle: "Detalle del propósito", tamano: "Tamaño",
+		estilo: "Estilo", referencias: "Referencias", canales: "Canales", roles: "Roles", bots: "Bots",
+		plazo: "Plazo", comentarios: "Comentarios", servidor_nombre: "Servidor", version_software: "Versión / software",
+		tipo_host: "Tipo de host", tipo_host_detalle: "Host", plugins_instalados: "Plugins instalados",
+		plugins_deseados: "Plugins deseados", metodo_acceso: "Acceso", panel_url: "URL del panel",
+		usuario_colaborador: "Usuario colaborador", notas_acceso: "Notas de acceso", modalidad: "Modalidad",
+		modalidad_detalle: "Detalle de la modalidad", rangos_permisos: "Rangos y permisos", bugs_exploits: "Bugs / exploits",
+		notas_adicionales: "Notas adicionales", areas: "Áreas", experiencia: "Experiencia", enlaces: "Enlaces",
+		disponibilidad: "Disponibilidad", motivacion: "Motivación", service: "Servicio", rating: "Valoración", comment: "Comentario",
+	};
+
+	// Shown under the name on each card, before expanding.
+	const SUMMARY = { discord: ["tipo", "proposito", "plazo"], minecraft: ["servidor_nombre", "version_software", "metodo_acceso"], voluntariado: ["areas", "disponibilidad"] };
+
+	const EVENTS = {
+		login_ok: ["✅", "Inicio de sesión", "is-ok"],
+		login_fail: ["❌", "Contraseña incorrecta", "is-fail"],
+		logout: ["🚪", "Cierre de sesión", ""],
+		revoke_others: ["🧹", "Cerradas las demás sesiones", ""],
+		revoke_all: ["🧨", "Cerradas todas las sesiones", ""],
+	};
+
+	const IDLE_LIMIT_MS = 30 * 60 * 1000;
+	const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+	// ---------- State ----------
+
+	const state = { tab: "review", filter: "all", query: "", rows: [], counts: [], recent: [], open: new Set() };
+
+	// ---------- Helpers ----------
+
+	const $ = (id) => document.getElementById(id);
+
+	const el = (tag, className, text) => {
+		const node = document.createElement(tag);
+		if (className) node.className = className;
+		if (text !== undefined && text !== null) node.textContent = String(text);
+		return node;
+	};
+
+	const button = (label, onClick, className) => {
+		const b = el("button", className || "btn btn-ghost btn-sm", label);
+		b.type = "button";
+		b.addEventListener("click", onClick);
+		return b;
+	};
+
+	const parseDate = (value) => new Date(String(value).replace(" ", "T") + "Z");
+
+	const rtf = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
+	const relative = (value) => {
+		const seconds = Math.round((parseDate(value).getTime() - Date.now()) / 1000);
+		const units = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
+		for (const [unit, size] of units) {
+			if (Math.abs(seconds) >= size) return rtf.format(Math.round(seconds / size), unit);
+		}
+		return "ahora mismo";
+	};
+	const absolute = (value) => parseDate(value).toLocaleString("es-ES", { dateStyle: "medium", timeStyle: "short" });
+	const timeOnly = (value) => parseDate(value).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+
+	const ref = (id) => "#" + String(id).padStart(4, "0");
+
+	let toastTimer = 0;
+	const toast = (text, isError) => {
+		const box = $("adm-toast");
+		box.textContent = text;
+		box.classList.toggle("is-error", Boolean(isError));
+		box.hidden = false;
+		clearTimeout(toastTimer);
+		toastTimer = setTimeout(() => (box.hidden = true), 2600);
+	};
+
+	const confirmDialog = (text, okLabel) =>
+		new Promise((resolve) => {
+			const dialog = $("adm-dialog");
+			$("adm-dialog-text").textContent = text;
+			$("adm-dialog-ok").textContent = okLabel || "Eliminar";
+			const done = (value) => {
+				dialog.close();
+				$("adm-dialog-ok").onclick = null;
+				$("adm-dialog-cancel").onclick = null;
+				resolve(value);
+			};
+			$("adm-dialog-ok").onclick = () => done(true);
+			$("adm-dialog-cancel").onclick = () => done(false);
+			dialog.oncancel = () => done(false);
+			dialog.showModal();
+		});
+
+	const goToLogin = (reason) => location.replace("/acceso/" + (reason ? "?" + reason + "=1" : ""));
+
+	const api = async (path, body) => {
+		const res = await fetch("/api/admin/" + path, {
+			method: body === undefined ? "GET" : "POST",
+			headers: body === undefined ? undefined : { "Content-Type": "application/json" },
+			body: body === undefined ? undefined : JSON.stringify(body),
+			credentials: "same-origin",
+			cache: "no-store",
+		});
+		if (res.status === 401 || res.status === 503) {
+			goToLogin("expired");
+			throw new Error("auth");
+		}
+		if (!res.ok) throw new Error("HTTP " + res.status);
+		return res.json();
+	};
+
+	const countOf = (form, status) =>
+		state.counts.filter((c) => c.form === form && (!status || c.status === status)).reduce((sum, c) => sum + c.n, 0);
+
+	// ---------- Header ----------
+
+	const loadSession = async () => {
+		const { session, previousLogin } = await api("session");
+		const chip = $("adm-session");
+		chip.textContent = "🔒 Sesión hasta las " + timeOnly(session.expires_at);
+		chip.title = "Iniciada " + absolute(session.created_at);
+		if (previousLogin) {
+			const p = $("adm-previous");
+			p.textContent = "Acceso anterior: " + absolute(previousLogin.at) + " · " + (previousLogin.user_agent || "dispositivo desconocido");
+			p.hidden = false;
+		}
+	};
+
+	// ---------- Stats & tabs ----------
+
+	const renderStats = () => {
+		const box = $("adm-stats");
+		box.replaceChildren();
+
+		for (const [form, cfg] of Object.entries(FORMS)) {
+			const fresh = countOf(form, cfg.fresh);
+			const card = el("button", "adm-stat" + (fresh ? " is-alert" : ""));
+			card.type = "button";
+			card.append(el("span", "", cfg.icon + " " + cfg.label), el("strong", "", countOf(form)));
+			const small = el("small");
+			if (fresh) small.append(el("b", "", fresh), " " + (form === "review" ? "por moderar" : "sin leer"));
+			else small.textContent = "Todo al día";
+			card.append(small);
+			card.addEventListener("click", () => selectTab(form));
+			box.append(card);
+		}
+
+		const week = state.recent.reduce((sum, r) => sum + r.n, 0);
+		const weekCard = el("div", "adm-stat");
+		weekCard.append(el("span", "", "📅 Últimos 7 días"), el("strong", "", week), el("small", "", "envíos recibidos"));
+		box.append(weekCard);
+	};
+
+	const renderTabs = () => {
+		const nav = $("adm-tabs");
+		nav.replaceChildren();
+		const tabs = [...Object.entries(FORMS), ["security", { label: "Seguridad", icon: "🛡️" }]];
+
+		for (const [id, cfg] of tabs) {
+			const tab = el("button", "adm-tab");
+			tab.type = "button";
+			tab.setAttribute("aria-selected", String(state.tab === id));
+			tab.append(el("span", "", cfg.icon), cfg.label);
+			if (cfg.fresh) {
+				const n = countOf(id, cfg.fresh);
+				if (n) tab.append(el("span", "adm-badge", n));
+			}
+			tab.addEventListener("click", () => selectTab(id));
+			nav.append(tab);
+		}
+	};
+
+	const renderFilter = () => {
+		const box = $("adm-filter");
+		box.replaceChildren();
+		for (const [value, label] of FORMS[state.tab].filters) {
+			const b = el("button", "", label);
+			b.type = "button";
+			b.setAttribute("aria-pressed", String(state.filter === value));
+			b.addEventListener("click", () => {
+				state.filter = value;
+				renderFilter();
+				renderList();
+			});
+			box.append(b);
+		}
+		$("adm-readall").hidden = state.tab === "review";
+	};
+
+	// ---------- List ----------
+
+	const visibleRows = () => {
+		const q = state.query.trim().toLowerCase();
+		return state.rows.filter((row) => {
+			if (state.filter !== "all" && row.status !== state.filter) return false;
+			if (!q) return true;
+			return (ref(row.id) + " " + Object.values(row.data).join(" ")).toLowerCase().includes(q);
+		});
+	};
+
+	const act = async (row, action, message) => {
+		if (action === "delete") {
+			const who = row.data.nickname || row.data.nombre || "este envío";
+			if (!(await confirmDialog("¿Eliminar " + ref(row.id) + " (" + who + ")? No se puede deshacer."))) return;
+		}
+		try {
+			await api("submissions", { id: row.id, action });
+			toast(message);
+			await loadRows();
+		} catch (err) {
+			if (err.message !== "auth") toast("No se pudo completar la acción.", true);
+		}
+	};
+
+	const renderCard = (row) => {
+		const d = row.data;
+		const [statusLabel, statusTone] = STATUS[row.status] || [row.status, ""];
+		const fresh = row.status === "new" || row.status === "pending";
+		const card = el("article", "adm-card" + (fresh ? " is-new" : "") + (row.status === "read" || row.status === "hidden" ? " is-muted" : ""));
+
+		const head = el("div", "adm-card-head");
+		head.append(el("strong", "", d.nickname || d.nombre || "—"), el("span", "adm-chip " + statusTone, statusLabel));
+		const meta = el("span", "adm-meta");
+		const when = el("span", "", relative(row.created_at));
+		when.title = absolute(row.created_at);
+		meta.append(el("span", "", ref(row.id)), when);
+		head.append(meta);
+		card.append(head);
+
+		const sub = el("div", "adm-sub");
+		if (row.form === "review") {
+			const rating = Math.max(0, Math.min(5, Number(d.rating) || 0));
+			sub.append(el("span", "adm-stars", "★".repeat(rating) + "☆".repeat(5 - rating)));
+			if (d.service) sub.append(el("span", "", d.service));
+			card.append(sub, el("p", "adm-quote", "“" + (d.comment || "") + "”"));
+		} else {
+			if (d.email && EMAIL_RE.test(d.email)) {
+				const mail = el("a", "", "✉ " + d.email);
+				mail.href = "mailto:" + d.email + "?subject=" + encodeURIComponent("Tu solicitud " + ref(row.id) + " en SpectroDinner Studios");
+				sub.append(mail);
+			}
+			if (d.discord) sub.append(el("span", "", "💬 " + d.discord));
+			for (const key of SUMMARY[row.form] || []) {
+				if (d[key]) sub.append(el("span", "", (LABELS[key] || key) + ": " + d[key]));
+			}
+			card.append(sub);
+
+			if (state.open.has(row.id)) {
+				const dl = el("dl", "adm-fields");
+				for (const [key, value] of Object.entries(d)) {
+					if (key === "form" || value === "" || value === null || value === undefined) continue;
+					dl.append(el("dt", "", LABELS[key] || key.replace(/_/g, " ")), el("dd", "", Array.isArray(value) ? value.join(", ") : value));
+				}
+				card.append(dl);
+			}
+		}
+
+		const actions = el("div", "adm-actions");
+		if (row.form === "review") {
+			actions.append(
+				row.status === "approved"
+					? button("Ocultar de la web", () => act(row, "hide", "Valoración oculta"))
+					: button("✓ Publicar en la web", () => act(row, "approve", "Valoración publicada"), "btn btn-primary btn-sm")
+			);
+		} else {
+			actions.append(
+				button(state.open.has(row.id) ? "Ocultar detalles" : "Ver todo", () => {
+					if (state.open.has(row.id)) state.open.delete(row.id);
+					else state.open.add(row.id);
+					renderList();
+				}),
+				row.status === "new"
+					? button("✓ Marcar leído", () => act(row, "read", "Marcado como leído"))
+					: button("Marcar como nuevo", () => act(row, "unread", "Marcado como nuevo"))
+			);
+			if (d.email && EMAIL_RE.test(d.email)) {
+				actions.append(
+					button("Copiar email", async () => {
+						try {
+							await navigator.clipboard.writeText(d.email);
+							toast("Email copiado");
+						} catch {
+							toast("No se pudo copiar", true);
+						}
+					})
+				);
+			}
+		}
+		actions.append(button("Eliminar", () => act(row, "delete", "Eliminado"), "btn btn-sm adm-danger"));
+		card.append(actions);
+
+		return card;
+	};
+
+	const renderList = () => {
+		const list = $("adm-list");
+		const rows = visibleRows();
+		$("adm-count").textContent = rows.length + " de " + state.rows.length + " " + (state.rows.length === 1 ? "envío" : "envíos");
+		if (!rows.length) {
+			list.replaceChildren(el("p", "adm-empty", state.rows.length ? "Nada coincide con el filtro o la búsqueda." : "Todavía no hay envíos aquí."));
+			return;
+		}
+		list.replaceChildren(...rows.map(renderCard));
+	};
+
+	const loadRows = async () => {
+		const { submissions, counts, recent } = await api("submissions?form=" + encodeURIComponent(state.tab));
+		state.rows = submissions;
+		state.counts = counts;
+		state.recent = recent || [];
+		renderStats();
+		renderTabs();
+		renderList();
+	};
+
+	// ---------- Security ----------
+
+	const loadSecurity = async () => {
+		const { sessions, events } = await api("security");
+
+		const sessionList = $("adm-sessions");
+		sessionList.replaceChildren(
+			...sessions.map((s) => {
+				const li = el("li");
+				li.append(el("span", "", (s.current ? "🟢 " : "⚪ ") + (s.user_agent || "Dispositivo desconocido")));
+				if (s.current) li.append(el("span", "adm-chip green", "Esta sesión"));
+				li.append(el("small", "", "activa " + relative(s.last_seen) + " · caduca " + timeOnly(s.expires_at)));
+				return li;
+			})
+		);
+
+		const eventList = $("adm-events");
+		eventList.replaceChildren(
+			...(events.length
+				? events.map((e) => {
+						const [icon, label, cls] = EVENTS[e.kind] || ["•", e.kind, ""];
+						const li = el("li", cls);
+						li.append(el("span", "", icon + " " + label), el("span", "", e.user_agent || ""));
+						const when = el("small", "", relative(e.at));
+						when.title = absolute(e.at);
+						li.append(when);
+						return li;
+					})
+				: [el("li", "", "Sin actividad registrada.")])
+		);
+	};
+
+	// ---------- Navigation ----------
+
+	const selectTab = async (tab) => {
+		state.tab = tab;
+		state.filter = "all";
+		state.open.clear();
+		const isSecurity = tab === "security";
+		$("adm-inbox").hidden = isSecurity;
+		$("adm-security").hidden = !isSecurity;
+		renderTabs();
+		try {
+			if (isSecurity) {
+				await loadSecurity();
+			} else {
+				renderFilter();
+				$("adm-list").replaceChildren(el("div", "adm-skeleton"), el("div", "adm-skeleton"));
+				await loadRows();
+			}
+		} catch (err) {
+			if (err.message !== "auth") toast("No se pudieron cargar los datos.", true);
+		}
+	};
+
+	const refresh = () => selectTab(state.tab);
+
+	// ---------- Toolbar ----------
+
+	$("adm-search").addEventListener("input", (e) => {
+		state.query = e.target.value;
+		renderList();
+	});
+
+	$("adm-readall").addEventListener("click", async () => {
+		try {
+			await api("submissions", { action: "read-all", form: state.tab });
+			toast("Todo marcado como leído");
+			await loadRows();
+		} catch (err) {
+			if (err.message !== "auth") toast("No se pudo completar la acción.", true);
+		}
+	});
+
+	$("adm-export").addEventListener("click", () => {
+		const rows = visibleRows();
+		if (!rows.length) return toast("No hay nada que exportar.", true);
+		const keys = [...new Set(rows.flatMap((r) => Object.keys(r.data)))].filter((k) => k !== "form");
+		const cell = (value) => {
+			let text = Array.isArray(value) ? value.join(", ") : String(value ?? "");
+			// Neutralise spreadsheet formulas (CSV injection).
+			if (/^[=+\-@\t\r]/.test(text)) text = "'" + text;
+			return '"' + text.replace(/"/g, '""') + '"';
+		};
+		const lines = [["id", "fecha", "estado", ...keys.map((k) => LABELS[k] || k)].map(cell).join(",")];
+		for (const r of rows) lines.push([ref(r.id), absolute(r.created_at), (STATUS[r.status] || [r.status])[0], ...keys.map((k) => r.data[k])].map(cell).join(","));
+		const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+		const link = el("a");
+		link.href = URL.createObjectURL(blob);
+		link.download = "spectrodinner-" + state.tab + "-" + new Date().toISOString().slice(0, 10) + ".csv";
+		link.click();
+		setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+		toast(rows.length + " filas exportadas");
+	});
+
+	$("adm-refresh").addEventListener("click", refresh);
+
+	const logout = async (reason) => {
+		try {
+			await fetch("/api/admin/logout", { method: "POST", credentials: "same-origin" });
+		} catch {}
+		goToLogin(reason || "out");
+	};
+
+	$("adm-logout").addEventListener("click", () => logout("out"));
+
+	$("adm-revoke-others").addEventListener("click", async () => {
+		await api("security", { action: "revoke-others" });
+		toast("Las demás sesiones se han cerrado");
+		loadSecurity();
+	});
+
+	$("adm-revoke-all").addEventListener("click", async () => {
+		if (!(await confirmDialog("Se cerrarán todas las sesiones, incluida esta. Tendrás que volver a entrar.", "Cerrar todas"))) return;
+		await api("security", { action: "revoke-all" });
+		goToLogin("out");
+	});
+
+	// ---------- Shortcuts, idle logout, refresh on focus ----------
+
+	document.addEventListener("keydown", (e) => {
+		const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "");
+		if (e.key === "/" && !typing) {
+			e.preventDefault();
+			$("adm-search").focus();
+		} else if ((e.key === "r" || e.key === "R") && !typing && !e.ctrlKey && !e.metaKey) {
+			refresh();
+		}
+	});
+
+	let lastActivity = Date.now();
+	for (const type of ["pointerdown", "keydown", "scroll", "pointermove"]) {
+		window.addEventListener(type, () => (lastActivity = Date.now()), { passive: true });
+	}
+	setInterval(() => {
+		if (Date.now() - lastActivity > IDLE_LIMIT_MS) logout("timeout");
+	}, 30 * 1000);
+
+	let hiddenAt = 0;
+	document.addEventListener("visibilitychange", () => {
+		if (document.hidden) hiddenAt = Date.now();
+		else if (Date.now() - hiddenAt > 60 * 1000) refresh();
+	});
+
+	// Restored from the back/forward cache (e.g. "Back" after logging out):
+	// never show the old copy, go through the server-side gate again.
+	window.addEventListener("pageshow", (e) => {
+		if (e.persisted) {
+			document.body.hidden = true;
+			location.reload();
+		}
+	});
+
+	// ---------- Start ----------
+
+	loadSession().catch(() => {});
+	selectTab("review");
+})();
+</script>
+
+</Layout>
