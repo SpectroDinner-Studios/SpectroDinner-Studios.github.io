@@ -14,6 +14,22 @@ export function getStaticPaths() {
 
 <Layout title="Panel | SpectroDinner™" description="Panel privado." noindex>
 
+	<div class="adm-shell">
+
+	<section class="adm-web" id="adm-web" aria-label="Vista de la web">
+		<div class="adm-web-bar">
+			<button type="button" id="adm-web-back" title="Atrás">←</button>
+			<button type="button" id="adm-web-reload" title="Recargar">⟳</button>
+			<form class="adm-web-url" id="adm-web-go">
+				<input id="adm-web-path" value="/" spellcheck="false" autocomplete="off" aria-label="Página de la web" />
+			</form>
+			<button type="button" id="adm-web-reviews" title="Ir a las valoraciones">★ <span>Valoraciones</span></button>
+			<a id="adm-web-open" href="/" target="_blank" rel="noopener" title="Abrir en una pestaña nueva">↗</a>
+			<button type="button" id="adm-web-close" title="Cerrar la vista de la web">✕</button>
+		</div>
+		<iframe class="adm-web-frame" id="adm-web-frame" title="Web de SpectroDinner" src="about:blank"></iframe>
+	</section>
+
 	<div class="adm" id="adm">
 
 		<header class="adm-top">
@@ -23,6 +39,7 @@ export function getStaticPaths() {
 			</a>
 			<div class="adm-top-actions">
 				<span class="adm-session" id="adm-session" title="">🔒 Sesión segura</span>
+				<button type="button" class="btn btn-primary btn-sm" id="adm-web-toggle" aria-pressed="false" title="La web a un lado y el panel en el lateral">🌐 Revisar la web</button>
 				<button type="button" class="btn btn-ghost btn-sm" id="adm-refresh" title="Actualizar (R)">⟳ Actualizar</button>
 				<button type="button" class="btn btn-ghost btn-sm" id="adm-logout">Cerrar sesión</button>
 			</div>
@@ -39,7 +56,7 @@ export function getStaticPaths() {
 				<input type="search" id="adm-search" placeholder="Buscar por nombre, email, texto…  ( / )" autocomplete="off" />
 				<div class="adm-filter" id="adm-filter" role="group" aria-label="Estado"></div>
 				<div class="adm-toolbar-actions">
-					<button type="button" class="btn btn-ghost btn-sm" id="adm-readall">✓ Marcar todo leído</button>
+					<button type="button" class="btn btn-ghost btn-sm" id="adm-readall"></button>
 					<button type="button" class="btn btn-ghost btn-sm" id="adm-export">⤓ Exportar CSV</button>
 				</div>
 			</div>
@@ -86,9 +103,30 @@ export function getStaticPaths() {
 
 	</div>
 
+	</div>
+
 
 <style is:inline>
-.adm { max-width: 1120px; margin: 0 auto; padding: 24px 24px 80px; }
+.adm { max-width: 1120px; margin: 0 auto; padding: 24px 24px 80px; container-type: inline-size; }
+
+/* "Revisar la web": the site on one side, the panel in a side column. */
+.adm-web { display: none; }
+.adm-review, .adm-review body { height: 100%; overflow: hidden; }
+.adm-review .adm-shell { display: grid; grid-template-columns: minmax(0, 1fr) min(500px, 44vw); height: 100vh; height: 100dvh; }
+.adm-review .adm-web { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--bg); border-right: 1px solid var(--border-2); }
+.adm-review .adm { width: 100%; max-width: none; height: 100%; margin: 0; padding: 16px 16px 60px; overflow-y: auto; overscroll-behavior: contain; }
+.adm-review .adm-stats, .adm-review .adm-previous { display: none; }
+.adm-web-bar { display: flex; align-items: center; gap: 6px; padding: 8px; background: var(--bg-elevated); border-bottom: 1px solid var(--border-2); }
+.adm-web-bar button, .adm-web-bar a { flex: none; display: inline-grid; place-items: center; min-width: 34px; height: 34px; padding: 0 10px; font: inherit; font-size: .85rem; color: var(--text-muted); text-decoration: none; background: var(--surface-1); border: 1px solid var(--border-1); border-radius: var(--radius-xs); cursor: pointer; }
+.adm-web-bar button:hover, .adm-web-bar a:hover { color: var(--text); border-color: var(--border-3); }
+.adm-web-url { flex: 1 1 auto; min-width: 0; }
+.adm-web-url input { width: 100%; height: 34px; padding: 0 10px; font-family: ui-monospace, Consolas, monospace; font-size: .85rem; color: var(--text); background: var(--bg-sunken); border: 1px solid var(--border-2); border-radius: var(--radius-xs); }
+.adm-web-url input:focus { border-color: var(--primary); outline: none; }
+.adm-web-frame { flex: 1; width: 100%; min-height: 0; background: var(--bg); border: 0; }
+.adm-card.is-flash { outline: 2px solid var(--gold); outline-offset: 3px; }
+.adm-toast { display: flex; align-items: center; gap: 14px; }
+.adm-toast[hidden] { display: none; }
+.adm-toast-action { padding: 5px 10px; font: inherit; font-weight: 600; color: var(--gold-text); background: var(--gold-bg); border: 1px solid var(--gold-border); cursor: pointer; }
 .adm-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
 .adm-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; letter-spacing: .05em; text-decoration: none; }
 .adm-brand b { color: var(--primary-light); }
@@ -167,15 +205,25 @@ export function getStaticPaths() {
 .adm-dialog p { margin: 0 0 18px; line-height: 1.6; }
 .adm-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
 
-@media (max-width: 900px) {
+/* Sized by the panel's own width, so the side column gets the compact layout too. */
+@container (max-width: 900px) {
 	.adm-stats { grid-template-columns: repeat(2, 1fr); }
 	.adm-security { grid-template-columns: 1fr; }
 }
-@media (max-width: 560px) {
-	.adm { padding: 16px 14px 60px; }
+@container (max-width: 560px) {
 	.adm-fields { grid-template-columns: 1fr; gap: 2px; }
 	.adm-fields dd { margin-bottom: 8px; }
 	.adm-meta { margin-left: 0; width: 100%; }
+}
+@media (max-width: 560px) {
+	.adm { padding: 16px 14px 60px; }
+	.adm-web-bar { gap: 4px; padding: 6px; }
+	.adm-web-bar button, .adm-web-bar a { min-width: 30px; padding: 0 7px; }
+	#adm-web-reviews span { display: none; }
+}
+@media (max-width: 960px) {
+	.adm-review .adm-shell { grid-template-columns: 1fr; grid-template-rows: 55% 45%; }
+	.adm-review .adm-web { border-right: 0; border-bottom: 2px solid var(--primary); }
 }
 </style>
 
@@ -185,17 +233,22 @@ export function getStaticPaths() {
 
 	// ---------- Config ----------
 
+	// `fresh`: statuses still waiting for you. The "fresh" filter shows those.
+	const INBOX = { fresh: ["new"], freshLabel: "sin leer", readAll: "✓ Marcar todo leído", filters: [["all", "Todos"], ["fresh", "Nuevos"], ["read", "Leídos"]] };
 	const FORMS = {
-		review: { label: "Valoraciones", icon: "⭐", fresh: "pending", filters: [["all", "Todas"], ["pending", "Pendientes"], ["approved", "Publicadas"], ["hidden", "Ocultas"]] },
-		discord: { label: "Discord", icon: "💬", fresh: "new", filters: [["all", "Todos"], ["new", "Nuevos"], ["read", "Leídos"]] },
-		minecraft: { label: "Minecraft", icon: "⛏️", fresh: "new", filters: [["all", "Todos"], ["new", "Nuevos"], ["read", "Leídos"]] },
-		voluntariado: { label: "Voluntariado", icon: "🤝", fresh: "new", filters: [["all", "Todos"], ["new", "Nuevos"], ["read", "Leídos"]] },
+		review: { label: "Valoraciones", icon: "⭐", fresh: ["live", "pending"], freshLabel: "sin revisar", readAll: "✓ Marcar todas revisadas", filters: [["all", "Todas"], ["fresh", "Sin revisar"], ["approved", "Revisadas"], ["hidden", "Ocultas"]] },
+		discord: { label: "Discord", icon: "💬", ...INBOX },
+		minecraft: { label: "Minecraft", icon: "⛏️", ...INBOX },
+		voluntariado: { label: "Voluntariado", icon: "🤝", ...INBOX },
 	};
 
+	// Reviews go live as soon as they're sent ("live") and are checked here
+	// afterwards. "pending" only exists for reviews from before that change.
 	const STATUS = {
-		pending: ["Pendiente", "gold"],
-		approved: ["Publicada", "green"],
+		live: ["En la web · sin revisar", "gold"],
+		approved: ["En la web · revisada", "green"],
 		hidden: ["Oculta", ""],
+		pending: ["Sin publicar", "gold"],
 		new: ["Nuevo", "gold"],
 		read: ["Leído", ""],
 	};
@@ -225,7 +278,11 @@ export function getStaticPaths() {
 	};
 
 	const IDLE_LIMIT_MS = 30 * 60 * 1000;
+	const ACTIVITY = ["pointerdown", "keydown", "scroll", "pointermove"];
 	const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+	let lastActivity = Date.now();
+	const markActive = () => (lastActivity = Date.now());
 
 	// ---------- State ----------
 
@@ -265,14 +322,23 @@ export function getStaticPaths() {
 
 	const ref = (id) => "#" + String(id).padStart(4, "0");
 
+	// `action` ({ label, run }) adds a button, e.g. "Deshacer".
 	let toastTimer = 0;
-	const toast = (text, isError) => {
+	const toast = (text, isError, action) => {
 		const box = $("adm-toast");
-		box.textContent = text;
+		box.replaceChildren(el("span", "", text));
+		if (action) {
+			box.append(
+				button(action.label, () => {
+					box.hidden = true;
+					action.run();
+				}, "adm-toast-action")
+			);
+		}
 		box.classList.toggle("is-error", Boolean(isError));
 		box.hidden = false;
 		clearTimeout(toastTimer);
-		toastTimer = setTimeout(() => (box.hidden = true), 2600);
+		toastTimer = setTimeout(() => (box.hidden = true), action ? 8000 : 2600);
 	};
 
 	const confirmDialog = (text, okLabel) =>
@@ -310,8 +376,8 @@ export function getStaticPaths() {
 		return res.json();
 	};
 
-	const countOf = (form, status) =>
-		state.counts.filter((c) => c.form === form && (!status || c.status === status)).reduce((sum, c) => sum + c.n, 0);
+	const countOf = (form, statuses) =>
+		state.counts.filter((c) => c.form === form && (!statuses || statuses.includes(c.status))).reduce((sum, c) => sum + c.n, 0);
 
 	// ---------- Header ----------
 
@@ -339,7 +405,7 @@ export function getStaticPaths() {
 			card.type = "button";
 			card.append(el("span", "", cfg.icon + " " + cfg.label), el("strong", "", countOf(form)));
 			const small = el("small");
-			if (fresh) small.append(el("b", "", fresh), " " + (form === "review" ? "por moderar" : "sin leer"));
+			if (fresh) small.append(el("b", "", fresh), " " + cfg.freshLabel);
 			else small.textContent = "Todo al día";
 			card.append(small);
 			card.addEventListener("click", () => selectTab(form));
@@ -385,39 +451,80 @@ export function getStaticPaths() {
 			});
 			box.append(b);
 		}
-		$("adm-readall").hidden = state.tab === "review";
+		$("adm-readall").textContent = FORMS[state.tab].readAll;
 	};
 
 	// ---------- List ----------
 
 	const visibleRows = () => {
 		const q = state.query.trim().toLowerCase();
+		const fresh = FORMS[state.tab].fresh;
 		return state.rows.filter((row) => {
-			if (state.filter !== "all" && row.status !== state.filter) return false;
+			if (state.filter === "fresh" ? !fresh.includes(row.status) : state.filter !== "all" && row.status !== state.filter) return false;
 			if (!q) return true;
 			return (ref(row.id) + " " + Object.values(row.data).join(" ")).toLowerCase().includes(q);
 		});
 	};
 
-	const act = async (row, action, message) => {
-		if (action === "delete") {
-			const who = row.data.nickname || row.data.nombre || "este envío";
-			if (!(await confirmDialog("¿Eliminar " + ref(row.id) + " (" + who + ")? No se puede deshacer."))) return;
+	// Reload what a change can affect: this tab, and the site if it's open beside.
+	const afterChange = async (form) => {
+		try {
+			await loadRows();
+			if (form === "review" && state.tab !== "review") await loadReviewIndex();
+		} catch (err) {
+			if (err.message !== "auth") toast("No se pudieron cargar los datos.", true);
 		}
+		if (form === "review") refreshWeb();
+	};
+
+	const act = async (row, action, message) => {
 		try {
 			await api("submissions", { id: row.id, action });
-			toast(message);
-			await loadRows();
 		} catch (err) {
 			if (err.message !== "auth") toast("No se pudo completar la acción.", true);
+			return;
 		}
+		toast(message);
+		await afterChange(row.form);
+	};
+
+	// One click, gone at once (from the site too), with a few seconds to undo.
+	const remove = async (row) => {
+		const snapshot = { id: row.id, created_at: row.created_at, form: row.form, status: row.status, data: row.data };
+
+		state.rows = state.rows.filter((r) => r.id !== row.id);
+		renderList();
+		webCard(row.id)?.remove();
+
+		try {
+			await api("submissions", { id: row.id, action: "delete" });
+		} catch (err) {
+			if (err.message !== "auth") toast("No se pudo eliminar.", true);
+			await afterChange(row.form);
+			return;
+		}
+
+		toast(row.form === "review" ? "Valoración " + ref(row.id) + " eliminada de la web" : ref(row.id) + " eliminado", false, {
+			label: "Deshacer",
+			run: async () => {
+				try {
+					await api("submissions", { action: "restore", row: snapshot });
+					toast(ref(row.id) + " restaurado");
+				} catch (err) {
+					if (err.message !== "auth") toast("No se pudo deshacer.", true);
+				}
+				await afterChange(row.form);
+			},
+		});
+		await afterChange(row.form);
 	};
 
 	const renderCard = (row) => {
 		const d = row.data;
 		const [statusLabel, statusTone] = STATUS[row.status] || [row.status, ""];
-		const fresh = row.status === "new" || row.status === "pending";
+		const fresh = FORMS[row.form].fresh.includes(row.status);
 		const card = el("article", "adm-card" + (fresh ? " is-new" : "") + (row.status === "read" || row.status === "hidden" ? " is-muted" : ""));
+		card.dataset.id = row.id;
 
 		const head = el("div", "adm-card-head");
 		head.append(el("strong", "", d.nickname || d.nombre || "—"), el("span", "adm-chip " + statusTone, statusLabel));
@@ -458,11 +565,10 @@ export function getStaticPaths() {
 
 		const actions = el("div", "adm-actions");
 		if (row.form === "review") {
-			actions.append(
-				row.status === "approved"
-					? button("Ocultar de la web", () => act(row, "hide", "Valoración oculta"))
-					: button("✓ Publicar en la web", () => act(row, "approve", "Valoración publicada"), "btn btn-primary btn-sm")
-			);
+			const onSite = row.status === "live" || row.status === "approved";
+			if (row.status === "live") actions.append(button("✓ Todo bien", () => act(row, "approve", "Marcada como revisada"), "btn btn-primary btn-sm"));
+			if (!onSite) actions.append(button("Publicar en la web", () => act(row, "approve", "Valoración publicada"), "btn btn-primary btn-sm"));
+			if (onSite) actions.append(button("Ocultar", () => act(row, "hide", "Valoración oculta de la web")), button("👁 Ver en la web", () => locateInWeb(row.id)));
 		} else {
 			actions.append(
 				button(state.open.has(row.id) ? "Ocultar detalles" : "Ver todo", () => {
@@ -487,7 +593,7 @@ export function getStaticPaths() {
 				);
 			}
 		}
-		actions.append(button("Eliminar", () => act(row, "delete", "Eliminado"), "btn btn-sm adm-danger"));
+		actions.append(button("🗑 Eliminar", () => remove(row), "btn btn-sm adm-danger"));
 		card.append(actions);
 
 		return card;
@@ -509,10 +615,265 @@ export function getStaticPaths() {
 		state.rows = submissions;
 		state.counts = counts;
 		state.recent = recent || [];
+		if (state.tab === "review") setReviewIndex(submissions);
 		renderStats();
 		renderTabs();
 		renderList();
 	};
+
+	// ---------- Review the site side by side ----------
+	// The site is loaded in a same-origin frame and each review sent through
+	// the form gets moderation buttons. All of this code lives here, behind the
+	// login; the public site only carries the reviews' ids.
+
+	const frame = $("adm-web-frame");
+	const web = { doc: null, locate: 0 };
+	const reviewIndex = new Map();
+
+	const MOD_CSS = [
+		".sd-mod{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding-top:12px;border-top:1px dashed rgba(127,127,127,.4);font:600 12px/1.2 system-ui,-apple-system,'Segoe UI',sans-serif}",
+		".sd-mod .sd-tag{margin-right:auto;padding:4px 7px;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#e6ebf5;background:#2a3142;border-radius:3px}",
+		".sd-mod .sd-tag.is-new{color:#1c1305;background:#f5b82e}",
+		".sd-mod button{padding:7px 10px;font:inherit;color:#fff;background:#1d2230;border:1px solid rgba(255,255,255,.25);border-radius:4px;cursor:pointer}",
+		".sd-mod button:hover{filter:brightness(1.25)}",
+		".sd-mod .sd-ok{background:#1f7a4d;border-color:#2fbf71}",
+		".sd-mod .sd-del{background:#a3202b;border-color:#e5484d}",
+		"[data-review-id].sd-flash{outline:3px solid #f5b82e;outline-offset:4px}",
+	].join("\n");
+
+	const isReview = () => document.documentElement.classList.contains("adm-review");
+
+	const webCard = (id) => web.doc?.querySelector('[data-review-id="' + Number(id) + '"]') || null;
+
+	const flash = (node, cls) => {
+		node.scrollIntoView({ behavior: "smooth", block: "center" });
+		node.classList.add(cls);
+		setTimeout(() => node.classList.remove(cls), 1800);
+	};
+
+	const setReviewIndex = (rows) => {
+		reviewIndex.clear();
+		for (const row of rows) reviewIndex.set(row.id, row);
+		decorateWeb();
+	};
+
+	const loadReviewIndex = async () => setReviewIndex((await api("submissions?form=review")).submissions);
+
+	// Ask the site to re-fetch its reviews (they're never cached).
+	const refreshWeb = () => {
+		try {
+			web.doc?.dispatchEvent(new frame.contentWindow.CustomEvent("sd:reviews-refresh"));
+		} catch {}
+	};
+
+	// Ids the site shows that the panel didn't know about (a review sent after
+	// the last load): fetched once, so they get their buttons too.
+	const askedFor = new Set();
+
+	const decorateNow = () => {
+		const doc = web.doc;
+		if (!doc) return;
+
+		let unknown = false;
+
+		for (const card of doc.querySelectorAll("[data-review-id]")) {
+			const id = Number(card.dataset.reviewId);
+			const row = reviewIndex.get(id);
+			if (!row && !askedFor.has(id)) {
+				askedFor.add(id);
+				unknown = true;
+			}
+			const key = row ? row.status : "?";
+			let bar = card.querySelector(".sd-mod");
+			if (bar && bar.dataset.status === key) continue;
+			bar?.remove();
+
+			bar = doc.createElement("div");
+			bar.className = "sd-mod";
+			bar.dataset.status = key;
+
+			const tag = doc.createElement("span");
+			tag.className = "sd-tag" + (key === "live" ? " is-new" : "");
+			tag.textContent = ref(id) + (key === "live" ? " · sin revisar" : key === "approved" ? " · revisada" : "");
+			bar.append(tag);
+
+			const add = (label, cls, onClick) => {
+				const b = doc.createElement("button");
+				b.type = "button";
+				b.className = cls;
+				b.textContent = label;
+				b.addEventListener("click", (e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					onClick();
+				});
+				bar.append(b);
+			};
+
+			if (row) {
+				if (row.status === "live") add("✓ Todo bien", "sd-ok", () => act(row, "approve", "Marcada como revisada"));
+				add("Ocultar", "", () => act(row, "hide", "Valoración oculta de la web"));
+				add("🗑 Eliminar", "sd-del", () => remove(row));
+				add("Ver en el panel", "", () => locateInPanel(id));
+			}
+			card.append(bar);
+		}
+
+		if (web.locate) {
+			const card = webCard(web.locate);
+			if (card) {
+				web.locate = 0;
+				flash(card, "sd-flash");
+			}
+		}
+
+		if (unknown) (state.tab === "review" ? loadRows() : loadReviewIndex()).catch(() => {});
+	};
+
+	let decorateQueued = false;
+	const decorateWeb = () => {
+		if (decorateQueued) return;
+		decorateQueued = true;
+		requestAnimationFrame(() => {
+			decorateQueued = false;
+			decorateNow();
+		});
+	};
+
+	const goWeb = (path) => {
+		const url = new URL(String(path || "/").trim() || "/", location.origin);
+		if (url.origin !== location.origin || /^\/(admin|acceso)(\/|$)/.test(url.pathname)) {
+			toast("Ahí solo se pueden abrir páginas de la web.", true);
+			return;
+		}
+		frame.dataset.started = "1";
+		frame.src = url.pathname + url.search + url.hash;
+	};
+
+	const webPath = () => {
+		try {
+			return frame.contentWindow.location.pathname;
+		} catch {
+			return "";
+		}
+	};
+
+	const setReview = (on, path) => {
+		document.documentElement.classList.toggle("adm-review", on);
+		const toggle = $("adm-web-toggle");
+		toggle.textContent = on ? "✕ Cerrar la web" : "🌐 Revisar la web";
+		toggle.setAttribute("aria-pressed", String(on));
+		try {
+			sessionStorage.setItem("adm-review", on ? "1" : "");
+		} catch {}
+		if (!on) return;
+
+		if (path || !frame.dataset.started) {
+			let saved = "";
+			try {
+				saved = sessionStorage.getItem("adm-web-path") || "";
+			} catch {}
+			goWeb(path || saved || "/#valoraciones");
+		}
+		if (state.tab !== "review") selectTab("review");
+	};
+
+	const locateInWeb = (id) => {
+		web.locate = id;
+		if (!isReview()) return setReview(true, "/#valoraciones");
+		if (webCard(id)) return decorateNow();
+		if (webPath() !== "/") goWeb("/#valoraciones");
+	};
+
+	const locateInPanel = async (id) => {
+		if (state.tab !== "review") await selectTab("review");
+		if (state.filter !== "all" || state.query) {
+			state.filter = "all";
+			state.query = "";
+			$("adm-search").value = "";
+			renderFilter();
+			renderList();
+		}
+		const card = $("adm-list").querySelector('[data-id="' + Number(id) + '"]');
+		if (card) flash(card, "is-flash");
+	};
+
+	frame.addEventListener("load", () => {
+		web.doc = null;
+		if (!frame.dataset.started) return;
+
+		let win, doc;
+		try {
+			win = frame.contentWindow;
+			doc = frame.contentDocument;
+		} catch {}
+		if (!win || !doc) return;
+
+		// Never nest the panel or its login inside the view.
+		if (/^\/(admin|acceso)(\/|$)/.test(win.location.pathname)) {
+			win.location.replace("/");
+			return;
+		}
+
+		web.doc = doc;
+
+		const showPath = () => {
+			const path = win.location.pathname + win.location.search + win.location.hash;
+			$("adm-web-path").value = path;
+			$("adm-web-open").href = path;
+			try {
+				sessionStorage.setItem("adm-web-path", path);
+			} catch {}
+		};
+		showPath();
+		win.addEventListener("hashchange", showPath);
+
+		// Other sites refuse to load inside a frame: open them in a new tab.
+		doc.addEventListener("click", (e) => {
+			const link = e.target instanceof win.Element ? e.target.closest("a[href]") : null;
+			if (!link) return;
+			const url = new URL(link.href, win.location.href);
+			if (url.origin !== location.origin) {
+				e.preventDefault();
+				window.open(url.href, "_blank", "noopener");
+			}
+		});
+
+		// Browsing the site counts as activity for the idle logout.
+		for (const type of ACTIVITY) win.addEventListener(type, markActive, { passive: true });
+
+		const style = doc.createElement("style");
+		style.textContent = MOD_CSS;
+		doc.head.append(style);
+
+		new win.MutationObserver(decorateWeb).observe(doc.body, { childList: true, subtree: true });
+		decorateWeb();
+	});
+
+	$("adm-web-toggle").addEventListener("click", () => setReview(!isReview()));
+	$("adm-web-close").addEventListener("click", () => setReview(false));
+	$("adm-web-back").addEventListener("click", () => {
+		try {
+			frame.contentWindow.history.back();
+		} catch {}
+	});
+	$("adm-web-reload").addEventListener("click", () => {
+		try {
+			frame.contentWindow.location.reload();
+		} catch {
+			goWeb("/");
+		}
+	});
+	$("adm-web-reviews").addEventListener("click", () => {
+		const section = webPath() === "/" ? web.doc?.getElementById("valoraciones") : null;
+		if (section) section.scrollIntoView({ behavior: "smooth" });
+		else goWeb("/#valoraciones");
+	});
+	$("adm-web-go").addEventListener("submit", (e) => {
+		e.preventDefault();
+		const value = $("adm-web-path").value.trim();
+		goWeb(value.startsWith("/") ? value : "/" + value);
+	});
 
 	// ---------- Security ----------
 
@@ -569,7 +930,10 @@ export function getStaticPaths() {
 		}
 	};
 
-	const refresh = () => selectTab(state.tab);
+	const refresh = () => {
+		refreshWeb();
+		return selectTab(state.tab);
+	};
 
 	// ---------- Toolbar ----------
 
@@ -581,11 +945,12 @@ export function getStaticPaths() {
 	$("adm-readall").addEventListener("click", async () => {
 		try {
 			await api("submissions", { action: "read-all", form: state.tab });
-			toast("Todo marcado como leído");
-			await loadRows();
 		} catch (err) {
 			if (err.message !== "auth") toast("No se pudo completar la acción.", true);
+			return;
 		}
+		toast(state.tab === "review" ? "Todas marcadas como revisadas" : "Todo marcado como leído");
+		await afterChange(state.tab);
 	});
 
 	$("adm-export").addEventListener("click", () => {
@@ -644,10 +1009,7 @@ export function getStaticPaths() {
 		}
 	});
 
-	let lastActivity = Date.now();
-	for (const type of ["pointerdown", "keydown", "scroll", "pointermove"]) {
-		window.addEventListener(type, () => (lastActivity = Date.now()), { passive: true });
-	}
+	for (const type of ACTIVITY) window.addEventListener(type, markActive, { passive: true, capture: true });
 	setInterval(() => {
 		if (Date.now() - lastActivity > IDLE_LIMIT_MS) logout("timeout");
 	}, 30 * 1000);
@@ -671,6 +1033,11 @@ export function getStaticPaths() {
 
 	loadSession().catch(() => {});
 	selectTab("review");
+
+	// Reopen the side-by-side view if it was open before a reload.
+	try {
+		if (sessionStorage.getItem("adm-review")) setReview(true);
+	} catch {}
 })();
 </script>
 

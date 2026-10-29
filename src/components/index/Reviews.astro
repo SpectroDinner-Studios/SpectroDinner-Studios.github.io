@@ -140,7 +140,7 @@ const stars = (rating: number) =>
 			)
 		}
 
-		<!-- Card for reviews approved in /admin, filled in by the script below. -->
+		<!-- Card for reviews sent through the form, filled in by the script below. -->
 		<template id="review-template">
 			<article class="card hud-card gold interactive">
 				<div class="author">
@@ -162,8 +162,8 @@ const stars = (rating: number) =>
 				<h3 class="title"><T es="¿Ya trabajamos juntos?" en="Have we worked together?" /></h3>
 				<p>
 					<T
-						es="Cuéntanos qué tal fue. Revisamos cada valoración antes de publicarla aquí."
-						en="Tell us how it went. We review every review before publishing it here."
+						es="Cuéntanos qué tal fue. Tu valoración se publica aquí al momento."
+						en="Tell us how it went. Your review goes live here right away."
 					/>
 				</p>
 			</div>
@@ -255,12 +255,16 @@ const stars = (rating: number) =>
 
 					<p class="hint">
 						<T
-							es="Tu valoración se envía directamente a nuestro equipo — la publicaremos en cuanto la revisemos. Nunca compartas contraseñas, claves de API ni otros datos secretos aquí."
-							en="Your review is sent straight to our team — we'll publish it once we review it. Never share passwords, API keys or other secrets here."
+							es="Se publica al instante. Revisamos todas y eliminamos las que contengan insultos, spam o datos personales. Nunca compartas contraseñas, claves de API ni otros datos secretos aquí."
+							en="It's published instantly. We check every review and remove any with insults, spam or personal data. Never share passwords, API keys or other secrets here."
 						/>
 					</p>
 
 					<p id="review-status" class="status" hidden>
+						<T es="✅ ¡Gracias! Tu valoración ya está publicada." en="✅ Thanks! Your review is now live." />
+					</p>
+
+					<p id="review-status-sent" class="status" hidden>
 						<T es="✅ ¡Gracias! Hemos recibido tu valoración." en="✅ Thanks! We received your review." />
 					</p>
 
@@ -343,31 +347,43 @@ const stars = (rating: number) =>
 		}
 	}
 
-	// Reviews approved from the admin panel. Only the Cloudflare copy of the
-	// site has /api; anywhere else this quietly keeps the hard-coded reviews.
-	const loadApprovedReviews = async () => {
+	// Reviews sent through the form go live at once and are moderated afterwards
+	// in /admin. Only the Cloudflare copy of the site has /api; anywhere else
+	// this quietly keeps the hard-coded reviews.
+	type LiveReview = { id: number; name: string; service: string; rating: number; text: string };
+
+	const starsFor = (rating: number) => "★".repeat(rating) + "☆".repeat(5 - rating);
+	let lastKey = "";
+
+	const renderLiveReviews = async () => {
 		const container = document.querySelector<HTMLElement>(
 			"#valoraciones .grid, #valoraciones .carousel-track"
 		);
 		const template = document.getElementById("review-template") as HTMLTemplateElement | null;
 		if (!container || !template) return;
 
-		let approved: { name: string; service: string; rating: number; text: string }[] = [];
+		let live: LiveReview[];
 
 		try {
-			const res = await fetch("/api/reviews");
+			const res = await fetch("/api/reviews", { cache: "no-store" });
 			if (!res.ok) return;
-			approved = (await res.json()).reviews ?? [];
+			live = (await res.json()).reviews ?? [];
 		} catch {
 			return;
 		}
 
-		const starsFor = (rating: number) => "★".repeat(rating) + "☆".repeat(5 - rating);
+		// Nothing changed since the last check: leave the page alone.
+		const key = JSON.stringify(live);
+		if (key === lastKey) return;
+		lastKey = key;
 
-		for (const review of approved) {
+		container.querySelectorAll("[data-review-id]").forEach((card) => card.remove());
+
+		const cards = live.map((review) => {
 			const card = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
 			const rating = Math.min(5, Math.max(1, Math.round(review.rating)));
 
+			card.dataset.reviewId = String(review.id);
 			card.dataset.rating = String(rating);
 			card.querySelector(".avatar")!.textContent = review.name.charAt(0);
 			card.querySelector(".name")!.textContent = review.name;
@@ -382,8 +398,11 @@ const stars = (rating: number) =>
 
 			card.querySelector(".text")!.textContent = `"${review.text}"`;
 
-			container.append(card);
-		}
+			return card;
+		});
+
+		// Newest first, ahead of the hard-coded ones.
+		container.prepend(...cards);
 
 		const ratings = Array.from(
 			document.querySelectorAll<HTMLElement>("#valoraciones [data-rating]"),
@@ -402,10 +421,18 @@ const stars = (rating: number) =>
 		});
 	};
 
-	loadApprovedReviews();
+	renderLiveReviews();
+
+	// Keep open pages in step with moderation: a removed review disappears
+	// within a minute, or at once when asked (the admin's review view does).
+	setInterval(() => {
+		if (!document.hidden) renderLiveReviews();
+	}, 60_000);
+	document.addEventListener("sd:reviews-refresh", () => renderLiveReviews());
 
 	const form = document.getElementById("review-form") as HTMLFormElement | null;
 	const status = document.getElementById("review-status");
+	const statusSent = document.getElementById("review-status-sent");
 	const error = document.getElementById("review-error");
 	const errorSummary = document.getElementById("review-error-summary");
 	const submitBtn = form?.querySelector<HTMLButtonElement>(".submit");
@@ -490,12 +517,13 @@ const stars = (rating: number) =>
 		if (cooling) return;
 
 		status?.setAttribute("hidden", "");
+		statusSent?.setAttribute("hidden", "");
 		error?.setAttribute("hidden", "");
 
 		const honeypot = form.elements.namedItem("website") as HTMLInputElement | null;
 		if (honeypot?.value) {
 			form.reset();
-			status?.removeAttribute("hidden");
+			statusSent?.removeAttribute("hidden");
 			return;
 		}
 
@@ -516,10 +544,23 @@ const stars = (rating: number) =>
 		cooling = true;
 
 		try {
-			await submitForm(payload);
+			const { id } = await submitForm(payload);
 
 			form.reset();
-			status?.removeAttribute("hidden");
+
+			if (id === undefined) {
+				// Sent without our backend (e.g. GitHub Pages): received, not published.
+				statusSent?.removeAttribute("hidden");
+			} else {
+				status?.removeAttribute("hidden");
+				await renderLiveReviews();
+
+				const card = document.querySelector<HTMLElement>(`#valoraciones [data-review-id="${id}"]`);
+				if (card) {
+					card.classList.add("is-fresh");
+					card.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "center" });
+				}
+			}
 		} catch (err) {
 			error?.removeAttribute("hidden");
 		} finally {
@@ -653,6 +694,17 @@ const stars = (rating: number) =>
 	font-size: 1rem;
 	line-height: 1.7;
 	color: var(--text);
+}
+
+.card.is-fresh {
+	outline: 2px solid var(--gold);
+	outline-offset: 4px;
+	animation: freshReview 2.4s ease-out 1;
+}
+
+@keyframes freshReview {
+	from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 60%, transparent); }
+	to { box-shadow: 0 0 0 18px transparent; }
 }
 
 .empty {

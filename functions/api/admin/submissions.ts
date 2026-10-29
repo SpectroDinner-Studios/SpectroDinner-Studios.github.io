@@ -1,10 +1,11 @@
 import { ensureSchema, type SubmissionRow } from "../../../server/db";
-import { FORM_IDS } from "../../../server/forms";
+import { FORM_IDS, validateSubmission } from "../../../server/forms";
 import { json, readJsonObject } from "../../../server/http";
 import type { PagesHandler } from "../../../server/types";
 
 // GET  /api/admin/submissions?form=review  → rows (newest first) + counts
 // POST /api/admin/submissions { id, action } → moderate / mark / delete
+// POST /api/admin/submissions { action: "restore", row } → undo a delete
 export const onRequestGet: PagesHandler = async ({ request, env }) => {
 	const db = env.DB!;
 	await ensureSchema(db);
@@ -42,6 +43,10 @@ export const onRequestGet: PagesHandler = async ({ request, env }) => {
 	});
 };
 
+// Statuses a row of each kind can be in (see server/db.ts).
+const REVIEW_STATUSES = ["live", "approved", "hidden", "pending"];
+const OTHER_STATUSES = ["new", "read"];
+
 const STATUS_FOR_ACTION: Record<string, string> = {
 	approve: "approved",
 	hide: "hidden",
@@ -53,15 +58,46 @@ export const onRequestPost: PagesHandler = async ({ request, env }) => {
 	const db = env.DB!;
 	await ensureSchema(db);
 
-	const body = await readJsonObject(request, 1000);
+	const body = await readJsonObject(request, 100_000);
 	const id = Number(body?.id);
 	const action = String(body?.action ?? "");
 
-	// Bulk: mark every new submission of one (non-review) form as read.
+	// Bulk: mark every unchecked submission of one form as checked
+	// (reviews: live → approved, they stay on the site; others: new → read).
 	if (action === "read-all") {
 		const form = String(body?.form ?? "");
-		if (!FORM_IDS.includes(form) || form === "review") return json({ error: "invalid_form" }, 400);
-		await db.prepare(`UPDATE submissions SET status = 'read' WHERE form = ? AND status = 'new'`).bind(form).run();
+		if (!FORM_IDS.includes(form)) return json({ error: "invalid_form" }, 400);
+		const [from, to] = form === "review" ? ["live", "approved"] : ["new", "read"];
+		await db.prepare(`UPDATE submissions SET status = ? WHERE form = ? AND status = ?`).bind(to, form, from).run();
+		return json({ ok: true });
+	}
+
+	// Undo a delete: put the row back exactly as the panel last saw it.
+	if (action === "restore") {
+		const row = body?.row as Record<string, unknown> | undefined;
+		const rowId = Number(row?.id);
+		const form = String(row?.form ?? "");
+		const status = String(row?.status ?? "");
+		const createdAt = String(row?.created_at ?? "");
+		const data = row?.data;
+
+		const allowed = form === "review" ? REVIEW_STATUSES : OTHER_STATUSES;
+		if (
+			!Number.isInteger(rowId) || rowId < 1 ||
+			!FORM_IDS.includes(form) || !allowed.includes(status) ||
+			!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(createdAt) ||
+			!data || typeof data !== "object" || Array.isArray(data)
+		) {
+			return json({ error: "invalid_row" }, 400);
+		}
+
+		const clean = validateSubmission({ ...(data as Record<string, unknown>), form });
+		if (!clean.ok) return json({ error: clean.error }, 400);
+
+		await db
+			.prepare(`INSERT OR IGNORE INTO submissions (id, created_at, form, status, data) VALUES (?, ?, ?, ?, ?)`)
+			.bind(rowId, createdAt, form, status, JSON.stringify(clean.data))
+			.run();
 		return json({ ok: true });
 	}
 

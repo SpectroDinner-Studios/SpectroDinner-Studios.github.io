@@ -2,7 +2,8 @@ import { ensureSchema } from "../../server/db";
 import { json } from "../../server/http";
 import type { PagesHandler } from "../../server/types";
 
-// Public list of reviews approved from the admin panel.
+// Public list of reviews: every one that hasn't been hidden or deleted in
+// /admin. Never cached, so a deletion disappears from the site at once.
 export const onRequestGet: PagesHandler = async ({ env }) => {
 	if (!env.DB) return json({ reviews: [] });
 
@@ -10,7 +11,7 @@ export const onRequestGet: PagesHandler = async ({ env }) => {
 
 	const { results } = await env.DB.prepare(
 		`SELECT id, data FROM submissions
-			WHERE form = 'review' AND status = 'approved'
+			WHERE form = 'review' AND status IN ('live', 'approved')
 			ORDER BY id DESC LIMIT 60`
 	).all<{ id: number; data: string }>();
 
@@ -25,5 +26,5 @@ export const onRequestGet: PagesHandler = async ({ env }) => {
 		};
 	});
 
-	return json({ reviews }, 200, { "Cache-Control": "public, max-age=60" });
+	return json({ reviews });
 };

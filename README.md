@@ -15,8 +15,8 @@ npm run dev
 ## Backend (Cloudflare Pages Functions + D1)
 
 - `POST /api/submit` — every site form (reviews, Discord, Minecraft, volunteering) is stored in D1 and forwarded to the existing Make scenario.
-- `GET /api/reviews` — reviews approved in the admin panel, shown on the homepage next to the hard-coded ones.
-- `/admin` — private panel to read, search and export submissions, publish/hide reviews and see who has signed in. Login is at `/acceso`.
+- `GET /api/reviews` — reviews sent through the homepage form, shown next to the hard-coded ones. They go live as soon as they're sent (max 3 per visitor a day) and are moderated afterwards: hiding or deleting one in `/admin` removes it from the site at once (the list is never cached, and open pages re-check every minute).
+- `/admin` — private panel to read, search and export submissions, moderate reviews and see who has signed in. **Revisar la web** opens the site beside the panel, with moderation buttons on every review. Login is at `/acceso`.
 
 If the backend isn't reachable (GitHub Pages, or D1 not set up yet) the forms post straight to Make, so nothing breaks. Tables are created automatically on first use — no migrations.
 

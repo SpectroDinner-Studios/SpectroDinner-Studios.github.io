@@ -3,7 +3,10 @@ import type { D1Database } from "./types";
 /*
 	One table for every form. `data` holds the exact JSON payload the form sends
 	(the same one Make receives). `status`:
-	  - reviews:      pending → approved / hidden   (only "approved" is public)
+	  - reviews:      live → approved / hidden
+	                  "live" = on the site, not checked yet; "approved" = checked.
+	                  Both are public. ("pending" = older reviews that waited for
+	                  approval before going live; not public until approved.)
 	  - other forms:  new → read
 */
 const SCHEMA = [

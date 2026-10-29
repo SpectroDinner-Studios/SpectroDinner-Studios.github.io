@@ -61,6 +61,8 @@ export function validateSubmission(
 		}
 		data.rating = rating;
 		data.nickname = String(data.nickname).slice(0, 60);
+		data.service = String(data.service ?? "").slice(0, 120);
+		data.comment = String(data.comment).slice(0, 1000);
 	}
 
 	return { ok: true, form, data };
