@@ -1,0 +1,818 @@
+/* =========================
+   Accounts & tickets — /entrar, /registro, /cuenta/*
+   (scripts in src/scripts/account.ts)
+   ========================= */
+
+.acc-page {
+	padding-top: calc(var(--header-h) + 48px);
+	padding-bottom: 72px;
+}
+
+.acc-page [hidden] {
+	display: none !important;
+}
+
+.acc-narrow {
+	max-width: 920px;
+	margin: 0 auto;
+}
+
+
+/* ---------- Sign-in / sign-up card ---------- */
+
+.acc-auth {
+	display: grid;
+	grid-template-columns: 1fr minmax(0, 440px);
+	align-items: center;
+	gap: 56px;
+	max-width: 1000px;
+	margin: 0 auto;
+}
+
+.acc-pitch {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.acc-pitch h1 {
+	font-size: clamp(2.1rem, 4.6vw, 3.2rem);
+	font-weight: 700;
+	letter-spacing: -.02em;
+}
+
+.acc-pitch p {
+	font-size: 1.04rem;
+	line-height: 1.75;
+	color: var(--text-muted);
+}
+
+.acc-perks {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin: 6px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.acc-perks li {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+	color: var(--text-muted);
+	line-height: 1.55;
+}
+
+.acc-perk-icon {
+	flex: none;
+	display: grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	background: var(--surface-2);
+	border: 1px solid var(--border-1);
+	border-radius: var(--radius-xs);
+}
+
+.acc-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 32px;
+	background: linear-gradient(180deg, var(--surface-2), var(--surface-1));
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-sm);
+	box-shadow: 0 40px 100px -50px var(--primary-glow);
+}
+
+.acc-card::before,
+.acc-card::after {
+	content: "";
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	border: 2px solid var(--primary);
+	pointer-events: none;
+}
+
+.acc-card::before {
+	top: -1px;
+	left: -1px;
+	border-right: 0;
+	border-bottom: 0;
+}
+
+.acc-card::after {
+	right: -1px;
+	bottom: -1px;
+	border-left: 0;
+	border-top: 0;
+}
+
+.acc-card h2 {
+	font-size: 1.6rem;
+	font-weight: 700;
+}
+
+.acc-switch {
+	font-size: .92rem;
+	color: var(--text-muted);
+	text-align: center;
+}
+
+.acc-switch a,
+.acc-link {
+	color: var(--primary-light);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.acc-switch a:hover,
+.acc-link:hover {
+	text-decoration: underline;
+}
+
+
+/* ---------- Fields ---------- */
+
+.acc-field {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	font-size: .92rem;
+	font-weight: 600;
+	color: var(--text);
+}
+
+.acc-field small {
+	font-weight: 400;
+	color: var(--text-dim);
+}
+
+.acc-input {
+	position: relative;
+}
+
+.acc-field input,
+.acc-field textarea,
+.acc-field select {
+	width: 100%;
+	padding: 12px 14px;
+	font: inherit;
+	font-size: .95rem;
+	font-weight: 400;
+	color: var(--text);
+	background: var(--bg-sunken);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-xs);
+	box-shadow: inset 0 2px 0 rgba(0, 0, 0, .18);
+	transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.acc-field textarea {
+	min-height: 140px;
+	line-height: 1.6;
+	resize: vertical;
+}
+
+.acc-input input {
+	padding-right: 48px;
+}
+
+.acc-field input:focus,
+.acc-field textarea:focus,
+.acc-field select:focus {
+	border-color: var(--primary);
+	outline: none;
+	box-shadow: inset 0 2px 0 rgba(0, 0, 0, .18), 0 0 0 3px var(--primary-bg);
+}
+
+.acc-eye {
+	position: absolute;
+	top: 50%;
+	right: 6px;
+	translate: 0 -50%;
+	display: grid;
+	place-items: center;
+	width: 36px;
+	height: 36px;
+	color: var(--text-dim);
+	background: transparent;
+	border: 0;
+	cursor: pointer;
+}
+
+.acc-eye:hover,
+.acc-eye[aria-pressed="true"] {
+	color: var(--primary);
+}
+
+.acc-check {
+	display: flex;
+	gap: 10px;
+	align-items: flex-start;
+	font-size: .88rem;
+	line-height: 1.5;
+	color: var(--text-muted);
+	cursor: pointer;
+}
+
+.acc-check input {
+	flex: none;
+	width: 18px;
+	height: 18px;
+	margin-top: 1px;
+	accent-color: var(--primary);
+}
+
+.acc-meter {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 4px;
+	margin-top: 2px;
+}
+
+.acc-meter span {
+	height: 4px;
+	background: var(--surface-3);
+	border-radius: 2px;
+	transition: background var(--transition);
+}
+
+.acc-meter[data-level="1"] span:nth-child(-n + 1) { background: var(--danger); }
+.acc-meter[data-level="2"] span:nth-child(-n + 2) { background: var(--gold); }
+.acc-meter[data-level="3"] span:nth-child(-n + 3) { background: var(--primary); }
+.acc-meter[data-level="4"] span { background: var(--emerald); }
+
+.acc-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+fieldset.acc-field {
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+fieldset.acc-field legend {
+	margin-bottom: 8px;
+	padding: 0;
+}
+
+.acc-honeypot {
+	position: absolute;
+	left: -10000px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+.acc-alert {
+	padding: 11px 13px;
+	font-size: .9rem;
+	line-height: 1.5;
+	color: var(--text);
+	background: color-mix(in srgb, var(--danger) 12%, transparent);
+	border-left: 3px solid var(--danger);
+	border-radius: var(--radius-xs);
+}
+
+.acc-alert.is-ok {
+	background: color-mix(in srgb, var(--emerald) 12%, transparent);
+	border-left-color: var(--emerald);
+}
+
+.acc-card .btn,
+.acc-form .btn {
+	justify-content: center;
+}
+
+.btn.is-busy {
+	opacity: .65;
+	cursor: wait;
+}
+
+
+/* ---------- Account dashboard ---------- */
+
+.acc-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 18px;
+	margin-bottom: 26px;
+}
+
+.acc-head h1 {
+	font-size: clamp(1.9rem, 4vw, 2.7rem);
+	font-weight: 700;
+}
+
+.acc-head p {
+	margin-top: 6px;
+	color: var(--text-muted);
+}
+
+.acc-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 300px;
+	align-items: start;
+	gap: 22px;
+}
+
+.acc-panel {
+	padding: 20px 22px;
+	background: var(--bg-elevated);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-sm);
+}
+
+.acc-panel + .acc-panel {
+	margin-top: 16px;
+}
+
+.acc-panel h2 {
+	font-size: 1.15rem;
+	font-weight: 600;
+	margin-bottom: 14px;
+}
+
+.acc-filter {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 14px;
+}
+
+.acc-filter button {
+	padding: 7px 12px;
+	font: inherit;
+	font-size: .86rem;
+	color: var(--text-muted);
+	background: var(--surface-1);
+	border: 1px solid var(--border-1);
+	border-radius: var(--radius-xs);
+	cursor: pointer;
+}
+
+.acc-filter button[aria-pressed="true"] {
+	color: var(--text);
+	background: var(--primary-bg);
+	border-color: var(--primary);
+}
+
+.acc-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.acc-ticket {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 14px;
+	padding: 14px 16px;
+	color: var(--text);
+	text-decoration: none;
+	background: linear-gradient(180deg, var(--surface-2), var(--surface-1));
+	border: 1px solid var(--border-1);
+	border-left: 3px solid var(--border-2);
+	border-radius: var(--radius-xs);
+	transition: border-color var(--transition), translate var(--transition);
+}
+
+.acc-ticket:hover {
+	border-color: var(--border-3);
+	translate: 2px 0;
+}
+
+.acc-ticket.is-unread {
+	border-left-color: var(--primary);
+}
+
+.acc-ticket.is-closed {
+	opacity: .65;
+}
+
+.acc-ticket-icon {
+	display: grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	font-size: 1.2rem;
+	background: var(--surface-3);
+	border-radius: var(--radius-xs);
+}
+
+.acc-ticket strong {
+	display: block;
+	font-family: var(--font-display);
+	font-size: 1.02rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.acc-ticket small {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 10px;
+	margin-top: 3px;
+	font-size: .82rem;
+	color: var(--text-dim);
+}
+
+.acc-ticket-side {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 6px;
+}
+
+.acc-dot {
+	width: 9px;
+	height: 9px;
+	background: var(--primary);
+	border-radius: 50%;
+	box-shadow: 0 0 10px var(--primary);
+}
+
+.acc-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 2px 8px;
+	font-family: var(--font-pixel);
+	font-size: .62rem;
+	letter-spacing: .05em;
+	text-transform: uppercase;
+	white-space: nowrap;
+	color: var(--text-muted);
+	background: var(--surface-2);
+	border: 1px solid var(--border-1);
+}
+
+.acc-chip.gold { color: var(--gold-text); background: var(--gold-bg); border-color: var(--gold-border); }
+.acc-chip.green { color: var(--emerald); background: color-mix(in srgb, var(--emerald) 10%, transparent); border-color: color-mix(in srgb, var(--emerald) 35%, transparent); }
+.acc-chip.red { color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, transparent); border-color: color-mix(in srgb, var(--danger) 35%, transparent); }
+.acc-chip.blue { color: var(--primary-light); background: var(--primary-bg); border-color: color-mix(in srgb, var(--primary) 45%, transparent); }
+
+.acc-empty {
+	padding: 40px 20px;
+	text-align: center;
+	color: var(--text-muted);
+	background: var(--surface-1);
+	border: 1px dashed var(--border-2);
+	border-radius: var(--radius-xs);
+}
+
+.acc-empty p + p {
+	margin-top: 8px;
+}
+
+.acc-skeleton {
+	height: 70px;
+	background: linear-gradient(90deg, var(--surface-1), var(--surface-3), var(--surface-1));
+	background-size: 200% 100%;
+	border-radius: var(--radius-xs);
+	animation: accShimmer 1.2s linear infinite;
+}
+
+@keyframes accShimmer {
+	to { background-position: -200% 0; }
+}
+
+.acc-form {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.acc-form .btn-sm {
+	align-self: flex-start;
+}
+
+.acc-form + .acc-form {
+	margin-top: 18px;
+	padding-top: 18px;
+	border-top: 1px dashed var(--border-2);
+}
+
+.acc-form h3 {
+	font-size: .98rem;
+	font-weight: 600;
+}
+
+.acc-danger {
+	--btn-bg: color-mix(in srgb, var(--danger) 14%, transparent);
+	--btn-fg: var(--danger);
+	--btn-ring: color-mix(in srgb, var(--danger) 45%, transparent);
+}
+
+.acc-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: .9rem;
+	color: var(--text-muted);
+}
+
+.acc-meta b {
+	color: var(--text);
+	overflow-wrap: anywhere;
+}
+
+
+/* ---------- New ticket ---------- */
+
+.acc-cats {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
+}
+
+.acc-cat {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 14px;
+	background: var(--surface-1);
+	border: 1px solid var(--border-1);
+	border-radius: var(--radius-xs);
+	cursor: pointer;
+	transition: border-color var(--transition), background var(--transition);
+}
+
+.acc-cat input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.acc-cat:hover {
+	border-color: var(--border-3);
+}
+
+.acc-cat:has(input:checked) {
+	background: var(--primary-bg);
+	border-color: var(--primary);
+	box-shadow: inset 0 -2px 0 var(--primary);
+}
+
+.acc-cat:has(input:focus-visible) {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+
+.acc-cat-icon {
+	font-size: 1.3rem;
+}
+
+.acc-cat strong {
+	font-family: var(--font-display);
+	font-size: .98rem;
+}
+
+.acc-cat small {
+	font-size: .8rem;
+	font-weight: 400;
+	line-height: 1.45;
+	color: var(--text-dim);
+}
+
+.acc-tip {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+	padding: 12px 14px;
+	font-size: .9rem;
+	line-height: 1.55;
+	color: var(--text-muted);
+	background: var(--primary-bg);
+	border-left: 3px solid var(--primary);
+	border-radius: var(--radius-xs);
+}
+
+
+/* ---------- Ticket thread ---------- */
+
+.acc-back {
+	display: inline-flex;
+	gap: 6px;
+	margin-bottom: 16px;
+	font-size: .92rem;
+	color: var(--text-muted);
+	text-decoration: none;
+}
+
+.acc-back:hover {
+	color: var(--text);
+}
+
+.acc-thread-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 14px;
+	margin-bottom: 18px;
+}
+
+.acc-thread-head h1 {
+	font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+	font-weight: 700;
+	overflow-wrap: anywhere;
+}
+
+.acc-thread-head .acc-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 8px;
+}
+
+.acc-track {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 6px;
+	margin-bottom: 18px;
+	padding: 14px;
+	background: var(--surface-1);
+	border: 1px solid var(--border-1);
+	border-radius: var(--radius-xs);
+}
+
+.acc-step {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	font-size: .8rem;
+	color: var(--text-dim);
+	text-align: center;
+}
+
+.acc-step::before {
+	content: "";
+	height: 4px;
+	background: var(--surface-3);
+	border-radius: 2px;
+}
+
+.acc-step.is-done {
+	color: var(--text);
+}
+
+.acc-step.is-done::before {
+	background: var(--emerald);
+}
+
+.acc-step.is-current {
+	font-weight: 700;
+	color: var(--emerald);
+}
+
+.acc-track.is-rejected .acc-step.is-current {
+	color: var(--danger);
+}
+
+.acc-track.is-rejected .acc-step.is-current::before {
+	background: var(--danger);
+}
+
+.acc-messages {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-bottom: 18px;
+}
+
+.acc-msg {
+	max-width: min(78%, 620px);
+	padding: 12px 15px;
+	background: var(--surface-2);
+	border: 1px solid var(--border-1);
+	border-radius: var(--radius-sm);
+}
+
+.acc-msg header {
+	display: flex;
+	gap: 10px;
+	align-items: baseline;
+	margin-bottom: 6px;
+	font-size: .78rem;
+	color: var(--text-dim);
+}
+
+.acc-msg header strong {
+	font-family: var(--font-display);
+	font-size: .86rem;
+	color: var(--text);
+}
+
+.acc-msg p {
+	line-height: 1.6;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.acc-msg.is-user {
+	align-self: flex-end;
+	background: var(--primary-bg);
+	border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+	border-bottom-right-radius: 2px;
+}
+
+.acc-msg.is-staff {
+	align-self: flex-start;
+	border-left: 3px solid var(--gold);
+	border-bottom-left-radius: 2px;
+}
+
+.acc-msg.is-staff header strong {
+	color: var(--gold-text);
+}
+
+.acc-msg.is-system {
+	align-self: center;
+	max-width: 90%;
+	padding: 6px 12px;
+	font-size: .85rem;
+	text-align: center;
+	color: var(--text-muted);
+	background: transparent;
+	border-style: dashed;
+}
+
+.acc-msg.is-system header {
+	justify-content: center;
+	margin-bottom: 2px;
+}
+
+.acc-reply {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.acc-reply-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+
+@media (max-width: 900px) {
+
+	.acc-auth,
+	.acc-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.acc-auth {
+		gap: 32px;
+	}
+
+	.acc-cats {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media (max-width: 560px) {
+
+	.acc-card {
+		padding: 24px 20px;
+	}
+
+	.acc-cats {
+		grid-template-columns: 1fr;
+	}
+
+	.acc-msg {
+		max-width: 92%;
+	}
+
+	.acc-ticket {
+		grid-template-columns: auto minmax(0, 1fr);
+	}
+
+	.acc-ticket-side {
+		grid-column: 2;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-start;
+	}
+
+	.acc-track {
+		grid-template-columns: 1fr 1fr;
+	}
+}

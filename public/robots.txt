@@ -3,6 +3,9 @@ Allow: /
 Disallow: /mantenimiento
 Disallow: /admin
 Disallow: /acceso
+Disallow: /cuenta
+Disallow: /entrar
+Disallow: /registro
 Disallow: /api/
 
 Sitemap: https://spectrodinner-studios.github.io/sitemap.xml

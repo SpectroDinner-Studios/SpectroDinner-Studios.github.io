@@ -89,6 +89,13 @@ const onQuestionnaire = path.startsWith("/cuestionario");
 
 		<div class="tools">
 
+			<a href="/entrar/" class="account-link" data-account-link>
+				<span class="account-icon" aria-hidden="true">👤</span>
+				<span class="account-text" data-account-out><T es="Entrar" en="Sign in" /></span>
+				<span class="account-text" data-account-in hidden><T es="Mi cuenta" en="My account" /></span>
+				<span class="account-badge" data-account-badge hidden></span>
+			</a>
+
 			<LangToggle />
 
 			<SettingsPanel />
@@ -106,6 +113,36 @@ const onQuestionnaire = path.startsWith("/cuestionario");
 </header>
 
 <script>
+	import { ACCOUNT_ORIGIN, signedInHint } from "../scripts/account";
+
+	// "Entrar" or "Mi cuenta" (with a dot for unread replies). Accounts live on
+	// the Cloudflare site, so the GitHub Pages copy links there.
+	const accountLink = document.querySelector<HTMLAnchorElement>("[data-account-link]");
+	if (accountLink) {
+		const base = location.hostname.endsWith(".github.io") ? ACCOUNT_ORIGIN : "";
+		accountLink.href = base + "/entrar/";
+
+		if (signedInHint()) {
+			const setSignedIn = (signedIn: boolean) => {
+				accountLink.href = base + (signedIn ? "/cuenta/" : "/entrar/");
+				accountLink.querySelector<HTMLElement>("[data-account-out]")!.hidden = signedIn;
+				accountLink.querySelector<HTMLElement>("[data-account-in]")!.hidden = !signedIn;
+			};
+			setSignedIn(true);
+
+			fetch("/api/auth/me", { credentials: "same-origin", cache: "no-store" })
+				.then((res) => (res.ok ? res.json() : null))
+				.then((data) => {
+					if (!data) return;
+					if (!data.user) return setSignedIn(false);
+					const badge = accountLink.querySelector<HTMLElement>("[data-account-badge]")!;
+					badge.textContent = String(data.user.unread);
+					badge.hidden = !data.user.unread;
+				})
+				.catch(() => {});
+		}
+	}
+
 	const toggle = document.querySelector(".navbar .menu-toggle");
 	const links = document.querySelector(".navbar .links");
 
@@ -465,6 +502,61 @@ const onQuestionnaire = path.startsWith("/cuestionario");
 	flex-shrink: 0;
 }
 
+.account-link {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+
+	height: 42px;
+	padding: 0 12px;
+
+	font-family: var(--font-display);
+	font-size: .9rem;
+	font-weight: 600;
+	color: var(--text-muted);
+	text-decoration: none;
+
+	background: var(--surface-2);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-xs);
+
+	transition:
+		border-color var(--transition),
+		background var(--transition),
+		color var(--transition);
+}
+
+.account-link:hover {
+	color: var(--text);
+	border-color: var(--primary-border);
+	background: var(--primary-bg);
+}
+
+.account-link [hidden] {
+	display: none;
+}
+
+.account-badge {
+	position: absolute;
+	top: -6px;
+	right: -6px;
+
+	min-width: 18px;
+	height: 18px;
+	padding: 0 5px;
+
+	font-family: var(--font-pixel);
+	font-size: .62rem;
+	line-height: 18px;
+	text-align: center;
+	color: #fff;
+
+	background: var(--primary);
+	border-radius: 9px;
+	box-shadow: 0 0 10px var(--primary);
+}
+
 
 /* Mobile menu toggle */
 
@@ -607,6 +699,14 @@ const onQuestionnaire = path.startsWith("/cuestionario");
 	.nav-inner {
 		padding: 0 14px;
 		gap: 10px;
+	}
+
+	.account-link {
+		padding: 0 10px;
+	}
+
+	.account-text {
+		display: none;
 	}
 
 	.brand {

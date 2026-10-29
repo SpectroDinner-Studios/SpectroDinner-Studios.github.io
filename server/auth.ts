@@ -9,7 +9,7 @@ const SESSION_TTL_S = 60 * 60 * 12; // a session never lives longer than 12 h
 const IDLE_TTL_S = 60 * 60 * 2; // …and ends after 2 h without activity
 const TOUCH_EVERY_S = 60 * 5; // how often last_seen is refreshed
 
-function toBase64Url(bytes: ArrayBuffer | Uint8Array): string {
+export function toBase64Url(bytes: ArrayBuffer | Uint8Array): string {
 	let binary = "";
 	for (const byte of new Uint8Array(bytes)) binary += String.fromCharCode(byte);
 	return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
@@ -56,7 +56,7 @@ export function shortUserAgent(ua: string | null): string {
 	return os ? `${browser} · ${os}` : browser;
 }
 
-function readCookie(request: Request, name: string): string | undefined {
+export function readCookie(request: Request, name: string): string | undefined {
 	const header = request.headers.get("Cookie") ?? "";
 	for (const part of header.split(";")) {
 		const [key, ...rest] = part.trim().split("=");

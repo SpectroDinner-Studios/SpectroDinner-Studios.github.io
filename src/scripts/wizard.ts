@@ -1,3 +1,4 @@
+import { currentAccount, loginUrl, signedInHint } from "./account";
 import { SubmitError, submitForm } from "./submit";
 
 /*
@@ -555,7 +556,7 @@ export function initWizard({ formId, buildPayload, onChange }: WizardOptions): v
 		submitBtn.querySelector(".submit-loading")?.toggleAttribute("hidden", !submitting);
 	};
 
-	const showSuccess = (id?: number) => {
+	const showSuccess = (id?: number, ticketId?: number) => {
 		sent = true;
 		clearDraft();
 		form.hidden = true;
@@ -574,6 +575,12 @@ export function initWizard({ formId, buildPayload, onChange }: WizardOptions): v
 			q<HTMLElement>("[data-ref-value]")!.textContent = `#${String(id).padStart(4, "0")}`;
 			ref.hidden = false;
 		}
+
+		if (ticketId) {
+			q<HTMLAnchorElement>("[data-ticket-link]")!.href = "/cuenta/ticket/?id=" + ticketId;
+			q<HTMLElement>("[data-ticket]")!.hidden = false;
+		}
+		q<HTMLElement>("[data-account-banner]")!.hidden = true;
 
 		root.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
 		q<HTMLElement>("[data-success-title]")?.focus({ preventScroll: true });
@@ -616,7 +623,7 @@ export function initWizard({ formId, buildPayload, onChange }: WizardOptions): v
 		try {
 			const result = await submitForm(buildPayload(new FormData(form)));
 			clearDraft();
-			showSuccess(result.id);
+			showSuccess(result.id, result.ticketId);
 		} catch (err) {
 			const code = err instanceof SubmitError ? err.code : "";
 			if (code === "closed" || code === "rate_limited") {
@@ -633,10 +640,42 @@ export function initWizard({ formId, buildPayload, onChange }: WizardOptions): v
 		}
 	});
 
+	// ---------- Accounts ----------
+	// Signed in: say so and fill in name/email if still empty. Signed out:
+	// suggest an account to follow the request. (Not on the GitHub Pages copy,
+	// which can't share the Cloudflare site's session.)
+
+	const accountBanner = q<HTMLElement>("[data-account-banner]");
+
+	const fillIfEmpty = (name: string, value: string) => {
+		const input = form.elements.namedItem(name);
+		if (input instanceof HTMLInputElement && !input.value.trim() && value) {
+			input.value = value;
+			input.dispatchEvent(new Event("input", { bubbles: true }));
+		}
+	};
+
+	const setupAccount = async () => {
+		if (!accountBanner || location.hostname.endsWith(".github.io")) return;
+
+		const account = signedInHint() ? await currentAccount() : null;
+		if (account) {
+			q<HTMLElement>("[data-account-name]")!.textContent = account.name;
+			q<HTMLElement>("[data-account-out]")!.hidden = true;
+			q<HTMLElement>("[data-account-in]")!.hidden = false;
+			fillIfEmpty("nombre", account.name);
+			fillIfEmpty("email", account.email);
+		} else {
+			q<HTMLAnchorElement>("[data-account-login]")!.href = loginUrl(location.pathname);
+		}
+		if (!sent) accountBanner.hidden = false;
+	};
+
 	// ---------- Start ----------
 
 	applyPlaceholders();
 	const restored = restoreDraft();
 	refresh();
 	show(restored ? current : 0, false);
+	setupAccount();
 }

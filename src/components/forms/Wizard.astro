@@ -84,6 +84,17 @@ const total = steps.length + 1; // + review step
 			</button>
 		</div>
 
+		<!-- Shown by wizard.ts where accounts exist: follow the request from /cuenta. -->
+		<div class="wz-account" data-account-banner hidden>
+			<span data-account-out>
+				💡 <T es="¿Quieres seguir esta solicitud y hablar con nosotros desde tu cuenta?" en="Want to follow this request and talk to us from your account?" />
+				<a class="wz-link" href="/entrar/" data-account-login><T es="Entra o crea una cuenta" en="Sign in or create an account" /></a>
+			</span>
+			<span data-account-in hidden>
+				✅ <T es="Sesión iniciada como" en="Signed in as" /> <strong data-account-name></strong> — <T es="podrás seguir esta solicitud en tu cuenta." en="you'll be able to follow it in your account." />
+			</span>
+		</div>
+
 		<form id={formId} class="wz-form" novalidate>
 
 			<slot />
@@ -160,6 +171,10 @@ const total = steps.length + 1; // + review step
 			</p>
 
 			<p class="wz-success-text"><T {...success.text} /></p>
+
+			<p data-ticket hidden>
+				<a class="btn btn-primary" href="/cuenta/" data-ticket-link>📦 <T es="Seguir mi solicitud en mi cuenta" en="Follow my request in my account" /> →</a>
+			</p>
 
 			<ol class="wz-next">
 				{success.next.map((item, i) => (

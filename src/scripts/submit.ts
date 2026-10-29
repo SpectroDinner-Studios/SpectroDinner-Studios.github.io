@@ -23,8 +23,8 @@ export class SubmitError extends Error {
 
 /**
  * Sends a form to our backend (/api/submit on Cloudflare Pages), which stores
- * it in D1 and forwards it to Make. Resolves with the stored request id and,
- * for reviews, whether it went live straight away.
+ * it in D1 and forwards it to Make. Resolves with the stored request id, for
+ * reviews whether it went live straight away, and the account ticket if any.
  *
  * When the backend can't be reached it falls back to posting straight to Make,
  * as the site always did (no id in that case). Rejections from a working
@@ -32,7 +32,7 @@ export class SubmitError extends Error {
  */
 export async function submitForm(
 	payload: Record<string, unknown>
-): Promise<{ id?: number; published?: boolean }> {
+): Promise<{ id?: number; published?: boolean; ticketId?: number }> {
 	// The language the form was filled in, so replies can be written in it.
 	const body = { ...payload, idioma: document.documentElement.lang === "en" ? "en" : "es" };
 
@@ -45,10 +45,12 @@ export async function submitForm(
 	}
 
 	if (response?.ok) {
-		const result = (await response.json().catch(() => ({}))) as { id?: unknown; published?: unknown };
+		const result = (await response.json().catch(() => ({}))) as { id?: unknown; published?: unknown; ticketId?: unknown };
 		return {
 			id: typeof result.id === "number" ? result.id : undefined,
 			published: result.published === true,
+			// Sent while signed in: the ticket that follows it in /cuenta.
+			ticketId: typeof result.ticketId === "number" ? result.ticketId : undefined,
 		};
 	}
 

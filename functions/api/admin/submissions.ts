@@ -1,6 +1,7 @@
 import { ensureSchema, logAction, type SubmissionRow } from "../../../server/db";
 import { FORM_IDS, validateSubmission } from "../../../server/forms";
 import { json, readJsonObject } from "../../../server/http";
+import { addMessage } from "../../../server/tickets";
 import type { D1Database, PagesHandler } from "../../../server/types";
 
 // GET  /api/admin/submissions?form=review  → rows (newest first) + counts
@@ -16,26 +17,34 @@ export const onRequestGet: PagesHandler = async ({ request, env }) => {
 	const byForm = FORM_IDS.includes(form ?? "");
 
 	const query = db.prepare(
-		`SELECT s.id, s.created_at, s.form, s.status, s.data, n.note
-			FROM submissions s LEFT JOIN submission_notes n ON n.submission_id = s.id
+		`SELECT s.id, s.created_at, s.form, s.status, s.data, n.note, t.id AS ticket_id
+			FROM submissions s
+			LEFT JOIN submission_notes n ON n.submission_id = s.id
+			LEFT JOIN tickets t ON t.submission_id = s.id
 			${byForm ? "WHERE s.form = ?" : ""}
 			ORDER BY s.created_at DESC, s.id DESC LIMIT 500`
 	);
 	const rows = await (byForm ? query.bind(form) : query).all<SubmissionRow & { note: string | null }>();
 
-	const [counts, recent] = await Promise.all([
+	const [counts, recent, tickets, users] = await Promise.all([
 		db
 			.prepare(`SELECT form, status, COUNT(*) AS n FROM submissions GROUP BY form, status`)
 			.all<{ form: string; status: string; n: number }>(),
 		db
 			.prepare(`SELECT form, COUNT(*) AS n FROM submissions WHERE created_at > datetime('now', '-7 days') GROUP BY form`)
 			.all<{ form: string; n: number }>(),
+		db
+			.prepare(`SELECT COALESCE(SUM(status != 'closed'), 0) AS open, COALESCE(SUM(staff_unread), 0) AS unread FROM tickets`)
+			.first<{ open: number; unread: number }>(),
+		db.prepare(`SELECT COUNT(*) AS n FROM users`).first<{ n: number }>(),
 	]);
 
 	return json({
 		submissions: rows.results.map((row) => ({ ...row, data: JSON.parse(row.data) })),
 		counts: counts.results,
 		recent: recent.results,
+		tickets: tickets ?? { open: 0, unread: 0 },
+		users: users?.n ?? 0,
 	});
 };
 
@@ -54,6 +63,9 @@ const ACTIONS: Record<string, { status: string; review: boolean; label: string }
 	reject: { status: "rejected", review: false, label: "rechazada" },
 	done: { status: "done", review: false, label: "terminada" },
 };
+
+// Status changes the owner of a tracked request is told about.
+const TRACKED_STATUSES = ["read", "accepted", "rejected", "done"];
 
 const FORM_LABELS: Record<string, string> = {
 	review: "Valoración",
@@ -165,6 +177,12 @@ export const onRequestPost: PagesHandler = async ({ request, env }) => {
 
 	await db.prepare(`UPDATE submissions SET status = ? WHERE id = ?`).bind(change.status, id).run();
 	await logAction(db, action, id, `${label}: ${change.label}`);
+
+	// Sent while signed in: tell the account owner in its ticket.
+	if (TRACKED_STATUSES.includes(change.status)) {
+		const ticket = await db.prepare(`SELECT id FROM tickets WHERE submission_id = ?`).bind(id).first<{ id: number }>();
+		if (ticket) await addMessage(db, ticket.id, "system", `status:${change.status}`);
+	}
 
 	return json({ ok: true });
 };

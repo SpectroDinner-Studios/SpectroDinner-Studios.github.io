@@ -75,6 +75,75 @@ const SCHEMA = [
 		summary TEXT
 	)`,
 
+	// Site accounts (separate from the admin login). Passwords are PBKDF2
+	// hashes (see server/users.ts); emails are stored lower-cased.
+	`CREATE TABLE IF NOT EXISTS users (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		email TEXT NOT NULL UNIQUE,
+		name TEXT NOT NULL,
+		password_hash TEXT NOT NULL,
+		created_at TEXT NOT NULL DEFAULT (datetime('now')),
+		last_login TEXT,
+		disabled INTEGER NOT NULL DEFAULT 0
+	)`,
+	`CREATE TABLE IF NOT EXISTS user_sessions (
+		token_hash TEXT PRIMARY KEY,
+		user_id INTEGER NOT NULL,
+		created_at TEXT NOT NULL DEFAULT (datetime('now')),
+		expires_at TEXT NOT NULL,
+		last_seen TEXT NOT NULL DEFAULT (datetime('now')),
+		user_agent TEXT
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_user_sessions_user ON user_sessions (user_id)`,
+
+	// One-time "set a new password" links, created from the panel.
+	`CREATE TABLE IF NOT EXISTS password_resets (
+		token_hash TEXT PRIMARY KEY,
+		user_id INTEGER NOT NULL,
+		created_at TEXT NOT NULL DEFAULT (datetime('now')),
+		expires_at TEXT NOT NULL
+	)`,
+
+	// Rate limiting for sign-up and sign-in: register | login_fail | login_ok
+	`CREATE TABLE IF NOT EXISTS user_events (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		at TEXT NOT NULL DEFAULT (datetime('now')),
+		kind TEXT NOT NULL,
+		ip_hash TEXT,
+		user_id INTEGER
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_user_events_kind_ip ON user_events (kind, ip_hash, at)`,
+
+	// Support tickets. `submission_id` links the ticket that follows a form
+	// sent while signed in. status: open (waiting for us) → answered (waiting
+	// for the user) → closed. The unread flags drive the badges on each side.
+	`CREATE TABLE IF NOT EXISTS tickets (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		user_id INTEGER NOT NULL,
+		submission_id INTEGER,
+		category TEXT NOT NULL,
+		subject TEXT NOT NULL,
+		status TEXT NOT NULL DEFAULT 'open',
+		created_at TEXT NOT NULL DEFAULT (datetime('now')),
+		updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+		user_unread INTEGER NOT NULL DEFAULT 0,
+		staff_unread INTEGER NOT NULL DEFAULT 1
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_tickets_user ON tickets (user_id, updated_at)`,
+	`CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets (status, updated_at)`,
+	`CREATE INDEX IF NOT EXISTS idx_tickets_submission ON tickets (submission_id)`,
+
+	// author: user | staff | system (system bodies are codes like
+	// "status:accepted", shown in the reader's language).
+	`CREATE TABLE IF NOT EXISTS ticket_messages (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		ticket_id INTEGER NOT NULL,
+		author TEXT NOT NULL,
+		body TEXT NOT NULL,
+		created_at TEXT NOT NULL DEFAULT (datetime('now'))
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_ticket_messages_ticket ON ticket_messages (ticket_id, id)`,
+
 	// One-time data jobs that already ran, so they never run twice.
 	`CREATE TABLE IF NOT EXISTS migrations (
 		name TEXT PRIMARY KEY,

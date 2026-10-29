@@ -291,6 +291,31 @@
 	border-radius: var(--radius-xs);
 }
 
+/* "Follow this request from your account" */
+.wz-account {
+	margin-bottom: 16px;
+	padding: 12px 16px;
+
+	font-size: .92rem;
+	line-height: 1.6;
+	color: var(--text-muted);
+
+	background: var(--primary-bg);
+	border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+	border-left: 3px solid var(--primary);
+	border-radius: var(--radius-xs);
+}
+
+.wz-account [hidden],
+.wz-account[hidden],
+[data-ticket][hidden] {
+	display: none;
+}
+
+.wz-account strong {
+	color: var(--text);
+}
+
 .wz-link {
 	padding: 0;
 

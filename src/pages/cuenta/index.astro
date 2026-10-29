@@ -1,0 +1,269 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import "../../styles/account.css";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import T from "../../components/T.astro";
+import PasswordField from "../../components/account/PasswordField.astro";
+---
+
+<Layout title="Mi cuenta | SpectroDinner™" description="Tus tickets y encargos en SpectroDinner Studios." noindex>
+
+	<Navbar />
+
+	<main class="container acc-page">
+
+		<header class="acc-head">
+			<div>
+				<span class="eyebrow"><T es="Mi cuenta" en="My account" /></span>
+				<h1 id="acc-greeting"><T es="Hola" en="Hi" /></h1>
+				<p><T es="Tus tickets y encargos, en un solo sitio." en="Your tickets and orders, all in one place." /></p>
+			</div>
+			<a href="/cuenta/nuevo/" class="btn btn-primary">+ <T es="Nuevo ticket" en="New ticket" /></a>
+		</header>
+
+		<div class="acc-layout">
+
+			<section class="acc-panel" aria-labelledby="tickets-title">
+				<h2 id="tickets-title"><T es="Tus tickets" en="Your tickets" /></h2>
+				<div class="acc-filter" id="ticket-filter" role="group" aria-label="Filtro / Filter">
+					<button type="button" data-filter="active" aria-pressed="true"><T es="Activos" en="Active" /></button>
+					<button type="button" data-filter="closed" aria-pressed="false"><T es="Cerrados" en="Closed" /></button>
+					<button type="button" data-filter="all" aria-pressed="false"><T es="Todos" en="All" /></button>
+				</div>
+				<div class="acc-list" id="ticket-list" aria-live="polite">
+					<div class="acc-skeleton"></div>
+					<div class="acc-skeleton"></div>
+				</div>
+			</section>
+
+			<aside>
+
+				<section class="acc-panel">
+					<h2><T es="Tu cuenta" en="Your account" /></h2>
+					<div class="acc-meta">
+						<span><T es="Email" en="Email" />: <b id="acc-email">—</b></span>
+						<span><T es="Miembro desde" en="Member since" />: <b id="acc-since">—</b></span>
+					</div>
+				</section>
+
+				<section class="acc-panel">
+
+					<p class="acc-alert" id="profile-alert" role="status" hidden></p>
+
+					<form class="acc-form" id="name-form" novalidate>
+						<h3><T es="Nombre" en="Name" /></h3>
+						<label class="acc-field" for="profile-name">
+							<span class="acc-honeypot"><T es="Nombre o apodo" en="Name or nickname" /></span>
+							<input id="profile-name" name="name" type="text" maxlength="40" autocomplete="nickname" required />
+						</label>
+						<button type="submit" class="btn btn-ghost btn-sm"><T es="Guardar nombre" en="Save name" /></button>
+					</form>
+
+					<form class="acc-form" id="password-form" novalidate>
+						<h3><T es="Cambiar contraseña" en="Change password" /></h3>
+						<PasswordField id="current-password" name="current" label={{ es: "Contraseña actual", en: "Current password" }} autocomplete="current-password" />
+						<PasswordField id="new-password" name="password" label={{ es: "Nueva contraseña", en: "New password" }} autocomplete="new-password" meter />
+						<button type="submit" class="btn btn-ghost btn-sm"><T es="Cambiar contraseña" en="Change password" /></button>
+					</form>
+
+					<div class="acc-form">
+						<button type="button" class="btn btn-ghost btn-sm" id="logout"><T es="Cerrar sesión" en="Sign out" /></button>
+					</div>
+
+					<details class="acc-form">
+						<summary class="acc-link"><T es="Eliminar mi cuenta" en="Delete my account" /></summary>
+						<form class="acc-form" id="delete-form" novalidate>
+							<p class="acc-meta">
+								<T
+									es="Se borran tu cuenta y todos tus tickets. No se puede deshacer."
+									en="Your account and all your tickets are erased. This can't be undone."
+								/>
+							</p>
+							<PasswordField id="delete-password" name="password" label={{ es: "Tu contraseña", en: "Your password" }} autocomplete="current-password" />
+							<button type="submit" class="btn btn-sm acc-danger"><T es="Eliminar cuenta" en="Delete account" /></button>
+						</form>
+					</details>
+
+				</section>
+
+			</aside>
+
+		</div>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+<script>
+	import {
+		type Account,
+		CATEGORIES,
+		REJECTED,
+		REQUEST_STEPS,
+		TICKET_STATUS,
+		api,
+		el,
+		errorText,
+		fullDate,
+		pair,
+		ref,
+		requireAccount,
+		setBusy,
+		showAlert,
+		tt,
+		when,
+		wirePasswordToggles,
+		wireStrengthMeters,
+	} from "../../scripts/account";
+
+	type Ticket = {
+		id: number;
+		category: string;
+		subject: string;
+		status: string;
+		updated_at: string;
+		user_unread: number;
+		submission_status: string | null;
+	};
+
+	wirePasswordToggles();
+	wireStrengthMeters();
+
+	const list = document.getElementById("ticket-list")!;
+	const profileAlert = document.getElementById("profile-alert")!;
+	let tickets: Ticket[] = [];
+	let filter = "active";
+
+	const renderAccount = (account: Account) => {
+		const greeting = document.getElementById("acc-greeting")!;
+		greeting.replaceChildren(tt("Hola, ", "Hi, "), account.name);
+		document.getElementById("acc-email")!.textContent = account.email;
+		document.getElementById("acc-since")!.textContent = fullDate(account.created_at).split(",")[0];
+		(document.getElementById("profile-name") as HTMLInputElement).value = account.name;
+	};
+
+	const requestLabel = (status: string) =>
+		status === "rejected" ? REJECTED : REQUEST_STEPS.find(([key]) => key === status)?.[1] ?? null;
+
+	const renderTickets = () => {
+		const shown = tickets.filter((t) => (filter === "all" ? true : filter === "closed" ? t.status === "closed" : t.status !== "closed"));
+
+		if (!shown.length) {
+			const empty = el("div", "acc-empty");
+			if (!tickets.length) {
+				empty.append(
+					el("p", "", tt("Todavía no tienes tickets.", "You don't have any tickets yet.")),
+					el("p", "", tt("Abre uno si necesitas ayuda, o envía un cuestionario con la sesión iniciada para seguirlo aquí.", "Open one if you need help, or send a questionnaire while signed in to follow it here."))
+				);
+			} else {
+				empty.append(el("p", "", tt("No hay tickets en esta vista.", "No tickets in this view.")));
+			}
+			list.replaceChildren(empty);
+			return;
+		}
+
+		list.replaceChildren(
+			...shown.map((t) => {
+				const category = CATEGORIES[t.category] ?? CATEGORIES.otro;
+				const status = TICKET_STATUS[t.status] ?? TICKET_STATUS.open;
+
+				const link = el("a", "acc-ticket" + (t.user_unread ? " is-unread" : "") + (t.status === "closed" ? " is-closed" : ""));
+				link.href = "/cuenta/ticket/?id=" + t.id;
+
+				const meta = el("small", "", ref(t.id), " · ", pair(category.label), " · ", when(t.updated_at));
+				const body = el("div", "", el("strong", "", t.subject), meta);
+
+				const side = el("div", "acc-ticket-side");
+				if (t.user_unread) side.append(el("span", "acc-dot", el("span", "acc-honeypot", tt("Nueva respuesta", "New reply"))));
+				const request = t.submission_status ? requestLabel(t.submission_status) : null;
+				if (request) side.append(el("span", "acc-chip blue", "📦 ", pair(request)));
+				side.append(el("span", "acc-chip " + status.tone, pair(status.label)));
+
+				link.append(el("span", "acc-ticket-icon", category.icon), body, side);
+				return link;
+			})
+		);
+	};
+
+	document.getElementById("ticket-filter")!.addEventListener("click", (e) => {
+		const button = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-filter]");
+		if (!button) return;
+		filter = button.dataset.filter!;
+		document.querySelectorAll("#ticket-filter button").forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+		renderTickets();
+	});
+
+	const loadTickets = async () => {
+		const { ok, data } = await api<{ tickets: Ticket[] }>("/api/tickets");
+		if (!ok) {
+			list.replaceChildren(el("div", "acc-empty", errorText(data.error)));
+			return;
+		}
+		tickets = data.tickets;
+		renderTickets();
+	};
+
+	// ---------- Profile ----------
+
+	document.getElementById("name-form")!.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const form = e.currentTarget as HTMLFormElement;
+		const button = form.querySelector("button")!;
+		const name = String(new FormData(form).get("name") || "").trim();
+		setBusy(button, true);
+		const result = await api<{ name: string }>("/api/auth/account", { action: "update-name", name });
+		setBusy(button, false);
+		if (result.ok) {
+			document.getElementById("acc-greeting")!.replaceChildren(tt("Hola, ", "Hi, "), result.data.name);
+			showAlert(profileAlert, tt("Nombre guardado.", "Name saved."), "ok");
+		} else {
+			showAlert(profileAlert, errorText(result.data.error));
+		}
+	});
+
+	document.getElementById("password-form")!.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const form = e.currentTarget as HTMLFormElement;
+		const button = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+		const data = new FormData(form);
+		setBusy(button, true);
+		const result = await api("/api/auth/account", { action: "change-password", current: data.get("current"), password: data.get("password") });
+		setBusy(button, false);
+		if (result.ok) {
+			form.reset();
+			showAlert(profileAlert, tt("Contraseña cambiada. Hemos cerrado tu sesión en los demás dispositivos.", "Password changed. We've signed you out on your other devices."), "ok");
+		} else {
+			showAlert(profileAlert, errorText(result.data.error));
+		}
+	});
+
+	document.getElementById("logout")!.addEventListener("click", async () => {
+		await api("/api/auth/logout", {});
+		location.replace("/entrar/");
+	});
+
+	document.getElementById("delete-form")!.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const form = e.currentTarget as HTMLFormElement;
+		const sure = window.confirm(
+			document.documentElement.lang === "en"
+				? "Delete your account and all your tickets? This can't be undone."
+				: "¿Eliminar tu cuenta y todos tus tickets? No se puede deshacer."
+		);
+		if (!sure) return;
+		const result = await api("/api/auth/account", { action: "delete", password: new FormData(form).get("password") });
+		if (result.ok) location.replace("/");
+		else showAlert(profileAlert, errorText(result.data.error));
+	});
+
+	// ---------- Start ----------
+
+	requireAccount().then((account) => {
+		if (!account) return;
+		renderAccount(account);
+		loadTickets();
+	});
+</script>

@@ -1,0 +1,144 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import "../../styles/account.css";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import T from "../../components/T.astro";
+
+// Same list as CATEGORIES in src/scripts/account.ts and the server.
+const categories = [
+	{ id: "soporte", icon: "🛟", es: "Soporte general", en: "General support", hintEs: "Dudas o problemas con cualquier cosa nuestra.", hintEn: "Questions or problems with anything of ours." },
+	{ id: "discord", icon: "💬", es: "Servicio de Discord", en: "Discord service", hintEs: "Sobre un servidor que te montamos o vamos a montar.", hintEn: "About a server we built or will build for you." },
+	{ id: "minecraft", icon: "⛏️", es: "Servicio de Minecraft", en: "Minecraft service", hintEs: "Permisos, rangos, plugins, rendimiento…", hintEn: "Permissions, ranks, plugins, performance…" },
+	{ id: "tep", icon: "⏱️", es: "T.E.P. (plugin)", en: "T.E.P. (plugin)", hintEs: "Errores, dudas o ideas para TimeEconomyPlugin.", hintEn: "Bugs, questions or ideas for TimeEconomyPlugin." },
+	{ id: "voluntariado", icon: "🤝", es: "Voluntariado", en: "Volunteering", hintEs: "Sobre tu postulación o cómo ayudar.", hintEn: "About your application or how to help." },
+	{ id: "otro", icon: "✉️", es: "Otro", en: "Other", hintEs: "Cualquier otra cosa.", hintEn: "Anything else." },
+];
+---
+
+<Layout title="Nuevo ticket | SpectroDinner™" description="Abre un ticket de soporte en SpectroDinner Studios." noindex>
+
+	<Navbar />
+
+	<main class="container acc-page">
+
+		<div class="acc-narrow">
+
+			<a href="/cuenta/" class="acc-back">← <T es="Mi cuenta" en="My account" /></a>
+
+			<header class="acc-head">
+				<div>
+					<span class="eyebrow"><T es="Soporte" en="Support" /></span>
+					<h1><T es="Nuevo ticket" en="New ticket" /></h1>
+					<p><T es="Cuéntanos qué necesitas. Te responderemos aquí, en tu cuenta." en="Tell us what you need. We'll reply here, in your account." /></p>
+				</div>
+			</header>
+
+			<form class="acc-panel acc-form" id="ticket-form" novalidate>
+
+				<p class="acc-alert" id="ticket-alert" role="alert" hidden></p>
+
+				<fieldset class="acc-field">
+					<legend><T es="¿Sobre qué es?" en="What is it about?" /></legend>
+					<div class="acc-cats">
+						{categories.map((c, i) => (
+							<label class="acc-cat">
+								<input type="radio" name="category" value={c.id} checked={i === 0} />
+								<span class="acc-cat-icon" aria-hidden="true">{c.icon}</span>
+								<strong><T es={c.es} en={c.en} /></strong>
+								<small><T es={c.hintEs} en={c.hintEn} /></small>
+							</label>
+						))}
+					</div>
+				</fieldset>
+
+				<p class="acc-tip" id="order-tip" hidden>
+					<span aria-hidden="true">💡</span>
+					<span>
+						<T
+							es="¿Quieres pedir un servicio nuevo? Rellena el cuestionario con la sesión iniciada: se creará un ticket para que lo sigas paso a paso."
+							en="Want to order a new service? Fill in the questionnaire while signed in: a ticket will be created so you can follow it step by step."
+						/>
+						<a class="acc-link" id="order-tip-link" href="/cuestionario/"><T es="Ir al cuestionario →" en="Go to the questionnaire →" /></a>
+					</span>
+				</p>
+
+				<label class="acc-field" for="ticket-subject">
+					<T es="Asunto" en="Subject" />
+					<input id="ticket-subject" name="subject" type="text" maxlength="120" required />
+				</label>
+
+				<label class="acc-field" for="ticket-message">
+					<T es="Mensaje" en="Message" />
+					<textarea id="ticket-message" name="message" maxlength="4000" rows="8" required></textarea>
+					<small><T es="Incluye todo lo que nos ayude: versión, capturas (enlace), pasos para reproducir… Nunca envíes contraseñas." en="Include anything that helps: version, screenshots (link), steps to reproduce… Never send passwords." /></small>
+				</label>
+
+				<button type="submit" class="btn btn-primary" id="ticket-submit"><T es="Enviar ticket →" en="Send ticket →" /></button>
+
+			</form>
+
+		</div>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+<script>
+	import { api, errorText, requireAccount, setBusy, showAlert } from "../../scripts/account";
+
+	const form = document.getElementById("ticket-form") as HTMLFormElement;
+	const alertBox = document.getElementById("ticket-alert")!;
+	const submit = document.getElementById("ticket-submit") as HTMLButtonElement;
+	const tip = document.getElementById("order-tip")!;
+	const tipLink = document.getElementById("order-tip-link") as HTMLAnchorElement;
+
+	const QUESTIONNAIRES: Record<string, string> = { discord: "/cuestionario/", minecraft: "/cuestionario-minecraft/", voluntariado: "/voluntariado/" };
+
+	const syncTip = () => {
+		const category = String(new FormData(form).get("category") || "");
+		tip.hidden = !QUESTIONNAIRES[category];
+		if (QUESTIONNAIRES[category]) tipLink.href = QUESTIONNAIRES[category];
+	};
+
+	// ?categoria=tep preselects a category.
+	const preset = new URLSearchParams(location.search).get("categoria");
+	const presetInput = form.querySelector<HTMLInputElement>(`input[name=category][value="${CSS.escape(preset || "")}"]`);
+	if (presetInput) presetInput.checked = true;
+	syncTip();
+	form.addEventListener("change", syncTip);
+
+	requireAccount();
+
+	form.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const data = new FormData(form);
+		const payload = {
+			category: String(data.get("category") || ""),
+			subject: String(data.get("subject") || "").trim(),
+			message: String(data.get("message") || "").trim(),
+		};
+
+		const problem = payload.subject.length < 3 ? "subject_short" : payload.message.length < 2 ? "message_short" : "";
+		if (problem) {
+			showAlert(alertBox, errorText(problem));
+			return;
+		}
+
+		setBusy(submit, true);
+		const result = await api<{ id: number }>("/api/tickets", payload);
+		setBusy(submit, false);
+
+		if (result.ok) {
+			location.replace("/cuenta/ticket/?id=" + result.data.id);
+			return;
+		}
+		if (result.status === 401) {
+			location.replace("/entrar/?next=" + encodeURIComponent(location.pathname));
+			return;
+		}
+		showAlert(alertBox, errorText(result.data.error));
+	});
+</script>

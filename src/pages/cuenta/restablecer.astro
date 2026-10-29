@@ -1,0 +1,95 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import "../../styles/account.css";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import T from "../../components/T.astro";
+import PasswordField from "../../components/account/PasswordField.astro";
+---
+
+<Layout title="Nueva contraseña | SpectroDinner™" description="Crea una nueva contraseña para tu cuenta." noindex>
+
+	<Navbar />
+
+	<main class="container acc-page">
+
+		<div class="acc-auth">
+
+			<section class="acc-pitch">
+				<span class="eyebrow"><T es="Tu cuenta" en="Your account" /></span>
+				<h1><T es="Nueva contraseña" en="New password" /></h1>
+				<p>
+					<T
+						es="Elige una contraseña nueva. Al guardarla cerraremos tu sesión en todos los demás dispositivos."
+						en="Choose a new password. When you save it we'll sign you out on every other device."
+					/>
+				</p>
+			</section>
+
+			<form class="acc-card" id="reset-form" novalidate>
+
+				<h2><T es="Crear nueva contraseña" en="Set a new password" /></h2>
+
+				<p class="acc-alert" id="reset-alert" role="alert" hidden></p>
+
+				<div class="acc-stack" id="reset-fields">
+					<PasswordField id="reset-password" name="password" label={{ es: "Nueva contraseña", en: "New password" }} autocomplete="new-password" meter />
+					<PasswordField id="reset-confirm" name="confirm" label={{ es: "Repite la contraseña", en: "Repeat the password" }} autocomplete="new-password" />
+				</div>
+
+				<button type="submit" class="btn btn-primary" id="reset-submit"><T es="Guardar y entrar →" en="Save and sign in →" /></button>
+
+			</form>
+
+		</div>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+<script>
+	import { api, ensureAccountHost, errorText, setBusy, showAlert, wirePasswordToggles, wireStrengthMeters } from "../../scripts/account";
+
+	ensureAccountHost();
+	wirePasswordToggles();
+	wireStrengthMeters();
+
+	const token = new URLSearchParams(location.search).get("token") || "";
+	const form = document.getElementById("reset-form") as HTMLFormElement;
+	const alertBox = document.getElementById("reset-alert")!;
+	const submit = document.getElementById("reset-submit") as HTMLButtonElement;
+
+	// Keep the token out of the address bar (and of the history).
+	history.replaceState(null, "", location.pathname);
+
+	const invalid = () => {
+		showAlert(alertBox, errorText("invalid_token"));
+		document.getElementById("reset-fields")!.hidden = true;
+		submit.hidden = true;
+	};
+
+	if (!token) invalid();
+	else {
+		api<{ valid: boolean }>("/api/auth/reset?token=" + encodeURIComponent(token)).then(({ data }) => {
+			if (!data?.valid) invalid();
+		});
+	}
+
+	form.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const data = new FormData(form);
+		const password = String(data.get("password") || "");
+
+		if (password.length < 8) return showAlert(alertBox, errorText("password_short"));
+		if (password !== data.get("confirm")) return showAlert(alertBox, errorText("password_mismatch"));
+
+		setBusy(submit, true);
+		const result = await api("/api/auth/reset", { token, password });
+		setBusy(submit, false);
+
+		if (result.ok) location.replace("/cuenta/");
+		else showAlert(alertBox, errorText(result.data.error));
+	});
+</script>

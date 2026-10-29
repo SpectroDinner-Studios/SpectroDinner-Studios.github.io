@@ -1,0 +1,109 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/account.css";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+import PasswordField from "../components/account/PasswordField.astro";
+---
+
+<Layout title="Entrar | SpectroDinner™" description="Entra en tu cuenta de SpectroDinner Studios para ver tus tickets y encargos." noindex>
+
+	<Navbar />
+
+	<main class="container acc-page">
+
+		<div class="acc-auth">
+
+			<section class="acc-pitch">
+				<span class="eyebrow"><T es="Tu cuenta" en="Your account" /></span>
+				<h1><T es="Bienvenido de vuelta" en="Welcome back" /></h1>
+				<p>
+					<T
+						es="Entra para ver tus tickets, seguir tus encargos y hablar con el equipo."
+						en="Sign in to see your tickets, follow your orders and talk to the team."
+					/>
+				</p>
+			</section>
+
+			<form class="acc-card" id="login-form" novalidate>
+
+				<h2><T es="Entrar" en="Sign in" /></h2>
+
+				<p class="acc-alert" id="login-alert" role="alert" hidden></p>
+
+				<label class="acc-field" for="login-email">
+					Email
+					<input id="login-email" name="email" type="email" autocomplete="email" maxlength="120" required />
+				</label>
+
+				<PasswordField id="login-password" name="password" label={{ es: "Contraseña", en: "Password" }} autocomplete="current-password" />
+
+				<button type="submit" class="btn btn-primary" id="login-submit"><T es="Entrar →" en="Sign in →" /></button>
+
+				<details class="acc-switch">
+					<summary class="acc-link"><T es="¿Olvidaste tu contraseña?" en="Forgot your password?" /></summary>
+					<p>
+						<T
+							es="Escríbenos por Discord o a oierps8@gmail.com desde el email de tu cuenta y te enviaremos un enlace para crear una nueva."
+							en="Message us on Discord or email oierps8@gmail.com from your account's email and we'll send you a link to set a new one."
+						/>
+					</p>
+				</details>
+
+				<p class="acc-switch">
+					<T es="¿No tienes cuenta?" en="No account yet?" /> <a href="/registro/" id="to-register"><T es="Crea una" en="Create one" /></a>
+				</p>
+
+			</form>
+
+		</div>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+<script>
+	import { api, ensureAccountHost, errorText, safeNext, setBusy, showAlert, wirePasswordToggles } from "../scripts/account";
+
+	ensureAccountHost();
+	wirePasswordToggles();
+
+	const next = safeNext(new URLSearchParams(location.search).get("next"));
+	const form = document.getElementById("login-form") as HTMLFormElement;
+	const alertBox = document.getElementById("login-alert")!;
+	const submit = document.getElementById("login-submit") as HTMLButtonElement;
+
+	// Keep where to go next when switching to sign-up.
+	(document.getElementById("to-register") as HTMLAnchorElement).href = "/registro/?next=" + encodeURIComponent(next);
+
+	// Already signed in: straight on.
+	api<{ user: unknown }>("/api/auth/me").then(({ data }) => {
+		if (data?.user) location.replace(next);
+	});
+
+	form.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const data = new FormData(form);
+		const email = String(data.get("email") || "").trim();
+		const password = String(data.get("password") || "");
+
+		if (!email || !password) {
+			showAlert(alertBox, errorText("invalid_credentials"));
+			return;
+		}
+
+		setBusy(submit, true);
+		const result = await api("/api/auth/login", { email, password });
+		setBusy(submit, false);
+
+		if (result.ok) {
+			location.replace(next);
+			return;
+		}
+		showAlert(alertBox, errorText(result.data.error));
+		(form.elements.namedItem("password") as HTMLInputElement).select();
+	});
+</script>

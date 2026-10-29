@@ -1,0 +1,141 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/account.css";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+import PasswordField from "../components/account/PasswordField.astro";
+---
+
+<Layout title="Crear cuenta | SpectroDinner™" description="Crea tu cuenta de SpectroDinner Studios para abrir tickets y seguir tus encargos." noindex>
+
+	<Navbar />
+
+	<main class="container acc-page">
+
+		<div class="acc-auth">
+
+			<section class="acc-pitch">
+				<span class="eyebrow"><T es="Cuenta gratuita" en="Free account" /></span>
+				<h1><T es="Crea tu cuenta" en="Create your account" /></h1>
+				<p>
+					<T
+						es="Con una cuenta tienes un sitio donde hablar con nosotros y ver en qué punto está todo lo que nos pides."
+						en="An account gives you one place to talk to us and see where everything you've asked for stands."
+					/>
+				</p>
+				<ul class="acc-perks">
+					<li><span class="acc-perk-icon" aria-hidden="true">🎫</span><span><T es="Abre tickets de soporte y recibe respuesta aquí mismo." en="Open support tickets and get replies right here." /></span></li>
+					<li><span class="acc-perk-icon" aria-hidden="true">📦</span><span><T es="Sigue tus encargos de Discord o Minecraft paso a paso." en="Follow your Discord or Minecraft orders step by step." /></span></li>
+					<li><span class="acc-perk-icon" aria-hidden="true">🔒</span><span><T es="Tu contraseña se guarda cifrada; nunca la vemos." en="Your password is stored hashed; we never see it." /></span></li>
+				</ul>
+			</section>
+
+			<form class="acc-card" id="register-form" novalidate>
+
+				<h2><T es="Crear cuenta" en="Create account" /></h2>
+
+				<p class="acc-alert" id="register-alert" role="alert" hidden></p>
+
+				<label class="acc-field" for="register-name">
+					<T es="Nombre o apodo" en="Name or nickname" />
+					<input id="register-name" name="name" type="text" autocomplete="nickname" maxlength="40" required />
+				</label>
+
+				<label class="acc-field" for="register-email">
+					Email
+					<input id="register-email" name="email" type="email" autocomplete="email" maxlength="120" required />
+				</label>
+
+				<PasswordField
+					id="register-password"
+					name="password"
+					label={{ es: "Contraseña", en: "Password" }}
+					autocomplete="new-password"
+					meter
+					hint={{ es: "Mínimo 8 caracteres. Mejor si mezclas letras, números y símbolos.", en: "At least 8 characters. Best if you mix letters, numbers and symbols." }}
+				/>
+
+				<label class="acc-check">
+					<input type="checkbox" name="accept" required />
+					<span>
+						<T
+							es="Acepto que SpectroDinner Studios guarde mi nombre, email y mensajes para gestionar mi cuenta y mis tickets. Puedo borrar mi cuenta cuando quiera."
+							en="I agree that SpectroDinner Studios stores my name, email and messages to run my account and tickets. I can delete my account at any time."
+						/>
+					</span>
+				</label>
+
+				<div class="acc-honeypot" aria-hidden="true">
+					<label for="register-website">Website</label>
+					<input id="register-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+				</div>
+
+				<button type="submit" class="btn btn-primary" id="register-submit"><T es="Crear cuenta →" en="Create account →" /></button>
+
+				<p class="acc-switch">
+					<T es="¿Ya tienes cuenta?" en="Already have an account?" /> <a href="/entrar/" id="to-login"><T es="Entra" en="Sign in" /></a>
+				</p>
+
+			</form>
+
+		</div>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+<script>
+	import { api, ensureAccountHost, errorText, safeNext, setBusy, showAlert, wirePasswordToggles, wireStrengthMeters } from "../scripts/account";
+
+	ensureAccountHost();
+	wirePasswordToggles();
+	wireStrengthMeters();
+
+	const next = safeNext(new URLSearchParams(location.search).get("next"));
+	const form = document.getElementById("register-form") as HTMLFormElement;
+	const alertBox = document.getElementById("register-alert")!;
+	const submit = document.getElementById("register-submit") as HTMLButtonElement;
+
+	(document.getElementById("to-login") as HTMLAnchorElement).href = "/entrar/?next=" + encodeURIComponent(next);
+
+	api<{ user: unknown }>("/api/auth/me").then(({ data }) => {
+		if (data?.user) location.replace(next);
+	});
+
+	form.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const data = new FormData(form);
+		const payload = {
+			name: String(data.get("name") || "").trim(),
+			email: String(data.get("email") || "").trim(),
+			password: String(data.get("password") || ""),
+			accept: data.get("accept") === "on",
+			website: String(data.get("website") || ""),
+		};
+
+		// Same checks as the server, to answer at once.
+		const problem =
+			payload.name.length < 2 ? "name_invalid" :
+			!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(payload.email) ? "email_invalid" :
+			payload.password.length < 8 ? "password_short" :
+			!payload.accept ? "terms_required" :
+			"";
+		if (problem) {
+			showAlert(alertBox, errorText(problem));
+			return;
+		}
+
+		setBusy(submit, true);
+		const result = await api("/api/auth/register", payload);
+		setBusy(submit, false);
+
+		if (result.ok) {
+			location.replace(next);
+			return;
+		}
+		showAlert(alertBox, errorText(result.data.error));
+	});
+</script>

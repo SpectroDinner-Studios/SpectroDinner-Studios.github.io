@@ -53,7 +53,26 @@ export function corsPreflight(request: Request): Response {
 	);
 }
 
+export function withCookies(response: Response, cookies: string[]): Response {
+	for (const cookie of cookies) response.headers.append("Set-Cookie", cookie);
+	return response;
+}
+
+// Every /api/auth and /api/tickets route: never cached, same-origin writes only.
+export function crossOriginWrite(request: Request): boolean {
+	if (request.method === "GET" || request.method === "HEAD") return false;
+	const origin = request.headers.get("Origin");
+	return Boolean(origin && origin !== new URL(request.url).origin);
+}
+
 export function withHeaders(response: Response, headers: Record<string, string>): Response {
+	// Our own responses can be changed in place (which keeps several
+	// Set-Cookie headers intact); fetched/static ones are immutable, so copy.
+	try {
+		for (const [key, value] of Object.entries(headers)) response.headers.set(key, value);
+		return response;
+	} catch {}
+
 	const merged = new Headers(response.headers);
 	for (const [key, value] of Object.entries(headers)) merged.set(key, value);
 	return new Response(response.body, { status: response.status, statusText: response.statusText, headers: merged });

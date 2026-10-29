@@ -3,7 +3,7 @@
 Astro static site, deployed twice from `main`:
 
 - **Cloudflare Pages** — `spectrodinner-studios.pages.dev`, with the backend in [`functions/`](functions).
-- **GitHub Pages** — `spectrodinner-studios.github.io`, static only: its pages call the Cloudflare backend (allowed by CORS for that origin only), so both copies share reviews, settings and the panel.
+- **GitHub Pages** — `spectrodinner-studios.github.io`, static only: its pages call the Cloudflare backend (allowed by CORS for that origin only), so both copies share reviews, settings and the panel. Accounts only live on the Cloudflare site; the GitHub copy links there.
 
 ## Development
 
@@ -17,7 +17,10 @@ npm run dev
 - `POST /api/submit` — every site form (reviews, Discord, Minecraft, volunteering) is stored in D1, with the language it was filled in, and forwarded to the existing Make scenario.
 - `GET /api/reviews` — every review on the homepage (the ones that used to be hard-coded were moved into D1 once, so they can be deleted too). New ones go live as soon as they're sent (max 3 per visitor a day) and are moderated afterwards: hiding or deleting one in `/admin` removes it from the site at once (the list is never cached, and open pages re-check every minute).
 - `GET /api/settings` and `/config.json` — the switches from **Ajustes**: volunteering open/closed, reviews instant or held for approval, maintenance mode.
+- **Accounts** — `/registro`, `/entrar`, `/cuenta` (API in `functions/api/auth`). Email + password, stored as PBKDF2 hashes; sessions in an HttpOnly cookie, separate from the admin login. Forgotten passwords: the panel makes a one-time link (24 h) to send by hand, since the site has no email service.
+- **Tickets** — `/cuenta/nuevo` and `/cuenta/ticket` (API in `functions/api/tickets`). A conversation per ticket, answered from the panel. A questionnaire sent while signed in opens a ticket automatically, where the user sees its progress and every Aceptar / Rechazar / Terminado as a message. Optional `TICKETS_WEBHOOK_URL` secret: gets a JSON POST when a ticket is opened or answered by the user (e.g. a Make scenario that emails you).
 - `/admin` — private panel. Login is at `/acceso`.
+  - **Tickets** and **Usuarios** tabs: reply (with quick replies), close/reopen, password links, disable or delete accounts.
   - Requests and volunteer applications: **Aceptar / Rechazar** (and **Terminado** for orders), with a reply email already written for each case, in Spanish or English.
   - Private notes on any submission, search, filters and CSV export.
   - **Revisar la web** opens the site beside the panel, with moderation buttons on every review.

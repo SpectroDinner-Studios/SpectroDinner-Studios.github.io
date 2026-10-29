@@ -28,6 +28,9 @@ export interface Env {
 	SESSION_SECRET?: string;
 	// Optional override; defaults to the Make scenario the site already uses.
 	MAKE_WEBHOOK_URL?: string;
+	// Optional: gets a JSON POST when a ticket is opened or a user replies
+	// (e.g. a separate Make scenario that emails you). Off when unset.
+	TICKETS_WEBHOOK_URL?: string;
 }
 
 export interface PagesContext {

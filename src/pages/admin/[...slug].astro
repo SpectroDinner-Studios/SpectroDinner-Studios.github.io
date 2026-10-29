@@ -98,6 +98,29 @@ export function getStaticPaths() {
 			</div>
 		</section>
 
+		<section id="adm-tickets" hidden>
+			<div id="adm-tk-list-view">
+				<div class="adm-toolbar">
+					<input type="search" id="adm-tk-search" placeholder="Buscar por asunto, nombre o email…" autocomplete="off" />
+					<div class="adm-filter" id="adm-tk-filter" role="group" aria-label="Estado"></div>
+				</div>
+				<p class="adm-count" id="adm-tk-count"></p>
+				<div class="adm-list" id="adm-tk-list" aria-live="polite"></div>
+			</div>
+			<div id="adm-tk-thread-view" hidden>
+				<button type="button" class="btn btn-ghost btn-sm" id="adm-tk-back">← Todos los tickets</button>
+				<div id="adm-tk-thread"></div>
+			</div>
+		</section>
+
+		<section id="adm-users" hidden>
+			<div class="adm-toolbar">
+				<input type="search" id="adm-us-search" placeholder="Buscar por nombre o email…" autocomplete="off" />
+			</div>
+			<p class="adm-count" id="adm-us-count"></p>
+			<div class="adm-list" id="adm-us-list" aria-live="polite"></div>
+		</section>
+
 		<section id="adm-settings" hidden>
 			<div class="adm-panel">
 				<div class="adm-panel-head">
@@ -109,6 +132,18 @@ export function getStaticPaths() {
 		</section>
 
 		<div class="adm-toast" id="adm-toast" role="status" aria-live="polite" hidden></div>
+
+		<dialog class="adm-dialog adm-reply" id="adm-link-dialog" aria-labelledby="adm-link-title">
+			<div class="adm-reply-head">
+				<h2 id="adm-link-title">Enlace para cambiar la contraseña</h2>
+			</div>
+			<p id="adm-link-text"></p>
+			<label class="adm-reply-field">Enlace <input id="adm-link-url" readonly /></label>
+			<div class="adm-dialog-actions">
+				<button type="button" class="btn btn-ghost btn-sm" id="adm-link-close">Cerrar</button>
+				<button type="button" class="btn btn-primary btn-sm" id="adm-link-copy">Copiar enlace</button>
+			</div>
+		</dialog>
 
 		<dialog class="adm-dialog adm-reply" id="adm-reply" aria-labelledby="adm-reply-title">
 			<div class="adm-reply-head">
@@ -122,6 +157,7 @@ export function getStaticPaths() {
 			<div class="adm-dialog-actions">
 				<button type="button" class="btn btn-ghost btn-sm" id="adm-reply-close">Cerrar</button>
 				<button type="button" class="btn btn-ghost btn-sm" id="adm-reply-copy">Copiar texto</button>
+				<button type="button" class="btn btn-ghost btn-sm" id="adm-reply-ticket" hidden>🎫 Enviar al ticket</button>
 				<a class="btn btn-primary btn-sm" id="adm-reply-mail" href="#">✉ Abrir en mi correo</a>
 			</div>
 		</dialog>
@@ -169,7 +205,31 @@ export function getStaticPaths() {
 .adm-previous { margin: 0 0 18px; font-size: .86rem; color: var(--text-dim); }
 .adm-danger { --btn-bg: color-mix(in srgb, var(--danger) 14%, transparent); --btn-fg: var(--danger); --btn-ring: color-mix(in srgb, var(--danger) 45%, transparent); }
 
-.adm-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 22px; }
+.adm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 22px; }
+
+/* Tickets & accounts */
+.adm-card.is-clickable { cursor: pointer; transition: border-color var(--transition); }
+.adm-card.is-clickable:hover { border-color: var(--border-3); }
+.adm-preview { margin: 8px 0 0; font-size: .9rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.adm-thread-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; margin: 14px 0; }
+.adm-thread-head h2 { font-size: 1.35rem; font-weight: 700; overflow-wrap: anywhere; }
+.adm-thread-head .adm-sub { margin-top: 6px; }
+.adm-linked { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; padding: 12px 14px; font-size: .9rem; color: var(--text-muted); background: var(--primary-bg); border-left: 3px solid var(--primary); border-radius: var(--radius-xs); }
+.adm-messages { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.adm-msg { max-width: min(80%, 640px); padding: 10px 14px; background: var(--surface-2); border: 1px solid var(--border-1); border-radius: var(--radius-sm); }
+.adm-msg header { display: flex; gap: 10px; align-items: baseline; margin-bottom: 4px; font-size: .78rem; color: var(--text-dim); }
+.adm-msg header strong { font-family: var(--font-display); font-size: .86rem; color: var(--text); }
+.adm-msg p { margin: 0; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+.adm-msg.is-user { align-self: flex-start; border-left: 3px solid var(--primary); }
+.adm-msg.is-staff { align-self: flex-end; background: var(--gold-bg); border-color: var(--gold-border); }
+.adm-msg.is-system { align-self: center; padding: 5px 12px; font-size: .84rem; color: var(--text-muted); text-align: center; background: transparent; border-style: dashed; }
+.adm-msg.is-system header { justify-content: center; margin-bottom: 0; }
+.adm-compose { display: flex; flex-direction: column; gap: 10px; padding: 14px; background: var(--bg-elevated); border: 1px solid var(--border-2); border-radius: var(--radius-xs); }
+.adm-compose textarea { width: 100%; min-height: 110px; padding: 10px 12px; font: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg-sunken); border: 1px solid var(--border-2); border-radius: var(--radius-xs); resize: vertical; }
+.adm-compose textarea:focus { border-color: var(--primary); outline: none; }
+.adm-quick { display: flex; flex-wrap: wrap; gap: 6px; }
+.adm-quick button { padding: 4px 10px; font: inherit; font-size: .8rem; color: var(--text-muted); background: var(--surface-1); border: 1px dashed var(--border-2); border-radius: 999px; cursor: pointer; }
+.adm-quick button:hover { color: var(--text); border-color: var(--primary); }
 .adm-stat { display: flex; flex-direction: column; gap: 6px; padding: 16px; text-align: left; font: inherit; color: var(--text); background: var(--surface-1); border: 1px solid var(--border-1); border-left: 3px solid var(--primary); border-radius: var(--radius-xs); cursor: pointer; transition: border-color var(--transition), background var(--transition); }
 .adm-stat:hover { background: var(--surface-2); border-color: var(--border-3); }
 .adm-stat.is-alert { border-left-color: var(--gold); }
@@ -334,7 +394,7 @@ export function getStaticPaths() {
 		{ key: "maintenance", icon: "🛠️", title: "Modo mantenimiento", warn: true, on: "Los visitantes ven la página de mantenimiento. Tú, desde este navegador, sigues viendo la web normal.", off: "La web funciona con normalidad.", confirm: "Los visitantes verán la página de mantenimiento hasta que lo desactives. ¿Activarlo?" },
 	];
 
-	const ACTION_ICONS = { delete: "🗑", restore: "↩️", approve: "✅", hide: "🙈", accept: "✔️", reject: "✖️", done: "🏁", read: "👁", unread: "🔵", note: "📝", setting: "⚙️", "read-all": "☑️" };
+	const ACTION_ICONS = { delete: "🗑", restore: "↩️", approve: "✅", hide: "🙈", accept: "✔️", reject: "✖️", done: "🏁", read: "👁", unread: "🔵", note: "📝", setting: "⚙️", "read-all": "☑️", "ticket-reply": "💬", "ticket-close": "🔒", "ticket-reopen": "🔓", "user-reset": "🔑", "user-disable": "⛔", "user-enable": "✅", "user-delete": "🗑" };
 
 	// ---------- Reply templates ----------
 	// v = { name, ref, about } · one per decision, for volunteers and orders.
@@ -424,7 +484,7 @@ export function getStaticPaths() {
 
 	// ---------- State ----------
 
-	const state = { tab: "review", filter: "all", query: "", rows: [], counts: [], recent: [], open: new Set(), editingNote: 0 };
+	const state = { tab: "review", filter: "all", query: "", rows: [], counts: [], recent: [], open: new Set(), editingNote: 0, tickets: { open: 0, unread: 0 }, users: 0 };
 
 	// ---------- Helpers ----------
 
@@ -552,6 +612,16 @@ export function getStaticPaths() {
 			box.append(card);
 		}
 
+		const ticketsCard = el("button", "adm-stat" + (state.tickets.unread ? " is-alert" : ""));
+		ticketsCard.type = "button";
+		ticketsCard.append(el("span", "", "🎫 Tickets"), el("strong", "", state.tickets.open));
+		const ticketsSmall = el("small");
+		if (state.tickets.unread) ticketsSmall.append(el("b", "", state.tickets.unread), " sin leer");
+		else ticketsSmall.textContent = "abiertos · todo al día";
+		ticketsCard.append(ticketsSmall);
+		ticketsCard.addEventListener("click", () => selectTab("tickets"));
+		box.append(ticketsCard);
+
 		const week = state.recent.reduce((sum, r) => sum + r.n, 0);
 		const weekCard = el("div", "adm-stat");
 		weekCard.append(el("span", "", "📅 Últimos 7 días"), el("strong", "", week), el("small", "", "envíos recibidos"));
@@ -561,17 +631,21 @@ export function getStaticPaths() {
 	const renderTabs = () => {
 		const nav = $("adm-tabs");
 		nav.replaceChildren();
-		const tabs = [...Object.entries(FORMS), ["security", { label: "Seguridad", icon: "🛡️" }], ["settings", { label: "Ajustes", icon: "⚙️" }]];
+		const tabs = [
+			...Object.entries(FORMS),
+			["tickets", { label: "Tickets", icon: "🎫", badge: () => state.tickets.unread }],
+			["users", { label: "Usuarios", icon: "👤" }],
+			["security", { label: "Seguridad", icon: "🛡️" }],
+			["settings", { label: "Ajustes", icon: "⚙️" }],
+		];
 
 		for (const [id, cfg] of tabs) {
 			const tab = el("button", "adm-tab");
 			tab.type = "button";
 			tab.setAttribute("aria-selected", String(state.tab === id));
 			tab.append(el("span", "", cfg.icon), cfg.label);
-			if (cfg.fresh) {
-				const n = countOf(id, cfg.fresh);
-				if (n) tab.append(el("span", "adm-badge", n));
-			}
+			const n = cfg.fresh ? countOf(id, cfg.fresh) : cfg.badge ? cfg.badge() : 0;
+			if (n) tab.append(el("span", "adm-badge", n));
 			tab.addEventListener("click", () => selectTab(id));
 			nav.append(tab);
 		}
@@ -714,6 +788,7 @@ export function getStaticPaths() {
 
 		const head = el("div", "adm-card-head");
 		head.append(el("strong", "", d.nickname || d.nombre || "—"), el("span", "adm-chip " + statusTone, statusLabel));
+		if (row.ticket_id) head.append(el("span", "adm-chip blue", "🎫 Con cuenta"));
 		const meta = el("span", "adm-meta");
 		const when = el("span", "", relative(row.created_at));
 		when.title = absolute(row.created_at);
@@ -789,6 +864,7 @@ export function getStaticPaths() {
 			}
 
 			actions.append(button("✉ Responder", () => openReply(row, TEMPLATE_FOR_STATUS[row.status] || "received")));
+			if (row.ticket_id) actions.append(button("🎫 Ticket " + ref(row.ticket_id), () => openTicket(row.ticket_id)));
 
 			if (d.email && EMAIL_RE.test(d.email)) {
 				actions.append(
@@ -829,10 +905,12 @@ export function getStaticPaths() {
 	};
 
 	const loadRows = async () => {
-		const { submissions, counts, recent } = await api("submissions?form=" + encodeURIComponent(state.tab));
+		const { submissions, counts, recent, tickets, users } = await api("submissions?form=" + encodeURIComponent(state.tab));
 		state.rows = submissions;
 		state.counts = counts;
 		state.recent = recent || [];
+		state.tickets = tickets || { open: 0, unread: 0 };
+		state.users = users || 0;
 		if (state.tab === "review") setReviewIndex(submissions);
 		renderStats();
 		renderTabs();
@@ -1103,7 +1181,7 @@ export function getStaticPaths() {
 		$("adm-actions").replaceChildren(
 			...(actions.length
 				? actions.map((a) => {
-						const li = el("li", a.action === "delete" ? "is-delete" : "");
+						const li = el("li", a.action === "delete" || a.action === "user-delete" ? "is-delete" : "");
 						li.append(el("span", "", ACTION_ICONS[a.action] || "•"), el("span", "", a.summary || a.action));
 						const when = el("small", "", relative(a.at));
 						when.title = absolute(a.at);
@@ -1270,9 +1348,26 @@ export function getStaticPaths() {
 			})
 		);
 
+		$("adm-reply-ticket").hidden = !row.ticket_id;
+
 		fillReply();
 		$("adm-reply").showModal();
 	};
+
+	// Signed-in requests have a ticket: the reply can go there instead of email.
+	$("adm-reply-ticket").addEventListener("click", async () => {
+		const row = reply.row;
+		if (!row?.ticket_id) return;
+		try {
+			await api("tickets", { id: row.ticket_id, action: "reply", body: $("adm-reply-body").value });
+		} catch (err) {
+			if (err.message !== "auth") toast("No se pudo enviar al ticket.", true);
+			return;
+		}
+		$("adm-reply").close();
+		toast("Enviado al ticket " + ref(row.ticket_id));
+		await afterChange(row.form);
+	});
 
 	$("adm-reply-subject").addEventListener("input", updateMailLink);
 	$("adm-reply-body").addEventListener("input", updateMailLink);
@@ -1286,24 +1381,360 @@ export function getStaticPaths() {
 		}
 	});
 
+	// ---------- Tickets ----------
+
+	const TICKET_CATEGORIES = { soporte: "🛟 Soporte", discord: "💬 Discord", minecraft: "⛏️ Minecraft", tep: "⏱️ T.E.P.", voluntariado: "🤝 Voluntariado", otro: "✉️ Otro" };
+	const TICKET_STATUS = { open: ["Espera respuesta", "gold"], answered: ["Respondido", "green"], closed: ["Cerrado", ""] };
+	const TICKET_FILTERS = [["active", "Activos"], ["open", "Esperan respuesta"], ["answered", "Respondidos"], ["closed", "Cerrados"], ["all", "Todos"]];
+	const SYSTEM_TEXT = {
+		"submitted:discord": "Envió el cuestionario de Discord con la sesión iniciada.",
+		"submitted:minecraft": "Envió el cuestionario de Minecraft con la sesión iniciada.",
+		"submitted:voluntariado": "Envió su postulación al voluntariado con la sesión iniciada.",
+		"status:read": "Solicitud marcada como en revisión.",
+		"status:accepted": "Solicitud aceptada.",
+		"status:rejected": "Solicitud rechazada.",
+		"status:done": "Encargo terminado.",
+		"closed:user": "El usuario cerró el ticket.",
+		"closed:staff": "Cerraste el ticket.",
+		"reopened:user": "El usuario reabrió el ticket.",
+		"reopened:staff": "Reabriste el ticket.",
+	};
+	const QUICK_REPLIES = [
+		["👀 Lo estamos mirando", "¡Gracias por escribirnos! Ya lo estamos mirando y te contamos en cuanto sepamos algo."],
+		["❓ Más detalles", "¿Nos puedes dar algo más de detalle? Por ejemplo: qué versión usas, qué esperabas que pasara y qué pasa en su lugar (si tienes capturas, pega el enlace)."],
+		["✅ Solucionado", "¡Listo! Ya debería estar solucionado. Si vuelve a pasar, responde aquí mismo y lo revisamos."],
+	];
+
+	const tk = { list: [], filter: "active", query: "", openId: 0, timer: 0 };
+
+	const ticketMatches = (t) => {
+		if (tk.filter === "active" ? t.status === "closed" : tk.filter !== "all" && t.status !== tk.filter) return false;
+		const q = tk.query.trim().toLowerCase();
+		return !q || [ref(t.id), t.subject, t.user_name, t.user_email].join(" ").toLowerCase().includes(q);
+	};
+
+	const renderTicketFilter = () => {
+		$("adm-tk-filter").replaceChildren(
+			...TICKET_FILTERS.map(([value, label]) => {
+				const b = el("button", "", label);
+				b.type = "button";
+				b.setAttribute("aria-pressed", String(tk.filter === value));
+				b.addEventListener("click", () => {
+					tk.filter = value;
+					renderTicketFilter();
+					renderTicketList();
+				});
+				return b;
+			})
+		);
+	};
+
+	const renderTicketList = () => {
+		const rows = tk.list.filter(ticketMatches);
+		$("adm-tk-count").textContent = rows.length + " de " + tk.list.length + " tickets";
+		if (!rows.length) {
+			$("adm-tk-list").replaceChildren(el("p", "adm-empty", tk.list.length ? "Nada coincide con el filtro o la búsqueda." : "Todavía no hay tickets. Aparecerán aquí cuando alguien abra uno desde su cuenta."));
+			return;
+		}
+		$("adm-tk-list").replaceChildren(
+			...rows.map((t) => {
+				const [label, tone] = TICKET_STATUS[t.status] || [t.status, ""];
+				const card = el("article", "adm-card is-clickable" + (t.staff_unread ? " is-new" : "") + (t.status === "closed" ? " is-muted" : ""));
+				const head = el("div", "adm-card-head");
+				head.append(el("strong", "", t.subject), el("span", "adm-chip " + tone, label));
+				if (t.staff_unread) head.append(el("span", "adm-chip gold", "Sin leer"));
+				if (t.submission_id) head.append(el("span", "adm-chip blue", "📦 Encargo"));
+				const meta = el("span", "adm-meta");
+				const whenEl = el("span", "", relative(t.updated_at));
+				whenEl.title = absolute(t.updated_at);
+				meta.append(el("span", "", ref(t.id)), whenEl);
+				head.append(meta);
+
+				const sub = el("div", "adm-sub");
+				sub.append(el("span", "", "👤 " + (t.user_name || "Cuenta eliminada")), el("span", "", t.user_email || ""), el("span", "", TICKET_CATEGORIES[t.category] || t.category));
+
+				const last = t.last_author === "system" ? SYSTEM_TEXT[t.last_body] || t.last_body : (t.last_author === "staff" ? "Tú: " : "") + (t.last_body || "");
+				card.append(head, sub, el("p", "adm-preview", last));
+				card.addEventListener("click", () => openTicket(t.id));
+				return card;
+			})
+		);
+	};
+
+	const loadTickets = async () => {
+		const { tickets } = await api("tickets");
+		tk.list = tickets;
+		state.tickets = { open: tickets.filter((t) => t.status !== "closed").length, unread: tickets.filter((t) => t.staff_unread).length };
+		renderTabs();
+		renderTicketList();
+	};
+
+	const showTicketList = () => {
+		tk.openId = 0;
+		clearInterval(tk.timer);
+		$("adm-tk-thread-view").hidden = true;
+		$("adm-tk-list-view").hidden = false;
+	};
+
+	const renderThread = ({ ticket, messages, submission }) => {
+		const box = $("adm-tk-thread");
+		const [label, tone] = TICKET_STATUS[ticket.status] || [ticket.status, ""];
+		const closed = ticket.status === "closed";
+
+		const head = el("div", "adm-thread-head");
+		const info = el("div");
+		const chips = el("div", "adm-card-head");
+		chips.append(el("span", "adm-chip", ref(ticket.id)), el("span", "adm-chip", TICKET_CATEGORIES[ticket.category] || ticket.category), el("span", "adm-chip " + tone, label));
+		const who = el("div", "adm-sub");
+		who.append(el("span", "", "👤 " + (ticket.user_name || "Cuenta eliminada")));
+		if (ticket.user_email) {
+			const mail = el("a", "", "✉ " + ticket.user_email);
+			mail.href = "mailto:" + ticket.user_email + "?subject=" + encodeURIComponent(ticket.subject + " (" + ref(ticket.id) + ")");
+			who.append(mail);
+		}
+		if (ticket.user_since) who.append(el("span", "", "Cuenta desde " + absolute(ticket.user_since).split(",")[0]));
+		info.append(el("h2", "", ticket.subject), chips, who);
+		head.append(
+			info,
+			button(closed ? "🔓 Reabrir" : "🔒 Cerrar ticket", async () => {
+				await api("tickets", { id: ticket.id, action: closed ? "reopen" : "close" });
+				toast(closed ? "Ticket reabierto" : "Ticket cerrado");
+				openTicket(ticket.id);
+			})
+		);
+
+		const parts = [head];
+
+		if (submission) {
+			const form = FORMS[submission.form];
+			const [statusLabel] = STATUS[submission.status] || [submission.status];
+			const linked = el("div", "adm-linked");
+			linked.append(
+				el("span", "", "📦 Sigue la solicitud " + (form ? form.label : submission.form) + " " + ref(submission.id) + " · " + statusLabel + ". Lo que hagas con ella (Aceptar, Rechazar, Terminado…) se le avisa aquí."),
+				button("Ver solicitud", async () => {
+					await selectTab(submission.form);
+					const card = $("adm-list").querySelector('[data-id="' + Number(submission.id) + '"]');
+					if (card) flash(card, "is-flash");
+				})
+			);
+			parts.push(linked);
+		} else if (ticket.submission_id) {
+			parts.push(el("div", "adm-linked", "📦 La solicitud " + ref(ticket.submission_id) + " que seguía este ticket ya no existe."));
+		}
+
+		const list = el("div", "adm-messages");
+		for (const m of messages) {
+			const msg = el("div", "adm-msg is-" + m.author);
+			const header = el("header");
+			const time = el("span", "", relative(m.created_at));
+			time.title = absolute(m.created_at);
+			if (m.author !== "system") header.append(el("strong", "", m.author === "staff" ? "Tú (SpectroDinner)" : ticket.user_name || "Usuario"));
+			header.append(time);
+			msg.append(header, el("p", "", m.author === "system" ? SYSTEM_TEXT[m.body] || m.body : m.body));
+			list.append(msg);
+		}
+		parts.push(list);
+
+		const compose = el("div", "adm-compose");
+		const area = el("textarea");
+		area.maxLength = 4000;
+		area.placeholder = closed ? "Escribir reabre el ticket…" : "Escribe tu respuesta… (Ctrl + Enter para enviar)";
+		const quick = el("div", "adm-quick");
+		for (const [labelText, text] of QUICK_REPLIES) {
+			const b = el("button", "", labelText);
+			b.type = "button";
+			b.addEventListener("click", () => {
+				area.value = (area.value ? area.value.trimEnd() + "\n\n" : "") + text;
+				area.focus();
+			});
+			quick.append(b);
+		}
+		const send = async (close) => {
+			const body = area.value.trim();
+			if (!body) return toast("Escribe una respuesta primero.", true);
+			try {
+				await api("tickets", { id: ticket.id, action: "reply", body, close });
+			} catch (err) {
+				if (err.message !== "auth") toast("No se pudo enviar.", true);
+				return;
+			}
+			toast(close ? "Respuesta enviada y ticket cerrado" : "Respuesta enviada");
+			openTicket(ticket.id);
+		};
+		area.addEventListener("keydown", (e) => {
+			if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) send(false);
+		});
+		const actions = el("div", "adm-actions");
+		actions.append(button("Enviar →", () => send(false), "btn btn-primary btn-sm"), button("Enviar y cerrar", () => send(true)));
+		compose.append(quick, area, actions);
+		parts.push(compose);
+
+		box.replaceChildren(...parts);
+	};
+
+	const openTicket = async (id) => {
+		if (state.tab !== "tickets") await selectTab("tickets");
+		tk.openId = id;
+		$("adm-tk-list-view").hidden = true;
+		$("adm-tk-thread-view").hidden = false;
+		try {
+			renderThread(await api("tickets?id=" + Number(id)));
+		} catch (err) {
+			if (err.message !== "auth") toast("No se pudo abrir el ticket.", true);
+			return;
+		}
+		// Opening it marked it read on the server: update the badges too.
+		const listed = tk.list.find((t) => t.id === id);
+		if (listed?.staff_unread) {
+			listed.staff_unread = 0;
+			state.tickets.unread = Math.max(0, state.tickets.unread - 1);
+			renderTabs();
+			renderStats();
+		}
+		$("adm-tk-thread-view").scrollIntoView({ block: "start" });
+		// New messages show up while the thread is open.
+		clearInterval(tk.timer);
+		tk.timer = setInterval(async () => {
+			if (document.hidden || tk.openId !== id || state.tab !== "tickets") return;
+			const area = $("adm-tk-thread").querySelector("textarea");
+			if (area && area.value) return; // don't wipe a reply being written
+			try {
+				renderThread(await api("tickets?id=" + Number(id)));
+			} catch {}
+		}, 30 * 1000);
+	};
+
+	$("adm-tk-back").addEventListener("click", () => {
+		showTicketList();
+		loadTickets().catch(() => {});
+	});
+	$("adm-tk-search").addEventListener("input", (e) => {
+		tk.query = e.target.value;
+		renderTicketList();
+	});
+
+	// ---------- Accounts ----------
+
+	const us = { list: [], query: "" };
+
+	const renderUsers = () => {
+		const q = us.query.trim().toLowerCase();
+		const rows = us.list.filter((u) => !q || (u.name + " " + u.email).toLowerCase().includes(q));
+		$("adm-us-count").textContent = rows.length + " de " + us.list.length + " cuentas";
+		if (!rows.length) {
+			$("adm-us-list").replaceChildren(el("p", "adm-empty", us.list.length ? "Nada coincide con la búsqueda." : "Todavía no se ha registrado nadie."));
+			return;
+		}
+		$("adm-us-list").replaceChildren(
+			...rows.map((u) => {
+				const card = el("article", "adm-card" + (u.disabled ? " is-muted" : ""));
+				const head = el("div", "adm-card-head");
+				head.append(el("strong", "", u.name));
+				if (u.disabled) head.append(el("span", "adm-chip red", "Desactivada"));
+				const meta = el("span", "adm-meta");
+				meta.append(el("span", "", "#" + u.id));
+				head.append(meta);
+
+				const sub = el("div", "adm-sub");
+				const mail = el("a", "", "✉ " + u.email);
+				mail.href = "mailto:" + u.email;
+				sub.append(mail, el("span", "", "Alta: " + absolute(u.created_at).split(",")[0]), el("span", "", "Último acceso: " + (u.last_login ? relative(u.last_login) : "nunca")), el("span", "", "🎫 " + u.tickets + (u.tickets === 1 ? " ticket" : " tickets")));
+
+				const actions = el("div", "adm-actions");
+				actions.append(
+					button("🔑 Enlace para cambiar contraseña", async () => {
+						try {
+							const { url } = await api("users", { id: u.id, action: "reset-link" });
+							$("adm-link-text").textContent = "Envíaselo a " + u.name + " (" + u.email + ") por Discord o email. Sirve una sola vez y caduca en 24 horas.";
+							$("adm-link-url").value = url;
+							$("adm-link-dialog").showModal();
+						} catch (err) {
+							if (err.message !== "auth") toast("No se pudo crear el enlace.", true);
+						}
+					})
+				);
+				if (u.tickets) {
+					actions.append(
+						button("🎫 Ver sus tickets", async () => {
+							await selectTab("tickets");
+							tk.filter = "all";
+							tk.query = u.email;
+							$("adm-tk-search").value = u.email;
+							renderTicketFilter();
+							renderTicketList();
+						})
+					);
+				}
+				actions.append(
+					button(u.disabled ? "✅ Activar" : "⛔ Desactivar", async () => {
+						await api("users", { id: u.id, action: u.disabled ? "enable" : "disable" });
+						toast(u.disabled ? "Cuenta activada" : "Cuenta desactivada y sesión cerrada");
+						loadUsers();
+					}),
+					button("🗑 Eliminar", async () => {
+						if (!(await confirmDialog("¿Eliminar la cuenta de " + u.name + " (" + u.email + ") y sus " + u.tickets + " tickets? No se puede deshacer."))) return;
+						await api("users", { id: u.id, action: "delete" });
+						toast("Cuenta eliminada");
+						loadUsers();
+					}, "btn btn-sm adm-danger")
+				);
+
+				card.append(head, sub, actions);
+				return card;
+			})
+		);
+	};
+
+	const loadUsers = async () => {
+		us.list = (await api("users")).users;
+		state.users = us.list.length;
+		renderUsers();
+	};
+
+	$("adm-us-search").addEventListener("input", (e) => {
+		us.query = e.target.value;
+		renderUsers();
+	});
+	$("adm-link-close").addEventListener("click", () => $("adm-link-dialog").close());
+	$("adm-link-copy").addEventListener("click", async () => {
+		try {
+			await navigator.clipboard.writeText($("adm-link-url").value);
+			toast("Enlace copiado");
+		} catch {
+			$("adm-link-url").select();
+			toast("Selecciónalo y cópialo a mano", true);
+		}
+	});
+
 	// ---------- Navigation ----------
 
-	const selectTab = async (tab) => {
+	const selectTab = async (tab, { keepThread = false } = {}) => {
 		state.tab = tab;
 		state.filter = "all";
 		state.open.clear();
 		state.editingNote = 0;
 		const isSecurity = tab === "security";
 		const isSettings = tab === "settings";
-		$("adm-inbox").hidden = isSecurity || isSettings;
+		const isTickets = tab === "tickets";
+		const isUsers = tab === "users";
+		$("adm-inbox").hidden = isSecurity || isSettings || isTickets || isUsers;
 		$("adm-security").hidden = !isSecurity;
 		$("adm-settings").hidden = !isSettings;
+		$("adm-tickets").hidden = !isTickets;
+		$("adm-users").hidden = !isUsers;
+		if (!isTickets || !keepThread) showTicketList();
 		renderTabs();
 		try {
 			if (isSecurity) {
 				await loadSecurity();
 			} else if (isSettings) {
 				await loadSettings();
+			} else if (isTickets) {
+				renderTicketFilter();
+				if (keepThread && tk.openId) await openTicket(tk.openId);
+				else await loadTickets();
+			} else if (isUsers) {
+				await loadUsers();
 			} else {
 				renderFilter();
 				$("adm-list").replaceChildren(el("div", "adm-skeleton"), el("div", "adm-skeleton"));
@@ -1316,7 +1747,7 @@ export function getStaticPaths() {
 
 	const refresh = () => {
 		refreshWeb();
-		return selectTab(state.tab);
+		return selectTab(state.tab, { keepThread: true });
 	};
 
 	// ---------- Toolbar ----------

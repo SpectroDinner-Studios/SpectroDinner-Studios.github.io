@@ -3,6 +3,8 @@ import { ensureSchema } from "../../server/db";
 import { validateSubmission } from "../../server/forms";
 import { corsPreflight, json, readJsonObject, withCors } from "../../server/http";
 import { getSettings } from "../../server/settings";
+import { createTicket, submissionSubject } from "../../server/tickets";
+import { getUser } from "../../server/users";
 import type { PagesHandler } from "../../server/types";
 
 // The Make scenario the forms have always posted to (email notifications).
@@ -78,9 +80,25 @@ const submit: PagesHandler = async ({ request, env, waitUntil }) => {
 		}).catch(() => undefined)
 	);
 
+	const id = Number(meta.last_row_id) || undefined;
+
+	// Sent while signed in (only possible on this site, not from the GitHub
+	// copy): open a ticket so the request can be followed from the account.
+	let ticketId: number | undefined;
+	if (id && result.form !== "review" && env.SESSION_SECRET) {
+		const user = await getUser(request, env.DB, env.SESSION_SECRET);
+		if (user) {
+			ticketId = await createTicket(
+				env.DB,
+				{ userId: user.id, category: result.form, subject: submissionSubject(result.form, id, String(result.data.idioma ?? "es")), submissionId: id },
+				{ author: "system", body: `submitted:${result.form}` }
+			);
+		}
+	}
+
 	// The id is shown to the visitor as their request number.
 	return json(
-		{ ok: true, id: Number(meta.last_row_id) || undefined, ...(result.form === "review" ? { published } : {}) },
+		{ ok: true, id, ...(result.form === "review" ? { published } : {}), ...(ticketId ? { ticketId } : {}) },
 		201
 	);
 };

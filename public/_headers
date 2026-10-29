@@ -12,3 +12,26 @@
   X-Frame-Options: DENY
   Referrer-Policy: no-referrer
   Cache-Control: no-store
+
+# Account pages: never framed (no clickjacking of sign-in forms), cached or indexed.
+/entrar
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex
+  Referrer-Policy: same-origin
+/entrar/*
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex
+  Referrer-Policy: same-origin
+/registro
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex
+  Referrer-Policy: same-origin
+/registro/*
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex
+  Referrer-Policy: same-origin
+/cuenta/*
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+  Cache-Control: no-store

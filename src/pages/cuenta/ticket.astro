@@ -1,0 +1,226 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import "../../styles/account.css";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import T from "../../components/T.astro";
+---
+
+<Layout title="Ticket | SpectroDinner™" description="Tu ticket en SpectroDinner Studios." noindex>
+
+	<Navbar />
+
+	<main class="container acc-page">
+
+		<div class="acc-narrow">
+
+			<a href="/cuenta/" class="acc-back">← <T es="Mis tickets" en="My tickets" /></a>
+
+			<div id="thread-loading" class="acc-skeleton"></div>
+
+			<p class="acc-alert" id="thread-error" role="alert" hidden></p>
+
+			<article id="thread" hidden>
+
+				<header class="acc-thread-head">
+					<div>
+						<h1 id="thread-subject"></h1>
+						<div class="acc-chips" id="thread-chips"></div>
+					</div>
+					<button type="button" class="btn btn-ghost btn-sm" id="thread-toggle"></button>
+				</header>
+
+				<div class="acc-track" id="thread-track" hidden></div>
+
+				<div class="acc-messages" id="thread-messages" aria-live="polite"></div>
+
+				<form class="acc-panel acc-reply" id="reply-form" novalidate>
+					<p class="acc-alert" id="reply-alert" role="alert" hidden></p>
+					<label class="acc-field" for="reply-body">
+						<span id="reply-label"><T es="Responder" en="Reply" /></span>
+						<textarea id="reply-body" name="body" maxlength="4000" rows="4" required></textarea>
+					</label>
+					<div class="acc-reply-actions">
+						<small class="acc-meta"><T es="Ctrl + Enter para enviar" en="Ctrl + Enter to send" /></small>
+						<button type="submit" class="btn btn-primary btn-sm" id="reply-submit"><T es="Enviar →" en="Send →" /></button>
+					</div>
+				</form>
+
+			</article>
+
+		</div>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+<script>
+	import {
+		CATEGORIES,
+		REJECTED,
+		REQUEST_STEPS,
+		TICKET_STATUS,
+		api,
+		el,
+		errorText,
+		fullDate,
+		pair,
+		ref,
+		requireAccount,
+		setBusy,
+		showAlert,
+		systemText,
+		tt,
+		when,
+	} from "../../scripts/account";
+
+	type Message = { id: number; author: "user" | "staff" | "system"; body: string; created_at: string };
+	type Thread = {
+		ticket: { id: number; category: string; subject: string; status: string; created_at: string; submission_id: number | null };
+		messages: Message[];
+		submission: { status: string; form: string } | null;
+	};
+
+	const id = Number(new URLSearchParams(location.search).get("id"));
+	const messagesBox = document.getElementById("thread-messages")!;
+	const replyForm = document.getElementById("reply-form") as HTMLFormElement;
+	const replyBody = document.getElementById("reply-body") as HTMLTextAreaElement;
+	const replyAlert = document.getElementById("reply-alert")!;
+	const replySubmit = document.getElementById("reply-submit") as HTMLButtonElement;
+	const toggle = document.getElementById("thread-toggle") as HTMLButtonElement;
+
+	let current: Thread | null = null;
+	let lastKey = "";
+
+	const renderTrack = (submission: Thread["submission"]) => {
+		const track = document.getElementById("thread-track")!;
+		if (!submission) {
+			track.hidden = true;
+			return;
+		}
+		const rejected = submission.status === "rejected";
+		const order = REQUEST_STEPS.map(([key]) => key);
+		// Volunteer applications end at "accepted"; orders go on to "done".
+		const steps = submission.form === "voluntariado" ? REQUEST_STEPS.slice(0, 3) : REQUEST_STEPS;
+		const reached = rejected ? 1 : order.indexOf(submission.status);
+
+		track.classList.toggle("is-rejected", rejected);
+		track.style.gridTemplateColumns = `repeat(${rejected ? Math.min(steps.length, 3) : steps.length}, 1fr)`;
+		track.replaceChildren(
+			...steps.map(([key, label], i) => {
+				const isRejectedStep = rejected && i === 2;
+				const step = el("span", "acc-step" + (i <= reached || isRejectedStep ? " is-done" : "") + (i === reached && !rejected ? " is-current" : "") + (isRejectedStep ? " is-current" : ""));
+				step.append(pair(isRejectedStep ? REJECTED : label));
+				if (key === "done" && rejected) step.hidden = true;
+				return step;
+			})
+		);
+		track.hidden = false;
+	};
+
+	const renderMessage = (m: Message) => {
+		if (m.author === "system") {
+			const note = el("div", "acc-msg is-system", el("header", "", when(m.created_at)), el("p", "", systemText(m.body)));
+			return note;
+		}
+		const who = m.author === "staff" ? tt("SpectroDinner", "SpectroDinner") : tt("Tú", "You");
+		const time = el("span", "", when(m.created_at));
+		time.title = fullDate(m.created_at);
+		return el("div", "acc-msg is-" + m.author, el("header", "", el("strong", "", who), time), el("p", "", m.body));
+	};
+
+	const render = (thread: Thread) => {
+		current = thread;
+		const { ticket } = thread;
+		const category = CATEGORIES[ticket.category] ?? CATEGORIES.otro;
+		const status = TICKET_STATUS[ticket.status] ?? TICKET_STATUS.open;
+
+		document.title = ticket.subject + " | SpectroDinner™";
+		document.getElementById("thread-subject")!.textContent = ticket.subject;
+		document.getElementById("thread-chips")!.replaceChildren(
+			el("span", "acc-chip", ref(ticket.id)),
+			el("span", "acc-chip", category.icon + " ", pair(category.label)),
+			el("span", "acc-chip " + status.tone, pair(status.label))
+		);
+
+		const closed = ticket.status === "closed";
+		toggle.replaceChildren(closed ? tt("Reabrir ticket", "Reopen ticket") : tt("Cerrar ticket", "Close ticket"));
+		document.getElementById("reply-label")!.replaceChildren(closed ? tt("Escribir de nuevo (reabre el ticket)", "Write again (reopens the ticket)") : tt("Responder", "Reply"));
+
+		renderTrack(thread.submission);
+
+		// Only redraw the conversation when something new arrived.
+		const key = thread.messages.map((m) => m.id).join(",");
+		if (key !== lastKey) {
+			const atBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 120;
+			messagesBox.replaceChildren(...thread.messages.map(renderMessage));
+			if (lastKey && atBottom) replyForm.scrollIntoView({ block: "end" });
+			lastKey = key;
+		}
+
+		document.getElementById("thread-loading")!.hidden = true;
+		document.getElementById("thread")!.hidden = false;
+	};
+
+	const load = async () => {
+		const { ok, status, data } = await api<Thread & { error?: string }>("/api/tickets/" + id);
+		if (status === 401) {
+			location.replace("/entrar/?next=" + encodeURIComponent(location.pathname + location.search));
+			return;
+		}
+		if (!ok) {
+			document.getElementById("thread-loading")!.hidden = true;
+			showAlert(document.getElementById("thread-error")!, errorText(data.error));
+			return;
+		}
+		render(data);
+	};
+
+	replyForm.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const body = replyBody.value.trim();
+		if (!body) {
+			showAlert(replyAlert, errorText("message_short"));
+			return;
+		}
+		setBusy(replySubmit, true);
+		const result = await api(`/api/tickets/${id}`, { action: "reply", body });
+		setBusy(replySubmit, false);
+		if (!result.ok) {
+			showAlert(replyAlert, errorText(result.data.error));
+			return;
+		}
+		showAlert(replyAlert, null);
+		replyBody.value = "";
+		await load();
+		replyForm.scrollIntoView({ block: "end", behavior: "smooth" });
+	});
+
+	replyBody.addEventListener("keydown", (e) => {
+		if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) replyForm.requestSubmit();
+	});
+
+	toggle.addEventListener("click", async () => {
+		if (!current) return;
+		setBusy(toggle, true);
+		await api(`/api/tickets/${id}`, { action: current.ticket.status === "closed" ? "reopen" : "close" });
+		setBusy(toggle, false);
+		load();
+	});
+
+	if (!id) {
+		document.getElementById("thread-loading")!.hidden = true;
+		showAlert(document.getElementById("thread-error")!, errorText("not_found"));
+	} else {
+		requireAccount().then((account) => {
+			if (!account) return;
+			load();
+			// New replies show up without reloading while the page is open.
+			setInterval(() => {
+				if (!document.hidden) load();
+			}, 30_000);
+		});
+	}
+</script>
