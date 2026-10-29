@@ -3,7 +3,7 @@
 Astro static site, deployed twice from `main`:
 
 - **Cloudflare Pages** — `spectrodinner-studios.pages.dev`, with the backend in [`functions/`](functions).
-- **GitHub Pages** — `spectrodinner-studios.github.io`, static only (no `/api`).
+- **GitHub Pages** — `spectrodinner-studios.github.io`, static only: its pages call the Cloudflare backend (allowed by CORS for that origin only), so both copies share reviews, settings and the panel.
 
 ## Development
 
@@ -14,11 +14,16 @@ npm run dev
 
 ## Backend (Cloudflare Pages Functions + D1)
 
-- `POST /api/submit` — every site form (reviews, Discord, Minecraft, volunteering) is stored in D1 and forwarded to the existing Make scenario.
-- `GET /api/reviews` — reviews sent through the homepage form, shown next to the hard-coded ones. They go live as soon as they're sent (max 3 per visitor a day) and are moderated afterwards: hiding or deleting one in `/admin` removes it from the site at once (the list is never cached, and open pages re-check every minute).
-- `/admin` — private panel to read, search and export submissions, moderate reviews and see who has signed in. **Revisar la web** opens the site beside the panel, with moderation buttons on every review. Login is at `/acceso`.
+- `POST /api/submit` — every site form (reviews, Discord, Minecraft, volunteering) is stored in D1, with the language it was filled in, and forwarded to the existing Make scenario.
+- `GET /api/reviews` — every review on the homepage (the ones that used to be hard-coded were moved into D1 once, so they can be deleted too). New ones go live as soon as they're sent (max 3 per visitor a day) and are moderated afterwards: hiding or deleting one in `/admin` removes it from the site at once (the list is never cached, and open pages re-check every minute).
+- `GET /api/settings` and `/config.json` — the switches from **Ajustes**: volunteering open/closed, reviews instant or held for approval, maintenance mode.
+- `/admin` — private panel. Login is at `/acceso`.
+  - Requests and volunteer applications: **Aceptar / Rechazar** (and **Terminado** for orders), with a reply email already written for each case, in Spanish or English.
+  - Private notes on any submission, search, filters and CSV export.
+  - **Revisar la web** opens the site beside the panel, with moderation buttons on every review.
+  - **Seguridad**: open sessions, access log and a history of every change made from the panel.
 
-If the backend isn't reachable (GitHub Pages, or D1 not set up yet) the forms post straight to Make, so nothing breaks. Tables are created automatically on first use — no migrations.
+If the backend can't be reached the forms post straight to Make, so nothing breaks. Tables are created automatically on first use — no migrations.
 
 ### One-time Cloudflare setup
 

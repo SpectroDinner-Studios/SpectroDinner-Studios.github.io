@@ -61,7 +61,12 @@ const ogImageURL = new URL("/logo.png", Astro.site);
 						);
 					};
 
-					fetch("/config.json", { cache: "no-store" })
+					// The GitHub Pages copy follows the switch in the Cloudflare panel.
+					var configBase = /\.github\.io$/.test(location.hostname)
+						? "https://spectrodinner-studios.pages.dev"
+						: "";
+
+					fetch(configBase + "/config.json", { cache: "no-store" })
 						.then(function (r) {
 							return r.json();
 						})

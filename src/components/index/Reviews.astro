@@ -3,47 +3,9 @@ import "../../styles/forms.css";
 import T from "../T.astro";
 import SectionHeader from "../SectionHeader.astro";
 
-/*
-	Añade aquí las valoraciones reales de tus clientes.
-	Ejemplo:
-
-	{ name: "User123", rating: 5, service: "Creación de servidor", text: "Quedó genial, muy profesionales." }
-*/
-const reviews: {
-	name: string;
-	rating: number;
-	service?: string;
-	text: string;
-}[] = [
-	{
-		name: "Eggchan00",
-		rating: 5,
-		service: "Helped redesign my discord and built it up",
-		text: "He was the best person to do it it literally took him less than a day and you guys should try it too",
-	},
-	{
-		name: "COR_braydzYT",
-		rating: 5,
-		service: "discord moderation",
-		text: "hes so good and fast and kind",
-	},
-	{
-		name: "IVN22",
-		rating: 5,
-		service: "Creación de bot personalizado, remodelación y moderación del servidor de Discord",
-		text: "De lo mejor que puedes encontrar, muy rápido, perfecto",
-	},
-];
-
-const count = reviews.length;
-
-const average =
-	count > 0
-		? reviews.reduce((sum, r) => sum + r.rating, 0) / count
-		: 0;
-
-const stars = (rating: number) =>
-	"★".repeat(rating) + "☆".repeat(5 - rating);
+// Every review lives in the database (including the ones that used to be
+// written here by hand), so any of them can be hidden or deleted from /admin.
+// The script below loads them from /api/reviews.
 ---
 
 <section class="section" id="valoraciones">
@@ -61,86 +23,51 @@ const stars = (rating: number) =>
 			/>
 		</SectionHeader>
 
-		{
-			count > 0 ? (
-				<>
-					<div class="summary reveal">
-						<strong class="score-number">{average.toFixed(1)}</strong>
-						<div class="score-meta">
-							<span class="score-stars" aria-hidden="true">{stars(Math.round(average))}</span>
-							<span class="score-count">
-								<span data-lang="es">basado en <b class="review-count">{count}</b> valoraciones</span>
-								<span data-lang="en">based on <b class="review-count">{count}</b> reviews</span>
-							</span>
-						</div>
-						<a href="#review-form" class="btn btn-ghost btn-sm">
-							<T es="Deja la tuya" en="Leave yours" /> ↓
-						</a>
-					</div>
+		<div class="summary" data-reviews-summary hidden>
+			<strong class="score-number">–</strong>
+			<div class="score-meta">
+				<span class="score-stars" aria-hidden="true"></span>
+				<span class="score-count">
+					<span data-lang="es">basado en <b class="review-count">0</b> valoraciones</span>
+					<span data-lang="en">based on <b class="review-count">0</b> reviews</span>
+				</span>
+			</div>
+			<a href="#review-form" class="btn btn-ghost btn-sm">
+				<T es="Deja la tuya" en="Leave yours" /> ↓
+			</a>
+		</div>
 
-					{count > 3 ? (
-						<div class="carousel reveal">
-							<div class="carousel-track">
-								{reviews.map((review) => (
-									<article class="card hud-card gold" data-rating={review.rating}>
-										<div class="author">
-											<span class="avatar" aria-hidden="true">{review.name.charAt(0)}</span>
-											<div>
-												<strong>{review.name}</strong>
-												{review.service && <span>{review.service}</span>}
-											</div>
-										</div>
-										<span class="card-stars" aria-label={`${review.rating}/5`}>{stars(review.rating)}</span>
-										<p class="text">"{review.text}"</p>
-									</article>
-								))}
-							</div>
+		<div class="grid is-collapsed" data-reviews aria-busy="true">
+			<div class="card hud-card skeleton" aria-hidden="true"></div>
+			<div class="card hud-card skeleton" aria-hidden="true"></div>
+			<div class="card hud-card skeleton" aria-hidden="true"></div>
+		</div>
 
-							<div class="carousel-dots">
-								{reviews.map((_, i) => (
-									<button
-										type="button"
-										class="dot"
-										aria-label={`Review ${i + 1}`}
-									/>
-								))}
-							</div>
-						</div>
-					) : (
-						<div class="grid">
-							{reviews.map((review, i) => (
-								<article
-									class="card hud-card gold interactive reveal"
-									style={`--reveal-delay:${i * 80}ms`}
-									data-rating={review.rating}
-								>
-									<div class="author">
-										<span class="avatar" aria-hidden="true">{review.name.charAt(0)}</span>
-										<div>
-											<strong>{review.name}</strong>
-											{review.service && <span>{review.service}</span>}
-										</div>
-									</div>
-									<span class="card-stars" aria-label={`${review.rating}/5`}>{stars(review.rating)}</span>
-									<p class="text">"{review.text}"</p>
-								</article>
-							))}
-						</div>
-					)}
-				</>
-			) : (
-				<div class="empty hud-card reveal">
-					<p>
-						<T
-							es="Todavía no tenemos valoraciones publicadas — ¡sé el primero en dejar la tuya!"
-							en="We don't have any published reviews yet — be the first to leave one!"
-						/>
-					</p>
-				</div>
-			)
-		}
+		<div class="more" data-reviews-more-wrap hidden>
+			<button type="button" class="btn btn-ghost btn-sm" data-reviews-more>
+				<T es="Ver todas" en="See all" /> (<span data-reviews-total>0</span>) ↓
+			</button>
+		</div>
 
-		<!-- Card for reviews sent through the form, filled in by the script below. -->
+		<div class="empty hud-card" data-reviews-empty hidden>
+			<p>
+				<T
+					es="Todavía no tenemos valoraciones publicadas — ¡sé el primero en dejar la tuya!"
+					en="We don't have any published reviews yet — be the first to leave one!"
+				/>
+			</p>
+		</div>
+
+		<div class="empty hud-card" data-reviews-error hidden>
+			<p>
+				<T
+					es="No hemos podido cargar las valoraciones ahora mismo. Vuelve a intentarlo en un rato."
+					en="We couldn't load the reviews right now. Please try again in a while."
+				/>
+			</p>
+		</div>
+
+		<!-- One review card, filled in by the script below. -->
 		<template id="review-template">
 			<article class="card hud-card gold interactive">
 				<div class="author">
@@ -160,10 +87,16 @@ const stars = (rating: number) =>
 			<div class="leave-copy reveal">
 				<span class="eyebrow"><T es="Tu turno" en="Your turn" /></span>
 				<h3 class="title"><T es="¿Ya trabajamos juntos?" en="Have we worked together?" /></h3>
-				<p>
+				<p data-when-instant>
 					<T
 						es="Cuéntanos qué tal fue. Tu valoración se publica aquí al momento."
 						en="Tell us how it went. Your review goes live here right away."
+					/>
+				</p>
+				<p data-when-moderated hidden>
+					<T
+						es="Cuéntanos qué tal fue. Revisamos cada valoración antes de publicarla aquí."
+						en="Tell us how it went. We check every review before publishing it here."
 					/>
 				</p>
 			</div>
@@ -254,9 +187,21 @@ const stars = (rating: number) =>
 					</button>
 
 					<p class="hint">
+						<span data-when-instant>
+							<T
+								es="Se publica al instante. Revisamos todas y eliminamos las que contengan insultos, spam o datos personales."
+								en="It's published instantly. We check every review and remove any with insults, spam or personal data."
+							/>
+						</span>
+						<span data-when-moderated hidden>
+							<T
+								es="La publicaremos en cuanto la revisemos. No publicamos las que contengan insultos, spam o datos personales."
+								en="We'll publish it once we've checked it. Reviews with insults, spam or personal data aren't published."
+							/>
+						</span>
 						<T
-							es="Se publica al instante. Revisamos todas y eliminamos las que contengan insultos, spam o datos personales. Nunca compartas contraseñas, claves de API ni otros datos secretos aquí."
-							en="It's published instantly. We check every review and remove any with insults, spam or personal data. Never share passwords, API keys or other secrets here."
+							es="Nunca compartas contraseñas, claves de API ni otros datos secretos aquí."
+							en="Never share passwords, API keys or other secrets here."
 						/>
 					</p>
 
@@ -264,8 +209,19 @@ const stars = (rating: number) =>
 						<T es="✅ ¡Gracias! Tu valoración ya está publicada." en="✅ Thanks! Your review is now live." />
 					</p>
 
+					<p id="review-status-pending" class="status" hidden>
+						<T es="✅ ¡Gracias! La publicaremos en cuanto la revisemos." en="✅ Thanks! We'll publish it once we've checked it." />
+					</p>
+
 					<p id="review-status-sent" class="status" hidden>
 						<T es="✅ ¡Gracias! Hemos recibido tu valoración." en="✅ Thanks! We received your review." />
+					</p>
+
+					<p id="review-limit" class="status error" hidden>
+						<T
+							es="⚠️ Has enviado varias valoraciones seguidas. Inténtalo de nuevo más tarde."
+							en="⚠️ You've sent several reviews in a row. Please try again later."
+						/>
 					</p>
 
 					<p id="review-error" class="status error" hidden>
@@ -286,89 +242,67 @@ const stars = (rating: number) =>
 </section>
 
 <script>
-	import { submitForm } from "../../scripts/submit";
+	import { apiUrl } from "../../scripts/api";
+	import { SubmitError, submitForm } from "../../scripts/submit";
 
 	const prefersReducedMotion = window.matchMedia(
 		"(prefers-reduced-motion: reduce)"
 	).matches;
 
-	const track = document.querySelector<HTMLElement>(".carousel-track");
+	// ---------- Reviews (from /api/reviews) ----------
 
-	if (track) {
-		const cards = Array.from(track.querySelectorAll<HTMLElement>(".card"));
-		const dots = document.querySelectorAll<HTMLButtonElement>(".carousel-dots .dot");
-
-		if (dots.length) {
-			dots.forEach((dot, i) => {
-				dot.addEventListener("click", () => {
-					cards[i]?.scrollIntoView({
-						behavior: "smooth",
-						inline: "start",
-						block: "nearest",
-					});
-				});
-			});
-
-			const dotObserver = new IntersectionObserver(
-				(entries) => {
-					entries.forEach((entry) => {
-						if (!entry.isIntersecting) return;
-						const index = cards.indexOf(entry.target as HTMLElement);
-						dots.forEach((d, i) => d.classList.toggle("active", i === index));
-					});
-				},
-				{ root: track, threshold: 0.6 }
-			);
-
-			cards.forEach((card) => dotObserver.observe(card));
-		}
-
-		if (!prefersReducedMotion && cards.length > 1) {
-			let paused = false;
-
-			track.addEventListener("mouseenter", () => (paused = true));
-			track.addEventListener("mouseleave", () => (paused = false));
-
-			setInterval(() => {
-				if (paused) return;
-
-				const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 5;
-
-				if (atEnd) {
-					track.scrollTo({ left: 0, behavior: "smooth" });
-					return;
-				}
-
-				const next = cards.find((c) => c.offsetLeft > track.scrollLeft + 5);
-				if (next) {
-					track.scrollTo({ left: next.offsetLeft, behavior: "smooth" });
-				}
-			}, 3500);
-		}
-	}
-
-	// Reviews sent through the form go live at once and are moderated afterwards
-	// in /admin. Only the Cloudflare copy of the site has /api; anywhere else
-	// this quietly keeps the hard-coded reviews.
 	type LiveReview = { id: number; name: string; service: string; rating: number; text: string };
 
+	const VISIBLE = 6; // shown before "Ver todas"
+
+	const grid = document.querySelector<HTMLElement>("[data-reviews]")!;
+	const template = document.getElementById("review-template") as HTMLTemplateElement;
+	const summary = document.querySelector<HTMLElement>("[data-reviews-summary]")!;
+	const moreWrap = document.querySelector<HTMLElement>("[data-reviews-more-wrap]")!;
+	const empty = document.querySelector<HTMLElement>("[data-reviews-empty]")!;
+	const loadError = document.querySelector<HTMLElement>("[data-reviews-error]")!;
+
+	const clampRating = (rating: number) => Math.min(5, Math.max(1, Math.round(rating)));
 	const starsFor = (rating: number) => "★".repeat(rating) + "☆".repeat(5 - rating);
-	let lastKey = "";
+
+	const buildCard = (review: LiveReview) => {
+		const card = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
+		const rating = clampRating(review.rating);
+
+		card.dataset.reviewId = String(review.id);
+		card.dataset.rating = String(rating);
+		card.querySelector(".avatar")!.textContent = review.name.charAt(0);
+		card.querySelector(".name")!.textContent = review.name;
+
+		const service = card.querySelector(".service")!;
+		if (review.service) service.textContent = review.service;
+		else service.remove();
+
+		const cardStars = card.querySelector(".card-stars")!;
+		cardStars.textContent = starsFor(rating);
+		cardStars.setAttribute("aria-label", `${rating}/5`);
+
+		card.querySelector(".text")!.textContent = `"${review.text}"`;
+
+		return card;
+	};
+
+	let lastKey: string | null = null;
 
 	const renderLiveReviews = async () => {
-		const container = document.querySelector<HTMLElement>(
-			"#valoraciones .grid, #valoraciones .carousel-track"
-		);
-		const template = document.getElementById("review-template") as HTMLTemplateElement | null;
-		if (!container || !template) return;
-
 		let live: LiveReview[];
 
 		try {
-			const res = await fetch("/api/reviews", { cache: "no-store" });
-			if (!res.ok) return;
+			const res = await fetch(apiUrl("/api/reviews"), { cache: "no-store" });
+			if (!res.ok) throw new Error(String(res.status));
 			live = (await res.json()).reviews ?? [];
 		} catch {
+			// Keep whatever is shown; only say so if nothing ever loaded.
+			if (lastKey === null) {
+				grid.replaceChildren();
+				grid.removeAttribute("aria-busy");
+				loadError.hidden = false;
+			}
 			return;
 		}
 
@@ -377,49 +311,28 @@ const stars = (rating: number) =>
 		if (key === lastKey) return;
 		lastKey = key;
 
-		container.querySelectorAll("[data-review-id]").forEach((card) => card.remove());
+		grid.replaceChildren(...live.map(buildCard));
+		grid.removeAttribute("aria-busy");
+		loadError.hidden = true;
+		empty.hidden = live.length > 0;
+		summary.hidden = live.length === 0;
+		moreWrap.hidden = !grid.classList.contains("is-collapsed") || live.length <= VISIBLE;
+		document.querySelector("[data-reviews-total]")!.textContent = String(live.length);
 
-		const cards = live.map((review) => {
-			const card = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
-			const rating = Math.min(5, Math.max(1, Math.round(review.rating)));
+		if (!live.length) return;
 
-			card.dataset.reviewId = String(review.id);
-			card.dataset.rating = String(rating);
-			card.querySelector(".avatar")!.textContent = review.name.charAt(0);
-			card.querySelector(".name")!.textContent = review.name;
-
-			const service = card.querySelector(".service")!;
-			if (review.service) service.textContent = review.service;
-			else service.remove();
-
-			const cardStars = card.querySelector(".card-stars")!;
-			cardStars.textContent = starsFor(rating);
-			cardStars.setAttribute("aria-label", `${rating}/5`);
-
-			card.querySelector(".text")!.textContent = `"${review.text}"`;
-
-			return card;
-		});
-
-		// Newest first, ahead of the hard-coded ones.
-		container.prepend(...cards);
-
-		const ratings = Array.from(
-			document.querySelectorAll<HTMLElement>("#valoraciones [data-rating]"),
-			(card) => Number(card.dataset.rating)
-		);
-		if (!ratings.length) return;
-
-		const average = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
-
-		const scoreNumber = document.querySelector("#valoraciones .score-number");
-		const scoreStars = document.querySelector("#valoraciones .score-stars");
-		if (scoreNumber) scoreNumber.textContent = average.toFixed(1);
-		if (scoreStars) scoreStars.textContent = starsFor(Math.round(average));
-		document.querySelectorAll("#valoraciones .review-count").forEach((el) => {
-			el.textContent = String(ratings.length);
+		const average = live.reduce((sum, r) => sum + clampRating(r.rating), 0) / live.length;
+		summary.querySelector(".score-number")!.textContent = average.toFixed(1);
+		summary.querySelector(".score-stars")!.textContent = starsFor(Math.round(average));
+		summary.querySelectorAll(".review-count").forEach((el) => {
+			el.textContent = String(live.length);
 		});
 	};
+
+	document.querySelector("[data-reviews-more]")?.addEventListener("click", () => {
+		grid.classList.remove("is-collapsed");
+		moreWrap.hidden = true;
+	});
 
 	renderLiveReviews();
 
@@ -430,9 +343,23 @@ const stars = (rating: number) =>
 	}, 60_000);
 	document.addEventListener("sd:reviews-refresh", () => renderLiveReviews());
 
+	// Reviews can be set to wait for approval in /admin: say so instead.
+	fetch(apiUrl("/api/settings"), { cache: "no-store" })
+		.then((res) => (res.ok ? res.json() : null))
+		.then((settings) => {
+			if (settings?.reviews_instant !== false) return;
+			document.querySelectorAll<HTMLElement>("[data-when-instant]").forEach((el) => (el.hidden = true));
+			document.querySelectorAll<HTMLElement>("[data-when-moderated]").forEach((el) => (el.hidden = false));
+		})
+		.catch(() => {});
+
+	// ---------- Leave a review ----------
+
 	const form = document.getElementById("review-form") as HTMLFormElement | null;
 	const status = document.getElementById("review-status");
+	const statusPending = document.getElementById("review-status-pending");
 	const statusSent = document.getElementById("review-status-sent");
+	const limit = document.getElementById("review-limit");
 	const error = document.getElementById("review-error");
 	const errorSummary = document.getElementById("review-error-summary");
 	const submitBtn = form?.querySelector<HTMLButtonElement>(".submit");
@@ -517,7 +444,9 @@ const stars = (rating: number) =>
 		if (cooling) return;
 
 		status?.setAttribute("hidden", "");
+		statusPending?.setAttribute("hidden", "");
 		statusSent?.setAttribute("hidden", "");
+		limit?.setAttribute("hidden", "");
 		error?.setAttribute("hidden", "");
 
 		const honeypot = form.elements.namedItem("website") as HTMLInputElement | null;
@@ -544,13 +473,15 @@ const stars = (rating: number) =>
 		cooling = true;
 
 		try {
-			const { id } = await submitForm(payload);
+			const { id, published } = await submitForm(payload);
 
 			form.reset();
 
 			if (id === undefined) {
-				// Sent without our backend (e.g. GitHub Pages): received, not published.
+				// Sent without our backend (it couldn't be reached): received, not published.
 				statusSent?.removeAttribute("hidden");
+			} else if (!published) {
+				statusPending?.removeAttribute("hidden");
 			} else {
 				status?.removeAttribute("hidden");
 				await renderLiveReviews();
@@ -562,7 +493,8 @@ const stars = (rating: number) =>
 				}
 			}
 		} catch (err) {
-			error?.removeAttribute("hidden");
+			if (err instanceof SubmitError && err.code === "rate_limited") limit?.removeAttribute("hidden");
+			else error?.removeAttribute("hidden");
 		} finally {
 			setSubmitting(false);
 			setTimeout(() => {
@@ -713,53 +645,31 @@ const stars = (rating: number) =>
 }
 
 
-/* Carousel (4+ reviews) */
+/* Loading, "Ver todas", empty and error states */
 
-.carousel-track {
-	display: flex;
-	gap: 18px;
-
-	overflow-x: auto;
-	scroll-snap-type: x mandatory;
-	scrollbar-width: none;
-
-	padding: 4px 2px 8px;
+#valoraciones [hidden] {
+	display: none !important;
 }
 
-.carousel-track::-webkit-scrollbar {
+.grid.is-collapsed > [data-review-id]:nth-child(n + 7) {
 	display: none;
 }
 
-.carousel-track .card {
-	flex: 0 0 calc((100% - 36px) / 3);
-	scroll-snap-align: start;
+.card.skeleton {
+	min-height: 190px;
+	background: linear-gradient(90deg, var(--surface-1), var(--surface-2), var(--surface-1));
+	background-size: 200% 100%;
+	animation: reviewShimmer 1.3s linear infinite;
 }
 
-.carousel-dots {
+@keyframes reviewShimmer {
+	to { background-position: -200% 0; }
+}
+
+.more {
 	display: flex;
 	justify-content: center;
-	gap: 8px;
-	margin-top: 18px;
-}
-
-.dot {
-	width: 10px;
-	height: 10px;
-	padding: 0;
-
-	background: var(--border-2);
-	border: 0;
-
-	cursor: pointer;
-
-	transition:
-		background var(--transition),
-		width var(--transition);
-}
-
-.dot.active {
-	width: 26px;
-	background: var(--gold);
+	margin-top: 22px;
 }
 
 
@@ -804,10 +714,6 @@ const stars = (rating: number) =>
 		grid-template-columns: 1fr 1fr;
 	}
 
-	.carousel-track .card {
-		flex-basis: calc((100% - 18px) / 2);
-	}
-
 	.leave {
 		grid-template-columns: 1fr;
 		gap: 28px;
@@ -822,10 +728,6 @@ const stars = (rating: number) =>
 
 	.grid {
 		grid-template-columns: 1fr;
-	}
-
-	.carousel-track .card {
-		flex-basis: 88%;
 	}
 }
 

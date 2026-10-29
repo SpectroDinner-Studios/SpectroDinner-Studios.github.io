@@ -146,5 +146,6 @@ export async function pruneAuthTables(db: D1Database): Promise<void> {
 	await db.batch([
 		db.prepare(`DELETE FROM admin_sessions WHERE expires_at <= datetime('now') OR last_seen <= datetime('now', ?)`).bind(`-${IDLE_TTL_S} seconds`),
 		db.prepare(`DELETE FROM admin_events WHERE at <= datetime('now', '-90 days')`),
+		db.prepare(`DELETE FROM admin_actions WHERE at <= datetime('now', '-180 days')`),
 	]);
 }

@@ -81,17 +81,50 @@ export function getStaticPaths() {
 				</div>
 				<ul class="adm-events" id="adm-events"></ul>
 			</div>
+			<div class="adm-panel adm-wide">
+				<div class="adm-panel-head">
+					<h2>Historial de cambios</h2>
+				</div>
+				<ul class="adm-events" id="adm-actions"></ul>
+			</div>
 			<div class="adm-panel adm-tips">
 				<h2>Consejos</h2>
 				<ul>
 					<li>Las sesiones caducan a las 12 h y se cierran tras 2 h sin actividad (este panel cierra la tuya tras 30 min quieto).</li>
 					<li>Tras 5 contraseñas incorrectas desde un mismo sitio, el acceso se bloquea 15 minutos.</li>
 					<li>Si ves un acceso que no reconoces: cambia <code>ADMIN_PASSWORD</code> en Cloudflare y pulsa «Cerrar todas».</li>
+					<li>El historial guarda cada cambio hecho desde el panel durante 180 días.</li>
 				</ul>
 			</div>
 		</section>
 
+		<section id="adm-settings" hidden>
+			<div class="adm-panel">
+				<div class="adm-panel-head">
+					<h2>Ajustes de la web</h2>
+				</div>
+				<p class="adm-hint">Se aplican al momento, también en la copia de GitHub Pages.</p>
+				<div class="adm-switches" id="adm-switches"></div>
+			</div>
+		</section>
+
 		<div class="adm-toast" id="adm-toast" role="status" aria-live="polite" hidden></div>
+
+		<dialog class="adm-dialog adm-reply" id="adm-reply" aria-labelledby="adm-reply-title">
+			<div class="adm-reply-head">
+				<h2 id="adm-reply-title">Responder</h2>
+				<div class="adm-filter" id="adm-reply-lang" role="group" aria-label="Idioma"></div>
+			</div>
+			<div class="adm-filter adm-reply-kinds" id="adm-reply-kinds" role="group" aria-label="Plantilla"></div>
+			<p class="adm-reply-to" id="adm-reply-to"></p>
+			<label class="adm-reply-field">Asunto <input id="adm-reply-subject" autocomplete="off" /></label>
+			<label class="adm-reply-field">Mensaje <textarea id="adm-reply-body" rows="12"></textarea></label>
+			<div class="adm-dialog-actions">
+				<button type="button" class="btn btn-ghost btn-sm" id="adm-reply-close">Cerrar</button>
+				<button type="button" class="btn btn-ghost btn-sm" id="adm-reply-copy">Copiar texto</button>
+				<a class="btn btn-primary btn-sm" id="adm-reply-mail" href="#">✉ Abrir en mi correo</a>
+			</div>
+		</dialog>
 
 		<dialog class="adm-dialog" id="adm-dialog">
 			<p id="adm-dialog-text"></p>
@@ -194,7 +227,43 @@ export function getStaticPaths() {
 .adm-sessions small, .adm-events small { margin-left: auto; color: var(--text-dim); }
 .adm-events li.is-fail { border-left: 3px solid var(--danger); }
 .adm-events li.is-ok { border-left: 3px solid var(--emerald); }
-.adm-tips { grid-column: 1 / -1; }
+.adm-tips, .adm-wide { grid-column: 1 / -1; }
+.adm-events li.is-delete { border-left: 3px solid var(--danger); }
+.adm-events li span:last-of-type { overflow-wrap: anywhere; }
+
+.adm-chip.red { color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, transparent); border-color: color-mix(in srgb, var(--danger) 35%, transparent); }
+.adm-chip.blue { color: var(--primary-light); background: var(--primary-bg); border-color: color-mix(in srgb, var(--primary) 45%, transparent); }
+.adm-card.is-accepted { border-left-color: var(--emerald); }
+.adm-note { margin-top: 12px; padding: 10px 12px; background: var(--gold-bg); border: 1px solid var(--gold-border); border-radius: var(--radius-xs); }
+.adm-note span { font-family: var(--font-pixel); font-size: .62rem; letter-spacing: .05em; text-transform: uppercase; color: var(--gold-text); }
+.adm-note p { margin: 4px 0 0; font-size: .9rem; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.adm-note textarea, .adm-reply-field input, .adm-reply-field textarea { width: 100%; margin-top: 6px; padding: 10px 12px; font: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg-sunken); border: 1px solid var(--border-2); border-radius: var(--radius-xs); resize: vertical; }
+.adm-note textarea:focus, .adm-reply-field input:focus, .adm-reply-field textarea:focus { border-color: var(--primary); outline: none; }
+.adm-note .adm-actions { margin-top: 8px; }
+
+.adm-hint { margin: -4px 0 14px; font-size: .88rem; color: var(--text-dim); }
+.adm-switches { display: flex; flex-direction: column; gap: 10px; }
+.adm-switch { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--surface-1); border: 1px solid var(--border-1); border-left: 3px solid var(--border-2); border-radius: var(--radius-xs); }
+.adm-switch.is-on { border-left-color: var(--emerald); }
+.adm-switch.is-warn.is-on { border-left-color: var(--gold); }
+.adm-switch-icon { font-size: 1.4rem; }
+.adm-switch-text { flex: 1; min-width: 0; }
+.adm-switch-text strong { display: block; font-family: var(--font-display); font-size: 1rem; }
+.adm-switch-text small { display: block; margin-top: 3px; font-size: .86rem; line-height: 1.5; color: var(--text-muted); }
+.adm-toggle { position: relative; flex: none; width: 52px; height: 28px; padding: 0; background: var(--surface-3); border: 1px solid var(--border-2); border-radius: 999px; cursor: pointer; transition: background var(--transition); }
+.adm-toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: var(--text-muted); border-radius: 50%; transition: translate var(--transition), background var(--transition); }
+.adm-toggle[aria-checked="true"] { background: color-mix(in srgb, var(--emerald) 35%, transparent); border-color: var(--emerald); }
+.adm-toggle[aria-checked="true"]::after { translate: 24px 0; background: var(--emerald); }
+.adm-toggle:disabled { opacity: .5; cursor: wait; }
+
+.adm-reply { max-width: 640px; }
+.adm-reply-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.adm-reply-head h2 { font-size: 1.15rem; font-weight: 600; }
+.adm-reply-kinds { flex-wrap: wrap; margin-bottom: 10px; }
+.adm-reply .adm-reply-to { margin: 0 0 10px; font-size: .88rem; color: var(--text-muted); }
+.adm-reply-field { display: block; margin-bottom: 12px; font-size: .85rem; font-weight: 600; color: var(--text-muted); }
+.adm-reply .adm-dialog-actions { flex-wrap: wrap; }
+#adm-reply-mail[aria-disabled="true"] { opacity: .45; pointer-events: none; }
 .adm-tips ul { margin: 10px 0 0; padding-left: 18px; color: var(--text-muted); line-height: 1.7; font-size: .9rem; }
 .adm-tips code { padding: 1px 5px; background: var(--bg-sunken); border: 1px solid var(--border-1); }
 
@@ -233,25 +302,92 @@ export function getStaticPaths() {
 
 	// ---------- Config ----------
 
-	// `fresh`: statuses still waiting for you. The "fresh" filter shows those.
-	const INBOX = { fresh: ["new"], freshLabel: "sin leer", readAll: "✓ Marcar todo leído", filters: [["all", "Todos"], ["fresh", "Nuevos"], ["read", "Leídos"]] };
+	// `fresh`: statuses still waiting for you (the "fresh" filter shows those).
+	// `order`: requests for work, which can be marked as done once delivered.
+	const INBOX_FILTERS = [["all", "Todos"], ["fresh", "Nuevos"], ["read", "Leídos"], ["accepted", "Aceptados"], ["rejected", "Rechazados"]];
+	const INBOX = { fresh: ["new"], freshLabel: "sin leer", readAll: "✓ Marcar todo leído" };
 	const FORMS = {
 		review: { label: "Valoraciones", icon: "⭐", fresh: ["live", "pending"], freshLabel: "sin revisar", readAll: "✓ Marcar todas revisadas", filters: [["all", "Todas"], ["fresh", "Sin revisar"], ["approved", "Revisadas"], ["hidden", "Ocultas"]] },
-		discord: { label: "Discord", icon: "💬", ...INBOX },
-		minecraft: { label: "Minecraft", icon: "⛏️", ...INBOX },
-		voluntariado: { label: "Voluntariado", icon: "🤝", ...INBOX },
+		discord: { label: "Discord", icon: "💬", ...INBOX, order: true, acceptedLabel: "en curso", filters: [...INBOX_FILTERS, ["done", "Terminados"]] },
+		minecraft: { label: "Minecraft", icon: "⛏️", ...INBOX, order: true, acceptedLabel: "en curso", filters: [...INBOX_FILTERS, ["done", "Terminados"]] },
+		voluntariado: { label: "Voluntariado", icon: "🤝", ...INBOX, acceptedLabel: "aceptados", filters: INBOX_FILTERS },
 	};
 
 	// Reviews go live as soon as they're sent ("live") and are checked here
-	// afterwards. "pending" only exists for reviews from before that change.
+	// afterwards; "pending" ones wait for approval (instant publishing off).
 	const STATUS = {
 		live: ["En la web · sin revisar", "gold"],
 		approved: ["En la web · revisada", "green"],
 		hidden: ["Oculta", ""],
-		pending: ["Sin publicar", "gold"],
+		pending: ["Esperando aprobación", "gold"],
 		new: ["Nuevo", "gold"],
 		read: ["Leído", ""],
+		accepted: ["Aceptado", "green"],
+		rejected: ["Rechazado", "red"],
+		done: ["Terminado", "blue"],
 	};
+
+	// Switches in the Ajustes tab (stored server-side, see server/settings.ts).
+	const SWITCHES = [
+		{ key: "volunteering_open", icon: "🤝", title: "Voluntariado abierto", on: "La página de voluntariado acepta postulaciones.", off: "La página muestra «Postulaciones cerradas» y no acepta envíos." },
+		{ key: "reviews_instant", icon: "⭐", title: "Valoraciones al instante", on: "Se publican solas en cuanto se envían y las revisas después.", off: "Esperan en «Sin revisar» hasta que pulses «Publicar en la web»." },
+		{ key: "maintenance", icon: "🛠️", title: "Modo mantenimiento", warn: true, on: "Los visitantes ven la página de mantenimiento. Tú, desde este navegador, sigues viendo la web normal.", off: "La web funciona con normalidad.", confirm: "Los visitantes verán la página de mantenimiento hasta que lo desactives. ¿Activarlo?" },
+	];
+
+	const ACTION_ICONS = { delete: "🗑", restore: "↩️", approve: "✅", hide: "🙈", accept: "✔️", reject: "✖️", done: "🏁", read: "👁", unread: "🔵", note: "📝", setting: "⚙️", "read-all": "☑️" };
+
+	// ---------- Reply templates ----------
+	// v = { name, ref, about } · one per decision, for volunteers and orders.
+
+	const SITE_URL = "https://spectrodinner-studios.pages.dev";
+	const SIGNATURE = { es: "Un saludo,\nSpectroDinner Studios", en: "Best regards,\nSpectroDinner Studios" };
+
+	const TEMPLATES = {
+		accept: {
+			label: "✓ Aceptada",
+			volunteer: {
+				es: (v) => ["Tu postulación al voluntariado de SpectroDinner Studios (" + v.ref + ")", "Hola " + v.name + ":\n\n¡Gracias por postularte al voluntariado de SpectroDinner Studios! Hemos revisado tu solicitud (" + v.ref + ") y nos encantaría contar contigo en: " + v.about + ".\n\nResponde a este correo cuando puedas y te contamos cómo trabajamos y en qué proyecto puedes empezar.\n\n¡Te damos la bienvenida al equipo!"],
+				en: (v) => ["Your SpectroDinner Studios volunteer application (" + v.ref + ")", "Hi " + v.name + ",\n\nThanks for applying to volunteer at SpectroDinner Studios! We've reviewed your application (" + v.ref + ") and we'd love to have you help with: " + v.about + ".\n\nReply to this email when you can and we'll tell you how we work and which project you can start on.\n\nWelcome to the team!"],
+			},
+			order: {
+				es: (v) => ["Tu solicitud " + v.ref + " en SpectroDinner Studios — aceptada", "Hola " + v.name + ":\n\n¡Buenas noticias! Hemos revisado tu solicitud " + v.ref + " (" + v.about + ") y nos encargamos de ella.\n\nPara empezar, responde a este correo confirmando que sigue en pie y con cualquier detalle que quieras añadir. Después te escribiremos para coordinar plazos y accesos.\n\nGracias por confiar en nosotros."],
+				en: (v) => ["Your SpectroDinner Studios request " + v.ref + " — accepted", "Hi " + v.name + ",\n\nGood news! We've reviewed your request " + v.ref + " (" + v.about + ") and we'll take it on.\n\nTo get started, reply to this email to confirm it's still on and add any details you'd like. We'll then get in touch to sort out timing and access.\n\nThanks for trusting us."],
+			},
+		},
+		reject: {
+			label: "✕ Rechazada",
+			volunteer: {
+				es: (v) => ["Tu postulación al voluntariado de SpectroDinner Studios (" + v.ref + ")", "Hola " + v.name + ":\n\nGracias por postularte al voluntariado de SpectroDinner Studios y por el tiempo que le dedicaste (" + v.ref + ").\n\nDespués de revisarla, ahora mismo no podemos ofrecerte un puesto. Guardaremos tu postulación y te escribiremos si surge algo que encaje contigo."],
+				en: (v) => ["Your SpectroDinner Studios volunteer application (" + v.ref + ")", "Hi " + v.name + ",\n\nThanks for applying to volunteer at SpectroDinner Studios and for the time you put into it (" + v.ref + ").\n\nAfter reviewing it, we can't offer you a place right now. We'll keep your application on file and get in touch if something comes up that suits you."],
+			},
+			order: {
+				es: (v) => ["Tu solicitud " + v.ref + " en SpectroDinner Studios", "Hola " + v.name + ":\n\nGracias por contactar con SpectroDinner Studios. Hemos revisado tu solicitud " + v.ref + " (" + v.about + ") y, por ahora, no podemos encargarnos de ella.\n\nSi tus necesidades cambian o quieres proponernos otra cosa, puedes enviarnos una nueva solicitud cuando quieras."],
+				en: (v) => ["Your SpectroDinner Studios request " + v.ref, "Hi " + v.name + ",\n\nThanks for contacting SpectroDinner Studios. We've reviewed your request " + v.ref + " (" + v.about + ") and, for now, we can't take it on.\n\nIf your needs change or you'd like to propose something else, feel free to send us a new request anytime."],
+			},
+		},
+		received: {
+			label: "⏳ Recibida",
+			volunteer: {
+				es: (v) => ["Hemos recibido tu postulación (" + v.ref + ")", "Hola " + v.name + ":\n\nHemos recibido tu postulación al voluntariado (" + v.ref + ") y ya la estamos revisando. Te responderemos lo antes posible."],
+				en: (v) => ["We've received your application (" + v.ref + ")", "Hi " + v.name + ",\n\nWe've received your volunteer application (" + v.ref + ") and we're already reviewing it. We'll get back to you as soon as we can."],
+			},
+			order: {
+				es: (v) => ["Hemos recibido tu solicitud " + v.ref, "Hola " + v.name + ":\n\nHemos recibido tu solicitud " + v.ref + " (" + v.about + ") y ya la estamos revisando. Te responderemos lo antes posible."],
+				en: (v) => ["We've received your request " + v.ref, "Hi " + v.name + ",\n\nWe've received your request " + v.ref + " (" + v.about + ") and we're already reviewing it. We'll get back to you as soon as we can."],
+			},
+		},
+		done: {
+			label: "🏁 Terminada",
+			orderOnly: true,
+			order: {
+				es: (v) => ["Tu encargo " + v.ref + " está terminado", "Hola " + v.name + ":\n\n¡Tu encargo " + v.ref + " (" + v.about + ") está terminado! Échale un vistazo y, si ves algo que ajustar, responde a este correo.\n\nSi te ha gustado el resultado, nos ayudaría mucho que dejaras una valoración en " + SITE_URL + "/#valoraciones\n\nGracias por confiar en nosotros."],
+				en: (v) => ["Your order " + v.ref + " is done", "Hi " + v.name + ",\n\nYour order " + v.ref + " (" + v.about + ") is done! Have a look and, if anything needs adjusting, just reply to this email.\n\nIf you're happy with the result, it would help us a lot if you left a review at " + SITE_URL + "/#valoraciones\n\nThanks for trusting us."],
+			},
+		},
+	};
+
+	// The template that fits a row's current status.
+	const TEMPLATE_FOR_STATUS = { accepted: "accept", rejected: "reject", done: "done" };
 
 	const LABELS = {
 		nombre: "Nombre", nickname: "Apodo", email: "Email", discord: "Discord", tipo: "Tipo de servicio",
@@ -264,7 +400,9 @@ export function getStaticPaths() {
 		modalidad_detalle: "Detalle de la modalidad", rangos_permisos: "Rangos y permisos", bugs_exploits: "Bugs / exploits",
 		notas_adicionales: "Notas adicionales", areas: "Áreas", experiencia: "Experiencia", enlaces: "Enlaces",
 		disponibilidad: "Disponibilidad", motivacion: "Motivación", service: "Servicio", rating: "Valoración", comment: "Comentario",
+		idioma: "Idioma",
 	};
+	const LANGUAGE_NAMES = { es: "Español", en: "Inglés" };
 
 	// Shown under the name on each card, before expanding.
 	const SUMMARY = { discord: ["tipo", "proposito", "plazo"], minecraft: ["servidor_nombre", "version_software", "metodo_acceso"], voluntariado: ["areas", "disponibilidad"] };
@@ -286,7 +424,7 @@ export function getStaticPaths() {
 
 	// ---------- State ----------
 
-	const state = { tab: "review", filter: "all", query: "", rows: [], counts: [], recent: [], open: new Set() };
+	const state = { tab: "review", filter: "all", query: "", rows: [], counts: [], recent: [], open: new Set(), editingNote: 0 };
 
 	// ---------- Helpers ----------
 
@@ -407,6 +545,8 @@ export function getStaticPaths() {
 			const small = el("small");
 			if (fresh) small.append(el("b", "", fresh), " " + cfg.freshLabel);
 			else small.textContent = "Todo al día";
+			const accepted = cfg.acceptedLabel ? countOf(form, ["accepted"]) : 0;
+			if (accepted) small.append(" · " + accepted + " " + cfg.acceptedLabel);
 			card.append(small);
 			card.addEventListener("click", () => selectTab(form));
 			box.append(card);
@@ -421,7 +561,7 @@ export function getStaticPaths() {
 	const renderTabs = () => {
 		const nav = $("adm-tabs");
 		nav.replaceChildren();
-		const tabs = [...Object.entries(FORMS), ["security", { label: "Seguridad", icon: "🛡️" }]];
+		const tabs = [...Object.entries(FORMS), ["security", { label: "Seguridad", icon: "🛡️" }], ["settings", { label: "Ajustes", icon: "⚙️" }]];
 
 		for (const [id, cfg] of tabs) {
 			const tab = el("button", "adm-tab");
@@ -462,7 +602,7 @@ export function getStaticPaths() {
 		return state.rows.filter((row) => {
 			if (state.filter === "fresh" ? !fresh.includes(row.status) : state.filter !== "all" && row.status !== state.filter) return false;
 			if (!q) return true;
-			return (ref(row.id) + " " + Object.values(row.data).join(" ")).toLowerCase().includes(q);
+			return (ref(row.id) + " " + Object.values(row.data).join(" ") + " " + (row.note || "")).toLowerCase().includes(q);
 		});
 	};
 
@@ -490,7 +630,7 @@ export function getStaticPaths() {
 
 	// One click, gone at once (from the site too), with a few seconds to undo.
 	const remove = async (row) => {
-		const snapshot = { id: row.id, created_at: row.created_at, form: row.form, status: row.status, data: row.data };
+		const snapshot = { id: row.id, created_at: row.created_at, form: row.form, status: row.status, data: row.data, note: row.note || "" };
 
 		state.rows = state.rows.filter((r) => r.id !== row.id);
 		renderList();
@@ -519,11 +659,57 @@ export function getStaticPaths() {
 		await afterChange(row.form);
 	};
 
+	// Accept / reject: change the status, then offer the matching reply.
+	const decide = async (row, action, message, template) => {
+		await act(row, action, message);
+		openReply(row, template);
+	};
+
+	const saveNote = async (row, note) => {
+		try {
+			await api("submissions", { id: row.id, action: "note", note });
+		} catch (err) {
+			if (err.message !== "auth") toast("No se pudo guardar la nota.", true);
+			return;
+		}
+		state.editingNote = 0;
+		toast(note ? "Nota guardada" : "Nota borrada");
+		await afterChange(row.form);
+	};
+
+	const renderNote = (row) => {
+		if (state.editingNote === row.id) {
+			const box = el("div", "adm-note");
+			const area = el("textarea");
+			area.rows = 3;
+			area.maxLength = 2000;
+			area.value = row.note || "";
+			area.placeholder = "Solo la ves tú. Ej.: «Le escribí por Discord el lunes».";
+			const actions = el("div", "adm-actions");
+			actions.append(
+				button("Guardar nota", () => saveNote(row, area.value.trim()), "btn btn-primary btn-sm"),
+				button("Cancelar", () => {
+					state.editingNote = 0;
+					renderList();
+				})
+			);
+			if (row.note) actions.append(button("Borrar nota", () => saveNote(row, ""), "btn btn-sm adm-danger"));
+			box.append(el("span", "", "📝 Nota interna"), area, actions);
+			setTimeout(() => area.focus(), 0);
+			return box;
+		}
+		if (!row.note) return null;
+		const box = el("div", "adm-note");
+		box.append(el("span", "", "📝 Nota interna"), el("p", "", row.note));
+		return box;
+	};
+
 	const renderCard = (row) => {
 		const d = row.data;
 		const [statusLabel, statusTone] = STATUS[row.status] || [row.status, ""];
 		const fresh = FORMS[row.form].fresh.includes(row.status);
-		const card = el("article", "adm-card" + (fresh ? " is-new" : "") + (row.status === "read" || row.status === "hidden" ? " is-muted" : ""));
+		const muted = ["read", "hidden", "rejected", "done"].includes(row.status);
+		const card = el("article", "adm-card" + (fresh ? " is-new" : "") + (muted ? " is-muted" : "") + (row.status === "accepted" ? " is-accepted" : ""));
 		card.dataset.id = row.id;
 
 		const head = el("div", "adm-card-head");
@@ -557,11 +743,15 @@ export function getStaticPaths() {
 				const dl = el("dl", "adm-fields");
 				for (const [key, value] of Object.entries(d)) {
 					if (key === "form" || value === "" || value === null || value === undefined) continue;
-					dl.append(el("dt", "", LABELS[key] || key.replace(/_/g, " ")), el("dd", "", Array.isArray(value) ? value.join(", ") : value));
+					const shown = key === "idioma" ? LANGUAGE_NAMES[value] || value : Array.isArray(value) ? value.join(", ") : value;
+					dl.append(el("dt", "", LABELS[key] || key.replace(/_/g, " ")), el("dd", "", shown));
 				}
 				card.append(dl);
 			}
 		}
+
+		const note = renderNote(row);
+		if (note) card.append(note);
 
 		const actions = el("div", "adm-actions");
 		if (row.form === "review") {
@@ -570,16 +760,36 @@ export function getStaticPaths() {
 			if (!onSite) actions.append(button("Publicar en la web", () => act(row, "approve", "Valoración publicada"), "btn btn-primary btn-sm"));
 			if (onSite) actions.append(button("Ocultar", () => act(row, "hide", "Valoración oculta de la web")), button("👁 Ver en la web", () => locateInWeb(row.id)));
 		} else {
+			const open = state.open.has(row.id);
 			actions.append(
-				button(state.open.has(row.id) ? "Ocultar detalles" : "Ver todo", () => {
-					if (state.open.has(row.id)) state.open.delete(row.id);
-					else state.open.add(row.id);
-					renderList();
-				}),
-				row.status === "new"
-					? button("✓ Marcar leído", () => act(row, "read", "Marcado como leído"))
-					: button("Marcar como nuevo", () => act(row, "unread", "Marcado como nuevo"))
+				button(open ? "Ocultar detalles" : "Ver todo", () => {
+					if (open) {
+						state.open.delete(row.id);
+						renderList();
+						return;
+					}
+					state.open.add(row.id);
+					// Opening a new one counts as reading it.
+					if (row.status === "new") act(row, "read", "Marcado como leído");
+					else renderList();
+				})
 			);
+
+			if (row.status === "new" || row.status === "read") {
+				actions.append(
+					button("✓ Aceptar", () => decide(row, "accept", "Aceptado", "accept"), "btn btn-primary btn-sm"),
+					button("✕ Rechazar", () => decide(row, "reject", "Rechazado", "reject"))
+				);
+				if (row.status === "read") actions.append(button("Marcar como nuevo", () => act(row, "unread", "Marcado como nuevo")));
+			} else {
+				if (row.status === "accepted" && FORMS[row.form].order) {
+					actions.append(button("🏁 Terminado", () => decide(row, "done", "Marcado como terminado", "done"), "btn btn-primary btn-sm"));
+				}
+				actions.append(button("↺ Reabrir", () => act(row, "read", "Vuelve a estar pendiente")));
+			}
+
+			actions.append(button("✉ Responder", () => openReply(row, TEMPLATE_FOR_STATUS[row.status] || "received")));
+
 			if (d.email && EMAIL_RE.test(d.email)) {
 				actions.append(
 					button("Copiar email", async () => {
@@ -592,6 +802,14 @@ export function getStaticPaths() {
 					})
 				);
 			}
+		}
+		if (state.editingNote !== row.id) {
+			actions.append(
+				button(row.note ? "📝 Editar nota" : "📝 Nota", () => {
+					state.editingNote = row.id;
+					renderList();
+				})
+			);
 		}
 		actions.append(button("🗑 Eliminar", () => remove(row), "btn btn-sm adm-danger"));
 		card.append(actions);
@@ -723,6 +941,8 @@ export function getStaticPaths() {
 			const card = webCard(web.locate);
 			if (card) {
 				web.locate = 0;
+				// Past the first few reviews the site folds the rest under "Ver todas".
+				if (!card.offsetParent) doc.querySelector("[data-reviews-more]")?.click();
 				flash(card, "sd-flash");
 			}
 		}
@@ -878,7 +1098,20 @@ export function getStaticPaths() {
 	// ---------- Security ----------
 
 	const loadSecurity = async () => {
-		const { sessions, events } = await api("security");
+		const { sessions, events, actions } = await api("security");
+
+		$("adm-actions").replaceChildren(
+			...(actions.length
+				? actions.map((a) => {
+						const li = el("li", a.action === "delete" ? "is-delete" : "");
+						li.append(el("span", "", ACTION_ICONS[a.action] || "•"), el("span", "", a.summary || a.action));
+						const when = el("small", "", relative(a.at));
+						when.title = absolute(a.at);
+						li.append(when);
+						return li;
+					})
+				: [el("li", "", "Todavía no se ha cambiado nada desde el panel.")])
+		);
 
 		const sessionList = $("adm-sessions");
 		sessionList.replaceChildren(
@@ -907,19 +1140,170 @@ export function getStaticPaths() {
 		);
 	};
 
+	// ---------- Settings ----------
+
+	const loadSettings = async () => {
+		const [{ settings }, config] = await Promise.all([
+			api("settings"),
+			// Maintenance as the site actually sees it (the panel's switch, or
+			// config.json if it was never switched here).
+			fetch("/config.json", { cache: "no-store" }).then((res) => res.json()).catch(() => ({})),
+		]);
+		renderSwitches({ ...settings, maintenance: config.maintenance === true });
+	};
+
+	const renderSwitches = (settings) => {
+		$("adm-switches").replaceChildren(
+			...SWITCHES.map((s) => {
+				const on = Boolean(settings[s.key]);
+				const row = el("div", "adm-switch" + (on ? " is-on" : "") + (s.warn ? " is-warn" : ""));
+				const text = el("div", "adm-switch-text");
+				text.append(el("strong", "", s.title), el("small", "", on ? s.on : s.off));
+
+				const toggle = el("button", "adm-toggle");
+				toggle.type = "button";
+				toggle.setAttribute("role", "switch");
+				toggle.setAttribute("aria-checked", String(on));
+				toggle.setAttribute("aria-label", s.title);
+				toggle.addEventListener("click", async () => {
+					const value = !on;
+					if (value && s.confirm && !(await confirmDialog(s.confirm, "Activar"))) return;
+					toggle.disabled = true;
+					try {
+						await api("settings", { key: s.key, value });
+						toast(s.title + ": " + (value ? "activado" : "desactivado"));
+						await loadSettings();
+					} catch (err) {
+						toggle.disabled = false;
+						if (err.message !== "auth") toast("No se pudo cambiar el ajuste.", true);
+					}
+				});
+
+				row.append(el("span", "adm-switch-icon", s.icon), text, toggle);
+				return row;
+			})
+		);
+	};
+
+	// ---------- Reply ----------
+
+	const reply = { row: null, kind: "received", lang: "es" };
+
+	// What the request was about, in a few words for the templates.
+	const aboutOf = (row, lang) => {
+		const d = row.data;
+		const en = lang === "en";
+		if (row.form === "voluntariado") return d.areas || (en ? "the studio" : "el estudio");
+		if (row.form === "discord") return d.tipo || (en ? "your Discord server" : "tu servidor de Discord");
+		if (d.servidor_nombre) return (en ? "your server " : "tu servidor ") + d.servidor_nombre;
+		return en ? "your Minecraft server" : "tu servidor de Minecraft";
+	};
+
+	const fillReply = () => {
+		const { row, kind, lang } = reply;
+		const template = TEMPLATES[kind][row.form === "voluntariado" ? "volunteer" : "order"][lang];
+		const name = String(row.data.nombre || row.data.nickname || "").trim() || (lang === "en" ? "there" : "");
+		const [subject, body] = template({ name, ref: ref(row.id), about: aboutOf(row, lang) });
+
+		$("adm-reply-subject").value = subject;
+		$("adm-reply-body").value = body.replace(/^Hola :/, "Hola:") + "\n\n" + SIGNATURE[lang];
+
+		for (const b of $("adm-reply-kinds").children) b.setAttribute("aria-pressed", String(b.dataset.kind === kind));
+		for (const b of $("adm-reply-lang").children) b.setAttribute("aria-pressed", String(b.dataset.pick === lang));
+		updateMailLink();
+	};
+
+	const updateMailLink = () => {
+		const mail = $("adm-reply-mail");
+		const email = String(reply.row?.data.email || "");
+		if (!EMAIL_RE.test(email)) {
+			mail.setAttribute("aria-disabled", "true");
+			mail.href = "#";
+			return;
+		}
+		mail.removeAttribute("aria-disabled");
+		const body = $("adm-reply-body").value.replace(/\r?\n/g, "\r\n");
+		mail.href = "mailto:" + email + "?subject=" + encodeURIComponent($("adm-reply-subject").value) + "&body=" + encodeURIComponent(body);
+	};
+
+	const openReply = (row, kind) => {
+		const isOrder = row.form !== "voluntariado";
+		reply.row = row;
+		reply.kind = TEMPLATES[kind] && (isOrder || !TEMPLATES[kind].orderOnly) ? kind : "received";
+		reply.lang = row.data.idioma === "en" ? "en" : "es";
+
+		const name = row.data.nombre || row.data.nickname || "—";
+		$("adm-reply-title").textContent = "Responder a " + name + " · " + ref(row.id);
+
+		const to = [];
+		if (EMAIL_RE.test(String(row.data.email || ""))) to.push("✉ " + row.data.email);
+		if (row.data.discord) to.push("💬 " + row.data.discord);
+		$("adm-reply-to").textContent = to.length
+			? "Para: " + to.join("  ·  ") + (to.length === 1 && row.data.discord ? " — copia el texto y envíaselo por Discord." : "")
+			: "No dejó email ni Discord.";
+
+		$("adm-reply-kinds").replaceChildren(
+			...Object.entries(TEMPLATES)
+				.filter(([, t]) => isOrder || !t.orderOnly)
+				.map(([key, t]) => {
+					const b = el("button", "", t.label);
+					b.type = "button";
+					b.dataset.kind = key;
+					b.addEventListener("click", () => {
+						reply.kind = key;
+						fillReply();
+					});
+					return b;
+				})
+		);
+
+		$("adm-reply-lang").replaceChildren(
+			...["es", "en"].map((lang) => {
+				const b = el("button", "", lang.toUpperCase());
+				b.type = "button";
+				b.dataset.pick = lang;
+				b.addEventListener("click", () => {
+					reply.lang = lang;
+					fillReply();
+				});
+				return b;
+			})
+		);
+
+		fillReply();
+		$("adm-reply").showModal();
+	};
+
+	$("adm-reply-subject").addEventListener("input", updateMailLink);
+	$("adm-reply-body").addEventListener("input", updateMailLink);
+	$("adm-reply-close").addEventListener("click", () => $("adm-reply").close());
+	$("adm-reply-copy").addEventListener("click", async () => {
+		try {
+			await navigator.clipboard.writeText($("adm-reply-subject").value + "\n\n" + $("adm-reply-body").value);
+			toast("Texto copiado");
+		} catch {
+			toast("No se pudo copiar", true);
+		}
+	});
+
 	// ---------- Navigation ----------
 
 	const selectTab = async (tab) => {
 		state.tab = tab;
 		state.filter = "all";
 		state.open.clear();
+		state.editingNote = 0;
 		const isSecurity = tab === "security";
-		$("adm-inbox").hidden = isSecurity;
+		const isSettings = tab === "settings";
+		$("adm-inbox").hidden = isSecurity || isSettings;
 		$("adm-security").hidden = !isSecurity;
+		$("adm-settings").hidden = !isSettings;
 		renderTabs();
 		try {
 			if (isSecurity) {
 				await loadSecurity();
+			} else if (isSettings) {
+				await loadSettings();
 			} else {
 				renderFilter();
 				$("adm-list").replaceChildren(el("div", "adm-skeleton"), el("div", "adm-skeleton"));
@@ -963,8 +1347,8 @@ export function getStaticPaths() {
 			if (/^[=+\-@\t\r]/.test(text)) text = "'" + text;
 			return '"' + text.replace(/"/g, '""') + '"';
 		};
-		const lines = [["id", "fecha", "estado", ...keys.map((k) => LABELS[k] || k)].map(cell).join(",")];
-		for (const r of rows) lines.push([ref(r.id), absolute(r.created_at), (STATUS[r.status] || [r.status])[0], ...keys.map((k) => r.data[k])].map(cell).join(","));
+		const lines = [["id", "fecha", "estado", ...keys.map((k) => LABELS[k] || k), "nota interna"].map(cell).join(",")];
+		for (const r of rows) lines.push([ref(r.id), absolute(r.created_at), (STATUS[r.status] || [r.status])[0], ...keys.map((k) => r.data[k]), r.note || ""].map(cell).join(","));
 		const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
 		const link = el("a");
 		link.href = URL.createObjectURL(blob);
@@ -1030,6 +1414,12 @@ export function getStaticPaths() {
 	});
 
 	// ---------- Start ----------
+
+	// You always see the real site from this browser, even in maintenance mode
+	// (the same flag the site's ?bypass= link sets).
+	try {
+		localStorage.setItem("sd-maintenance-bypass", "true");
+	} catch {}
 
 	loadSession().catch(() => {});
 	selectTab("review");

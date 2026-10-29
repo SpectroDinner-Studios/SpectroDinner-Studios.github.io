@@ -2,12 +2,12 @@ import { clearSessionCookie, logEvent, type Session } from "../../../server/auth
 import { json, readJsonObject } from "../../../server/http";
 import type { PagesHandler } from "../../../server/types";
 
-// GET  → open sessions and the recent access log
+// GET  → open sessions, the recent access log and the history of changes
 // POST { action: "revoke-others" | "revoke-all" } → close sessions
 export const onRequestGet: PagesHandler = async ({ env, data }) => {
 	const current = (data.session as Session).token_hash;
 
-	const [sessions, events] = await Promise.all([
+	const [sessions, events, actions] = await Promise.all([
 		env
 			.DB!.prepare(
 				`SELECT token_hash, created_at, last_seen, expires_at, user_agent FROM admin_sessions
@@ -17,12 +17,16 @@ export const onRequestGet: PagesHandler = async ({ env, data }) => {
 		env
 			.DB!.prepare(`SELECT at, kind, user_agent FROM admin_events ORDER BY id DESC LIMIT 40`)
 			.all<{ at: string; kind: string; user_agent: string }>(),
+		env
+			.DB!.prepare(`SELECT at, action, submission_id, summary FROM admin_actions ORDER BY id DESC LIMIT 80`)
+			.all<{ at: string; action: string; submission_id: number | null; summary: string }>(),
 	]);
 
 	return json({
 		// Never expose token hashes, only whether a row is this browser's session.
 		sessions: sessions.results.map(({ token_hash, ...rest }) => ({ ...rest, current: token_hash === current })),
 		events: events.results,
+		actions: actions.results,
 	});
 };
 

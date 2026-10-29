@@ -29,6 +29,30 @@ export const PRIVATE_HEADERS: Record<string, string> = {
 	].join("; "),
 };
 
+// The GitHub Pages copy of the site has no backend: it uses this one for the
+// public endpoints (forms, reviews, settings), so both copies stay in sync.
+const CORS_ORIGINS = ["https://spectrodinner-studios.github.io"];
+
+export function withCors(request: Request, response: Response): Response {
+	const origin = request.headers.get("Origin");
+	if (!origin || !CORS_ORIGINS.includes(origin)) return response;
+	return withHeaders(response, { "Access-Control-Allow-Origin": origin, Vary: "Origin" });
+}
+
+export function corsPreflight(request: Request): Response {
+	return withCors(
+		request,
+		new Response(null, {
+			status: 204,
+			headers: {
+				"Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+				"Access-Control-Allow-Headers": "Content-Type",
+				"Access-Control-Max-Age": "86400",
+			},
+		})
+	);
+}
+
 export function withHeaders(response: Response, headers: Record<string, string>): Response {
 	const merged = new Headers(response.headers);
 	for (const [key, value] of Object.entries(headers)) merged.set(key, value);

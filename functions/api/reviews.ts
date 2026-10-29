@@ -1,18 +1,22 @@
 import { ensureSchema } from "../../server/db";
-import { json } from "../../server/http";
-import type { PagesHandler } from "../../server/types";
+import { corsPreflight, json, withCors } from "../../server/http";
+import type { Env, PagesHandler } from "../../server/types";
 
 // Public list of reviews: every one that hasn't been hidden or deleted in
 // /admin. Never cached, so a deletion disappears from the site at once.
-export const onRequestGet: PagesHandler = async ({ env }) => {
-	if (!env.DB) return json({ reviews: [] });
+export const onRequestOptions: PagesHandler = async ({ request }) => corsPreflight(request);
 
-	await ensureSchema(env.DB);
+export const onRequestGet: PagesHandler = async ({ request, env }) => withCors(request, await list(env.DB));
 
-	const { results } = await env.DB.prepare(
+const list = async (db: Env["DB"]): Promise<Response> => {
+	if (!db) return json({ reviews: [] });
+
+	await ensureSchema(db);
+
+	const { results } = await db.prepare(
 		`SELECT id, data FROM submissions
 			WHERE form = 'review' AND status IN ('live', 'approved')
-			ORDER BY id DESC LIMIT 60`
+			ORDER BY created_at DESC, id DESC LIMIT 100`
 	).all<{ id: number; data: string }>();
 
 	const reviews = results.map((row) => {

@@ -29,18 +29,31 @@ const total = steps.length + 1;
 		<header class="wz-hero">
 			<span class="eyebrow"><T es="Voluntariado" en="Volunteering" /></span>
 			<h1><T es="Postúlate como voluntario" en="Apply to volunteer" /></h1>
-			<p>
+			<p data-volunteer-open>
 				<T
-					es="Dentro de poco vamos a empezar a buscar gente que nos ayude en SpectroDinner Studios — en software, desarrollo de videojuegos, Minecraft, Discord o tecnología experimental. El programa todavía no está abierto oficialmente, pero puedes dejarnos tu solicitud ya y la revisaremos en cuanto abramos."
-					en="We'll soon start looking for people to help out at SpectroDinner Studios — in software, game development, Minecraft, Discord or experimental technology. The program isn't officially open yet, but you can leave your application now and we'll review it once it is."
+					es="Estamos buscando gente que nos ayude en SpectroDinner Studios — en software, desarrollo de videojuegos, Minecraft, Discord o tecnología experimental. Rellena tu postulación y te responderemos por email o Discord."
+					en="We're looking for people to help out at SpectroDinner Studios — in software, game development, Minecraft, Discord or experimental technology. Fill in your application and we'll get back to you by email or Discord."
 				/>
 			</p>
-			<div class="wz-perks">
-				<span class="chip chip-gold">⏳ <T es="Próximamente" en="Coming soon" /></span>
+			<div class="wz-perks" data-volunteer-open>
+				<span class="chip chip-open">🟢 <T es="Postulaciones abiertas" en="Applications open" /></span>
 				<span class="chip">⏱ ≈ 3 min</span>
 				<span class="chip">💾 <T es="Se guarda solo en tu navegador" en="Auto-saved in your browser" /></span>
 			</div>
 		</header>
+
+		<!-- Shown instead of the form when volunteering is closed from /admin. -->
+		<section class="wz-closed hud-card" data-volunteer-closed hidden>
+			<span class="wz-closed-icon" aria-hidden="true">🔒</span>
+			<h2><T es="Las postulaciones están cerradas" en="Applications are closed" /></h2>
+			<p>
+				<T
+					es="Ahora mismo no estamos buscando voluntarios. Vuelve a pasarte más adelante — anunciaremos cuando reabramos."
+					en="We're not looking for volunteers right now. Check back later — we'll announce when we reopen."
+				/>
+			</p>
+			<a href="/about" class="btn btn-ghost btn-sm"><T es="Conocer el estudio" en="Meet the studio" /> →</a>
+		</section>
 
 		<Wizard
 			formId="volunteer-form"
@@ -51,13 +64,13 @@ const total = steps.length + 1;
 			success={{
 				title: { es: "¡Postulación recibida!", en: "Application received!" },
 				text: {
-					es: "Gracias por querer ayudar. Como el programa todavía no está abierto, revisaremos tu solicitud más adelante.",
-					en: "Thanks for wanting to help. Since the program isn't open yet, we'll review your application later on.",
+					es: "Gracias por querer ayudar. Revisaremos tu postulación y te responderemos lo antes posible.",
+					en: "Thanks for wanting to help. We'll review your application and get back to you as soon as we can.",
 				},
 				next: [
-					{ icon: "📥", text: { es: "Guardamos tu postulación.", en: "We keep your application on file." } },
-					{ icon: "📣", text: { es: "Cuando abramos el programa, revisaremos todas las solicitudes.", en: "When the program opens, we'll review every application." } },
-					{ icon: "💬", text: { es: "Si encaja, te escribimos por email o Discord.", en: "If it's a fit, we'll reach out by email or Discord." } },
+					{ icon: "📥", text: { es: "Revisamos tu postulación.", en: "We review your application." } },
+					{ icon: "💬", text: { es: "Te respondemos por email o Discord con la decisión.", en: "We reply by email or Discord with our decision." } },
+					{ icon: "🚀", text: { es: "Si encaja, te contamos cómo empezar.", en: "If it's a fit, we tell you how to get started." } },
 				],
 				backHref: "/about",
 				backLabel: { es: "Conocer el estudio", en: "Meet the studio" },
@@ -143,7 +156,20 @@ const total = steps.length + 1;
 </Layout>
 
 <script>
+	import { apiUrl } from "../scripts/api";
 	import { initWizard } from "../scripts/wizard";
+
+	// Volunteering can be closed from /admin → Ajustes: show that instead of
+	// the form (the backend refuses applications while it's closed, too).
+	fetch(apiUrl("/api/settings"), { cache: "no-store" })
+		.then((res) => (res.ok ? res.json() : null))
+		.then((settings) => {
+			if (settings?.volunteering_open !== false) return;
+			document.querySelector("[data-wizard='volunteer-form']")?.setAttribute("hidden", "");
+			document.querySelector("[data-volunteer-closed]")?.removeAttribute("hidden");
+			document.querySelectorAll("[data-volunteer-open]").forEach((el) => el.setAttribute("hidden", ""));
+		})
+		.catch(() => {});
 
 	initWizard({
 		formId: "volunteer-form",
@@ -165,3 +191,40 @@ const total = steps.length + 1;
 		},
 	});
 </script>
+
+<style>
+
+.chip-open {
+	color: var(--emerald);
+	background: color-mix(in srgb, var(--emerald) 10%, transparent);
+	border-color: color-mix(in srgb, var(--emerald) 35%, transparent);
+}
+
+.wz-closed {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+	max-width: 640px;
+}
+
+.wz-closed[hidden],
+[data-volunteer-open][hidden],
+:global([data-wizard][hidden]) {
+	display: none;
+}
+
+.wz-closed-icon {
+	font-size: 2rem;
+}
+
+.wz-closed h2 {
+	font-size: 1.6rem;
+}
+
+.wz-closed p {
+	line-height: 1.7;
+	color: var(--text-muted);
+}
+
+</style>

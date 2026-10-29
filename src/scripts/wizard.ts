@@ -1,4 +1,4 @@
-import { submitForm } from "./submit";
+import { SubmitError, submitForm } from "./submit";
 
 /*
 	Step-by-step questionnaire engine for <Wizard> forms.
@@ -28,6 +28,8 @@ const MESSAGES = {
 		edit: "Editar",
 		emptyStep: "Sin respuestas en este paso.",
 		picked: (n: number) => `${n} elegida${n === 1 ? "" : "s"}`,
+		closed: "Este formulario está cerrado ahora mismo. Tus respuestas siguen guardadas en este navegador.",
+		limited: "Has enviado varias solicitudes seguidas. Espera unos minutos e inténtalo de nuevo.",
 	},
 	en: {
 		required: "This field is required.",
@@ -41,6 +43,8 @@ const MESSAGES = {
 		edit: "Edit",
 		emptyStep: "No answers in this step.",
 		picked: (n: number) => `${n} selected`,
+		closed: "This form is closed right now. Your answers are still saved in this browser.",
+		limited: "You've sent several requests in a row. Wait a few minutes and try again.",
 	},
 };
 
@@ -613,8 +617,14 @@ export function initWizard({ formId, buildPayload, onChange }: WizardOptions): v
 			const result = await submitForm(buildPayload(new FormData(form)));
 			clearDraft();
 			showSuccess(result.id);
-		} catch {
-			submitError.hidden = false;
+		} catch (err) {
+			const code = err instanceof SubmitError ? err.code : "";
+			if (code === "closed" || code === "rate_limited") {
+				stepError.textContent = code === "closed" ? t().closed : t().limited;
+				stepError.hidden = false;
+			} else {
+				submitError.hidden = false;
+			}
 		} finally {
 			setSubmitting(false);
 			setTimeout(() => {
