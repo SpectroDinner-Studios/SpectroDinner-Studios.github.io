@@ -193,10 +193,13 @@ export async function pruneUserTables(db: D1Database): Promise<void> {
 	]);
 }
 
-// Removes an account and everything tied to it (its tickets included). Form
-// submissions stay: they were sent separately and also reached Make.
+// Removes an account and everything tied to it (its tickets and game progress
+// included). Form submissions stay: they were sent separately and also reached
+// Make. Confirmations it gave others stay too, so their games don't re-lock.
 export function deleteUserStatements(db: D1Database, userId: number) {
 	return [
+		db.prepare(`DELETE FROM invites WHERE user_id = ?`).bind(userId),
+		db.prepare(`DELETE FROM invite_confirmations WHERE inviter_id = ?`).bind(userId),
 		db.prepare(`DELETE FROM ticket_messages WHERE ticket_id IN (SELECT id FROM tickets WHERE user_id = ?)`).bind(userId),
 		db.prepare(`DELETE FROM tickets WHERE user_id = ?`).bind(userId),
 		db.prepare(`DELETE FROM user_sessions WHERE user_id = ?`).bind(userId),

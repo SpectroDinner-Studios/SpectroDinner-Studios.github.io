@@ -1,0 +1,185 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/account.css";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+---
+
+<Layout title="Invitación | SpectroDinner™" description="Un amigo te ha invitado a SpectroDinner Studios." noindex>
+
+	<Navbar />
+
+	<main class="container acc-page">
+
+		<div class="acc-auth">
+
+			<section class="acc-pitch">
+				<span class="eyebrow"><T es="Invitación" en="Invitation" /></span>
+				<h1 id="inv-title"><T es="Te han invitado" en="You've been invited" /></h1>
+				<p id="inv-lead">
+					<T es="Un amigo está desbloqueando juegos en el LAB de SpectroDinner y necesita tu ayuda." en="A friend is unlocking games in the SpectroDinner LAB and needs your help." />
+				</p>
+				<ul class="acc-perks">
+					<li><span class="acc-perk-icon" aria-hidden="true">1</span><span><T es="Crea tu cuenta (tarda un minuto)." en="Create your account (it takes a minute)." /></span></li>
+					<li><span class="acc-perk-icon" aria-hidden="true">2</span><span><T es="Pídele a tu amigo el código que ve en su pantalla." en="Ask your friend for the code on their screen." /></span></li>
+					<li><span class="acc-perk-icon" aria-hidden="true">3</span><span><T es="Escríbelo aquí y listo. Después podrás desbloquear tus propios juegos." en="Type it here and you're done. Then you can unlock your own games." /></span></li>
+				</ul>
+			</section>
+
+			<div class="acc-card">
+
+				<div class="acc-skeleton" id="inv-loading"></div>
+
+				<p class="acc-alert" id="inv-alert" role="alert" hidden></p>
+
+				<!-- Signed out -->
+				<div class="acc-stack" id="inv-signed-out" hidden>
+					<h2><T es="Ayuda a tu amigo" en="Help your friend" /></h2>
+					<a class="btn btn-primary" id="inv-register" href="/registro/"><T es="Crear mi cuenta →" en="Create my account →" /></a>
+					<a class="btn btn-ghost btn-sm" id="inv-login" href="/entrar/"><T es="Ya tengo cuenta" en="I already have an account" /></a>
+					<small class="acc-meta"><T es="Solo cuentan las cuentas creadas hace menos de 24 horas." en="Only accounts created in the last 24 hours count." /></small>
+				</div>
+
+				<!-- Signed in, can confirm -->
+				<form class="acc-stack" id="inv-form" hidden novalidate>
+					<h2><T es="Escribe el código" en="Enter the code" /></h2>
+					<label class="acc-field" for="inv-code">
+						<span id="inv-code-label"></span>
+						<input id="inv-code" class="lab-code-input" name="code" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="9" placeholder="ABC 123" required />
+					</label>
+					<button type="submit" class="btn btn-primary" id="inv-submit"><T es="Confirmar →" en="Confirm →" /></button>
+				</form>
+
+				<!-- Finished or can't confirm -->
+				<div class="acc-stack" id="inv-result" hidden>
+					<h2 id="inv-result-title"></h2>
+					<p class="acc-meta" id="inv-result-text"></p>
+					<a class="btn btn-primary" href="/juegos/"><T es="Desbloquear mis juegos →" en="Unlock my games →" /></a>
+				</div>
+
+			</div>
+
+		</div>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+<script>
+	import { api, ensureAccountHost, errorText, setBusy, showAlert, tt } from "../scripts/account";
+
+	type Invite = {
+		inviter: string;
+		slot: number | null;
+		game: { title: string; icon: string } | null;
+		count: number;
+		needed: number;
+		viewer: { name: string; own: boolean; confirmed: boolean; fresh: boolean } | null;
+	};
+
+	ensureAccountHost();
+
+	const token = new URLSearchParams(location.search).get("i") || "";
+	const here = location.pathname + location.search;
+	const alertBox = document.getElementById("inv-alert")!;
+	const show = (id: string) => {
+		for (const part of ["inv-signed-out", "inv-form", "inv-result"]) document.getElementById(part)!.hidden = part !== id;
+		document.getElementById("inv-loading")!.hidden = true;
+	};
+
+	const gameName = (invite: { slot: number | null; game: Invite["game"] }) =>
+		invite.game?.title ? `${invite.game.icon || "🎮"} ${invite.game.title}` : null;
+
+	const result = (title: Node, text: Node) => {
+		document.getElementById("inv-result-title")!.replaceChildren(title);
+		document.getElementById("inv-result-text")!.replaceChildren(text);
+		show("inv-result");
+	};
+
+	const load = async () => {
+		if (!token) {
+			show("inv-result");
+			result(tt("Enlace incompleto", "Incomplete link"), errorText("invalid_invite"));
+			return;
+		}
+
+		const { ok, data } = await api<Invite>("/api/games/invite?token=" + encodeURIComponent(token));
+		if (!ok) {
+			result(tt("Invitación no válida", "Invalid invitation"), errorText(data.error));
+			return;
+		}
+
+		const name = data.inviter;
+		const game = gameName(data);
+		document.getElementById("inv-title")!.replaceChildren(tt(`${name} te ha invitado`, `${name} invited you`));
+		document.getElementById("inv-lead")!.replaceChildren(
+			data.slot
+				? tt(
+						`Está desbloqueando ${game ?? "el juego " + data.slot} en el LAB de SpectroDinner y lleva ${data.count} de ${data.needed} amigos. Ayúdale en un minuto:`,
+						`They're unlocking ${game ?? "game " + data.slot} in the SpectroDinner LAB and have ${data.count} of ${data.needed} friends. Help them in a minute:`
+					)
+				: tt(`${name} ya ha desbloqueado todos los juegos del LAB.`, `${name} has already unlocked every LAB game.`)
+		);
+
+		if (!data.slot) {
+			result(tt("¡Ya está todo desbloqueado!", "Everything's unlocked!"), errorText("all_unlocked"));
+			return;
+		}
+
+		const viewer = data.viewer;
+		if (!viewer) {
+			(document.getElementById("inv-register") as HTMLAnchorElement).href = "/registro/?next=" + encodeURIComponent(here);
+			(document.getElementById("inv-login") as HTMLAnchorElement).href = "/entrar/?next=" + encodeURIComponent(here);
+			show("inv-signed-out");
+			return;
+		}
+		if (viewer.own) return result(tt("Esta es tu invitación", "This is your invitation"), errorText("own_invite"));
+		if (viewer.confirmed) return result(tt("Ya ayudaste a alguien", "You already helped someone"), errorText("already_confirmed"));
+		if (!viewer.fresh) return result(tt("Tu cuenta no es nueva", "Your account isn't new"), errorText("not_new_account"));
+
+		document.getElementById("inv-code-label")!.replaceChildren(
+			tt(`El código que ve ${name} en su página de juegos`, `The code ${name} sees on their games page`)
+		);
+		show("inv-form");
+		document.getElementById("inv-code")!.focus();
+	};
+
+	document.getElementById("inv-form")!.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const input = document.getElementById("inv-code") as HTMLInputElement;
+		const submit = document.getElementById("inv-submit") as HTMLButtonElement;
+		const code = input.value.trim();
+		if (code.replace(/[^a-z0-9]/gi, "").length < 6) {
+			showAlert(alertBox, errorText("invalid_code"));
+			return;
+		}
+
+		setBusy(submit, true);
+		const res = await api<{ inviter: string; slot: number; count: number; needed: number; unlocked: boolean }>("/api/games/confirm", { token, code });
+		setBusy(submit, false);
+
+		if (!res.ok) {
+			if (res.status === 401) location.replace("/entrar/?next=" + encodeURIComponent(here));
+			showAlert(alertBox, errorText(res.data.error));
+			input.select();
+			return;
+		}
+
+		showAlert(alertBox, null);
+		const { inviter, slot, count, needed, unlocked } = res.data;
+		document.getElementById("inv-lead")!.replaceChildren(
+			tt(`Gracias a ti, ${inviter} ya lleva ${count} de ${needed} amigos para el juego ${slot}.`, `Thanks to you, ${inviter} now has ${count} of ${needed} friends for game ${slot}.`)
+		);
+		result(
+			unlocked ? tt(`🎉 ¡${inviter} ha desbloqueado el juego ${slot}!`, `🎉 ${inviter} unlocked game ${slot}!`) : tt("¡Hecho! Gracias por ayudar", "Done! Thanks for helping"),
+			unlocked
+				? tt("Tu confirmación era la que faltaba. Ahora te toca a ti: invita a tus amigos y desbloquea tus juegos.", "Yours was the last one needed. Now it's your turn: invite your friends and unlock your games.")
+				: tt(`${inviter} lleva ${count} de ${needed} amigos para el juego ${slot}. Ahora puedes desbloquear tus propios juegos.`, `${inviter} has ${count} of ${needed} friends for game ${slot}. Now you can unlock your own games.`)
+		);
+	});
+
+	load();
+</script>

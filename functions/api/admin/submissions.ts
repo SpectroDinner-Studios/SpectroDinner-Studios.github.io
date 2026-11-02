@@ -26,7 +26,7 @@ export const onRequestGet: PagesHandler = async ({ request, env }) => {
 	);
 	const rows = await (byForm ? query.bind(form) : query).all<SubmissionRow & { note: string | null }>();
 
-	const [counts, recent, tickets, users] = await Promise.all([
+	const [counts, recent, tickets, users, flagged] = await Promise.all([
 		db
 			.prepare(`SELECT form, status, COUNT(*) AS n FROM submissions GROUP BY form, status`)
 			.all<{ form: string; status: string; n: number }>(),
@@ -37,6 +37,7 @@ export const onRequestGet: PagesHandler = async ({ request, env }) => {
 			.prepare(`SELECT COALESCE(SUM(status != 'closed'), 0) AS open, COALESCE(SUM(staff_unread), 0) AS unread FROM tickets`)
 			.first<{ open: number; unread: number }>(),
 		db.prepare(`SELECT COUNT(*) AS n FROM users`).first<{ n: number }>(),
+		db.prepare(`SELECT COUNT(*) AS n FROM invite_confirmations WHERE same_network = 1 AND voided = 0`).first<{ n: number }>(),
 	]);
 
 	return json({
@@ -45,6 +46,7 @@ export const onRequestGet: PagesHandler = async ({ request, env }) => {
 		recent: recent.results,
 		tickets: tickets ?? { open: 0, unread: 0 },
 		users: users?.n ?? 0,
+		flaggedInvites: flagged?.n ?? 0,
 	});
 };
 

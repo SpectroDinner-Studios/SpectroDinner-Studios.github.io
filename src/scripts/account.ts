@@ -131,6 +131,12 @@ const ERRORS: Record<string, Pair> = {
 	category_invalid: ["Elige una categoría.", "Choose a category."],
 	not_found: ["No encontramos este ticket.", "We couldn't find this ticket."],
 	unavailable: ["Las cuentas no están disponibles ahora mismo.", "Accounts aren't available right now."],
+	invalid_invite: ["Esta invitación no existe o ya no es válida.", "This invitation doesn't exist or is no longer valid."],
+	own_invite: ["Esta es tu propia invitación: pásasela a un amigo.", "This is your own invitation: send it to a friend."],
+	already_confirmed: ["Tu cuenta ya confirmó una invitación. Cada cuenta solo puede hacerlo una vez.", "Your account has already confirmed an invitation. Each account can only do it once."],
+	not_new_account: ["Solo pueden confirmar cuentas nuevas (creadas hace menos de 24 horas).", "Only new accounts (created in the last 24 hours) can confirm."],
+	invalid_code: ["Ese código no es correcto. Pídeselo otra vez a tu amigo: lo ve en su página de juegos.", "That code isn't right. Ask your friend again: it's on their games page."],
+	all_unlocked: ["Tu amigo ya ha desbloqueado todos los juegos. ¡Gracias igualmente!", "Your friend has already unlocked every game. Thanks anyway!"],
 	network: ["No se pudo conectar. Revisa tu conexión.", "Couldn't connect. Check your connection."],
 };
 

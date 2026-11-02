@@ -35,3 +35,15 @@
   X-Robots-Tag: noindex, nofollow
   Referrer-Policy: no-referrer
   Cache-Control: no-store
+/invitacion
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex
+  Referrer-Policy: no-referrer
+/invitacion/*
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex
+  Referrer-Policy: no-referrer
+/juegos
+  X-Frame-Options: DENY
+/juegos/*
+  X-Frame-Options: DENY

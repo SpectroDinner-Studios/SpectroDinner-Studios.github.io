@@ -113,6 +113,24 @@ export function getStaticPaths() {
 			</div>
 		</section>
 
+		<section id="adm-games" hidden>
+			<div class="adm-panel">
+				<div class="adm-panel-head">
+					<h2>Las 8 ranuras del LAB</h2>
+				</div>
+				<p class="adm-hint">Quien desbloquea una ranura ve su nombre, descripción y el botón «Jugar» (solo si está marcada como lista). La siguiente ranura se ve como adelanto: icono y nombre.</p>
+				<div class="adm-games" id="adm-games-list"></div>
+			</div>
+			<div class="adm-panel">
+				<div class="adm-panel-head">
+					<h2>Invitaciones confirmadas</h2>
+					<div class="adm-filter" id="adm-inv-filter" role="group" aria-label="Filtro"></div>
+				</div>
+				<p class="adm-hint" id="adm-inv-summary"></p>
+				<div class="adm-list" id="adm-inv-list"></div>
+			</div>
+		</section>
+
 		<section id="adm-users" hidden>
 			<div class="adm-toolbar">
 				<input type="search" id="adm-us-search" placeholder="Buscar por nombre o email…" autocomplete="off" />
@@ -206,6 +224,21 @@ export function getStaticPaths() {
 .adm-danger { --btn-bg: color-mix(in srgb, var(--danger) 14%, transparent); --btn-fg: var(--danger); --btn-ring: color-mix(in srgb, var(--danger) 45%, transparent); }
 
 .adm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 22px; }
+
+/* LAB games */
+#adm-games { display: flex; flex-direction: column; gap: 14px; }
+.adm-games { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.adm-game { display: flex; flex-direction: column; gap: 8px; padding: 14px; background: var(--surface-1); border: 1px solid var(--border-1); border-left: 3px solid var(--border-2); border-radius: var(--radius-xs); }
+.adm-game.is-ready { border-left-color: var(--emerald); }
+.adm-game-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: var(--font-pixel); font-size: .68rem; letter-spacing: .05em; text-transform: uppercase; color: var(--text-dim); }
+.adm-game-row { display: grid; grid-template-columns: 64px 1fr; gap: 8px; }
+.adm-game input[type="text"], .adm-game textarea { width: 100%; padding: 8px 10px; font: inherit; font-size: .9rem; color: var(--text); background: var(--bg-sunken); border: 1px solid var(--border-2); border-radius: var(--radius-xs); }
+.adm-game textarea { min-height: 64px; resize: vertical; }
+.adm-game input:focus, .adm-game textarea:focus { border-color: var(--primary); outline: none; }
+.adm-game-icon { text-align: center; font-size: 1.2rem !important; }
+.adm-game-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: .86rem; color: var(--text-muted); }
+.adm-game-foot label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+@container (max-width: 700px) { .adm-games { grid-template-columns: 1fr; } }
 
 /* Tickets & accounts */
 .adm-card.is-clickable { cursor: pointer; transition: border-color var(--transition); }
@@ -394,7 +427,7 @@ export function getStaticPaths() {
 		{ key: "maintenance", icon: "🛠️", title: "Modo mantenimiento", warn: true, on: "Los visitantes ven la página de mantenimiento. Tú, desde este navegador, sigues viendo la web normal.", off: "La web funciona con normalidad.", confirm: "Los visitantes verán la página de mantenimiento hasta que lo desactives. ¿Activarlo?" },
 	];
 
-	const ACTION_ICONS = { delete: "🗑", restore: "↩️", approve: "✅", hide: "🙈", accept: "✔️", reject: "✖️", done: "🏁", read: "👁", unread: "🔵", note: "📝", setting: "⚙️", "read-all": "☑️", "ticket-reply": "💬", "ticket-close": "🔒", "ticket-reopen": "🔓", "user-reset": "🔑", "user-disable": "⛔", "user-enable": "✅", "user-delete": "🗑" };
+	const ACTION_ICONS = { delete: "🗑", restore: "↩️", approve: "✅", hide: "🙈", accept: "✔️", reject: "✖️", done: "🏁", read: "👁", unread: "🔵", note: "📝", setting: "⚙️", "read-all": "☑️", "ticket-reply": "💬", "ticket-close": "🔒", "ticket-reopen": "🔓", "user-reset": "🔑", "user-disable": "⛔", "user-enable": "✅", "user-delete": "🗑", "game-save": "🎮", "invite-void": "🚫", "invite-restore": "♻️" };
 
 	// ---------- Reply templates ----------
 	// v = { name, ref, about } · one per decision, for volunteers and orders.
@@ -484,7 +517,7 @@ export function getStaticPaths() {
 
 	// ---------- State ----------
 
-	const state = { tab: "review", filter: "all", query: "", rows: [], counts: [], recent: [], open: new Set(), editingNote: 0, tickets: { open: 0, unread: 0 }, users: 0 };
+	const state = { tab: "review", filter: "all", query: "", rows: [], counts: [], recent: [], open: new Set(), editingNote: 0, tickets: { open: 0, unread: 0 }, users: 0, flagged: 0 };
 
 	// ---------- Helpers ----------
 
@@ -635,6 +668,7 @@ export function getStaticPaths() {
 			...Object.entries(FORMS),
 			["tickets", { label: "Tickets", icon: "🎫", badge: () => state.tickets.unread }],
 			["users", { label: "Usuarios", icon: "👤" }],
+			["games", { label: "Juegos", icon: "🎮", badge: () => state.flagged }],
 			["security", { label: "Seguridad", icon: "🛡️" }],
 			["settings", { label: "Ajustes", icon: "⚙️" }],
 		];
@@ -905,12 +939,13 @@ export function getStaticPaths() {
 	};
 
 	const loadRows = async () => {
-		const { submissions, counts, recent, tickets, users } = await api("submissions?form=" + encodeURIComponent(state.tab));
+		const { submissions, counts, recent, tickets, users, flaggedInvites } = await api("submissions?form=" + encodeURIComponent(state.tab));
 		state.rows = submissions;
 		state.counts = counts;
 		state.recent = recent || [];
 		state.tickets = tickets || { open: 0, unread: 0 };
 		state.users = users || 0;
+		state.flagged = flaggedInvites || 0;
 		if (state.tab === "review") setReviewIndex(submissions);
 		renderStats();
 		renderTabs();
@@ -1613,6 +1648,145 @@ export function getStaticPaths() {
 		renderTicketList();
 	});
 
+	// ---------- LAB games ----------
+
+	const INVITE_FILTERS = [["all", "Todas"], ["flagged", "⚠ Sospechosas"], ["voided", "Anuladas"]];
+	const gm = { games: [], confirmations: [], filter: "all", friendsPerGame: 3, invites: 0 };
+
+	const saveGame = async (slot, box) => {
+		const value = (name) => box.querySelector('[name="' + name + '"]');
+		const payload = {
+			action: "save",
+			slot,
+			icon: value("icon").value,
+			title: value("title").value,
+			url: value("url").value,
+			description: value("description").value,
+			ready: value("ready").checked,
+		};
+		try {
+			await api("games", payload);
+		} catch (err) {
+			if (err.message === "HTTP 400") {
+				toast(payload.ready ? "Para marcarlo como listo necesita nombre y enlace (https://… o /ruta)." : "El enlace tiene que empezar por https:// o por /.", true);
+			} else if (err.message !== "auth") toast("No se pudo guardar.", true);
+			return;
+		}
+		toast("Juego " + slot + " guardado");
+		loadGamesAdmin();
+	};
+
+	const renderGamesAdmin = () => {
+		$("adm-games-list").replaceChildren(
+			...gm.games.map((g) => {
+				const box = el("div", "adm-game" + (g.ready ? " is-ready" : ""));
+				const head = el("div", "adm-game-head");
+				head.append(el("span", "", "Juego " + g.slot), el("span", "", g.unlockedBy + (g.unlockedBy === 1 ? " cuenta lo tiene" : " cuentas lo tienen")));
+
+				const input = (name, placeholder, value, className) => {
+					const field = el("input", className || "");
+					field.type = "text";
+					field.name = name;
+					field.placeholder = placeholder;
+					field.value = value || "";
+					return field;
+				};
+				const row = el("div", "adm-game-row");
+				row.append(input("icon", "🎮", g.icon, "adm-game-icon"), input("title", "Nombre del juego", g.title));
+				const description = el("textarea");
+				description.name = "description";
+				description.placeholder = "Descripción corta (la ve quien lo desbloquea)";
+				description.value = g.description || "";
+				description.maxLength = 400;
+
+				const foot = el("div", "adm-game-foot");
+				const ready = el("label");
+				const check = el("input");
+				check.type = "checkbox";
+				check.name = "ready";
+				check.checked = g.ready;
+				ready.append(check, "Listo para jugar");
+				foot.append(ready, button("Guardar", () => saveGame(g.slot, box), "btn btn-primary btn-sm"));
+
+				box.append(head, row, input("url", "Enlace para jugar: https://… o /ruta", g.url), description, foot);
+				return box;
+			})
+		);
+	};
+
+	const renderInvites = () => {
+		$("adm-inv-filter").replaceChildren(
+			...INVITE_FILTERS.map(([value, label]) => {
+				const b = el("button", "", label);
+				b.type = "button";
+				b.setAttribute("aria-pressed", String(gm.filter === value));
+				b.addEventListener("click", () => {
+					gm.filter = value;
+					renderInvites();
+				});
+				return b;
+			})
+		);
+
+		const flagged = gm.confirmations.filter((c) => c.same_network && !c.voided).length;
+		$("adm-inv-summary").textContent =
+			gm.invites + " cuentas tienen enlace de invitación · " + gm.confirmations.length + " confirmaciones" +
+			(flagged ? " · " + flagged + " desde la misma conexión que quien invitó (posibles cuentas falsas)" : "") +
+			". Anular una confirmación la deja de contar (y el juego puede volver a bloquearse).";
+
+		const rows = gm.confirmations.filter((c) => (gm.filter === "flagged" ? c.same_network && !c.voided : gm.filter === "voided" ? c.voided : true));
+		if (!rows.length) {
+			$("adm-inv-list").replaceChildren(el("p", "adm-empty", gm.confirmations.length ? "Nada en este filtro." : "Todavía nadie ha confirmado una invitación."));
+			return;
+		}
+		$("adm-inv-list").replaceChildren(
+			...rows.map((c) => {
+				const card = el("article", "adm-card" + (c.voided ? " is-muted" : c.same_network ? " is-new" : ""));
+				const head = el("div", "adm-card-head");
+				head.append(el("strong", "", (c.inviter_name || "Cuenta eliminada") + " ← " + (c.friend_name || "cuenta eliminada")), el("span", "adm-chip blue", "Juego " + c.slot));
+				if (c.same_network) head.append(el("span", "adm-chip gold", "⚠ Misma conexión"));
+				if (c.voided) head.append(el("span", "adm-chip red", "Anulada"));
+				const meta = el("span", "adm-meta");
+				const whenEl = el("span", "", relative(c.created_at));
+				whenEl.title = absolute(c.created_at);
+				meta.append(whenEl);
+				head.append(meta);
+
+				const sub = el("div", "adm-sub");
+				sub.append(el("span", "", "Invitó: " + (c.inviter_email || "—")), el("span", "", "Confirmó: " + (c.friend_email || "—")));
+
+				const actions = el("div", "adm-actions");
+				actions.append(
+					c.voided
+						? button("♻️ Restaurar", async () => {
+								await api("games", { action: "restore", id: c.id });
+								toast("Confirmación restaurada");
+								loadGamesAdmin();
+							})
+						: button("🚫 Anular", async () => {
+								await api("games", { action: "void", id: c.id });
+								toast("Confirmación anulada");
+								loadGamesAdmin();
+							}, "btn btn-sm adm-danger")
+				);
+				card.append(head, sub, actions);
+				return card;
+			})
+		);
+	};
+
+	const loadGamesAdmin = async () => {
+		const data = await api("games");
+		gm.games = data.games;
+		gm.confirmations = data.confirmations;
+		gm.friendsPerGame = data.friendsPerGame;
+		gm.invites = data.invites;
+		state.flagged = data.confirmations.filter((c) => c.same_network && !c.voided).length;
+		renderTabs();
+		renderGamesAdmin();
+		renderInvites();
+	};
+
 	// ---------- Accounts ----------
 
 	const us = { list: [], query: "" };
@@ -1717,11 +1891,13 @@ export function getStaticPaths() {
 		const isSettings = tab === "settings";
 		const isTickets = tab === "tickets";
 		const isUsers = tab === "users";
-		$("adm-inbox").hidden = isSecurity || isSettings || isTickets || isUsers;
+		const isGames = tab === "games";
+		$("adm-inbox").hidden = isSecurity || isSettings || isTickets || isUsers || isGames;
 		$("adm-security").hidden = !isSecurity;
 		$("adm-settings").hidden = !isSettings;
 		$("adm-tickets").hidden = !isTickets;
 		$("adm-users").hidden = !isUsers;
+		$("adm-games").hidden = !isGames;
 		if (!isTickets || !keepThread) showTicketList();
 		renderTabs();
 		try {
@@ -1735,6 +1911,8 @@ export function getStaticPaths() {
 				else await loadTickets();
 			} else if (isUsers) {
 				await loadUsers();
+			} else if (isGames) {
+				await loadGamesAdmin();
 			} else {
 				renderFilter();
 				$("adm-list").replaceChildren(el("div", "adm-skeleton"), el("div", "adm-skeleton"));

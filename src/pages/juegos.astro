@@ -1,0 +1,248 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/account.css";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+---
+
+<Layout title="Juegos del LAB | SpectroDinner™" description="8 juegos experimentales de SpectroDinner Studios. Desbloquéalos de uno en uno invitando a tus amigos.">
+
+	<Navbar />
+
+	<main class="container acc-page">
+
+		<header class="acc-head">
+			<div>
+				<span class="eyebrow">LAB.INV</span>
+				<h1><T es="Juegos del LAB" en="LAB games" /></h1>
+				<p>
+					<T
+						es="8 juegos experimentales. Se desbloquean de uno en uno: cada juego necesita que 3 amigos nuevos acepten tu invitación."
+						en="8 experimental games. They unlock one at a time: each game needs 3 new friends to accept your invitation."
+					/>
+				</p>
+			</div>
+			<span class="acc-chip blue" id="lab-total" hidden></span>
+		</header>
+
+		<p class="acc-alert" id="lab-alert" role="status" hidden></p>
+
+		<!-- Signed out -->
+		<section class="acc-panel" id="lab-signed-out" hidden>
+			<h2><T es="Empieza a desbloquear" en="Start unlocking" /></h2>
+			<p class="acc-meta">
+				<T
+					es="Necesitas una cuenta para tener tu enlace de invitación y guardar lo que desbloqueas."
+					en="You need an account to get your invitation link and keep what you unlock."
+				/>
+			</p>
+			<div class="lab-row" style="margin-top: 14px">
+				<a class="btn btn-primary btn-sm" href="/registro/?next=/juegos/"><T es="Crear cuenta" en="Create account" /></a>
+				<a class="btn btn-ghost btn-sm" href="/entrar/?next=/juegos/"><T es="Ya tengo cuenta" en="I have an account" /></a>
+			</div>
+		</section>
+
+		<!-- The game being unlocked: progress + how to invite -->
+		<section class="lab-current" id="lab-current" hidden>
+
+			<div class="lab-progress">
+				<span class="eyebrow"><T es="Desbloqueando ahora" en="Unlocking now" /></span>
+				<h2 id="lab-current-title"></h2>
+				<div class="lab-bar" aria-hidden="true"><span id="lab-current-bar" style="width: 0%"></span></div>
+				<p class="acc-meta" id="lab-current-count"></p>
+				<div class="lab-friends" id="lab-current-friends"></div>
+			</div>
+
+			<ol class="lab-steps">
+				<li>
+					<span>1 · <T es="Envía tu enlace a un amigo" en="Send your link to a friend" /></span>
+					<div class="lab-row">
+						<input id="lab-link" readonly aria-label="Enlace de invitación / Invitation link" />
+						<button type="button" class="btn btn-ghost btn-sm" id="lab-copy"><T es="Copiar" en="Copy" /></button>
+						<a class="btn btn-ghost btn-sm" id="lab-whatsapp" href="#" target="_blank" rel="noopener">WhatsApp</a>
+						<button type="button" class="btn btn-ghost btn-sm" id="lab-share" hidden><T es="Compartir" en="Share" /></button>
+					</div>
+				</li>
+				<li>
+					<span>2 · <T es="Cuando se cree la cuenta, dile este código" en="Once they sign up, tell them this code" /></span>
+					<div class="lab-row" style="align-items: center">
+						<span class="lab-code" id="lab-code" aria-live="polite">······</span>
+						<button type="button" class="btn btn-ghost btn-sm" id="lab-new-code"><T es="Generar otro código" en="New code" /></button>
+					</div>
+				</li>
+				<li>
+					<span>3 · <T es="Con 3 amigos nuevos, el juego se desbloquea" en="With 3 new friends, the game unlocks" /></span>
+					<small class="acc-meta"><T es="Esta página se actualiza sola: verás a cada amigo aparecer." en="This page updates itself: you'll see each friend appear." /></small>
+				</li>
+			</ol>
+
+		</section>
+
+		<section class="acc-panel" id="lab-done" hidden>
+			<h2>🏆 <T es="¡Has desbloqueado los 8 juegos!" en="You've unlocked all 8 games!" /></h2>
+			<p class="acc-meta"><T es="Gracias por traer a tanta gente al LAB." en="Thanks for bringing so many people to the LAB." /></p>
+		</section>
+
+		<div class="lab-grid" id="lab-grid" aria-live="polite">
+			{Array.from({ length: 8 }, () => <div class="acc-skeleton" style="height: 170px"></div>)}
+		</div>
+
+		<details class="acc-panel">
+			<summary class="acc-link"><T es="Reglas" en="Rules" /></summary>
+			<ul class="lab-rules">
+				<li><T es="Los juegos se desbloquean en orden, de uno en uno." en="Games unlock in order, one at a time." /></li>
+				<li><T es="Cada juego necesita 3 amigos que confirmen tu invitación con el código que ves aquí." en="Each game needs 3 friends who confirm your invitation with the code you see here." /></li>
+				<li><T es="Solo cuentan cuentas nuevas (creadas hace menos de 24 horas), y cada cuenta solo puede confirmar una invitación en toda su vida. Así que para cada juego hacen falta 3 amigos distintos." en="Only new accounts count (created in the last 24 hours), and each account can confirm a single invitation, ever. So each game needs 3 different friends." /></li>
+				<li><T es="Las invitaciones con trampa (cuentas falsas) se anulan, y el juego vuelve a bloquearse." en="Cheated invitations (fake accounts) are voided, and the game locks again." /></li>
+			</ul>
+		</details>
+
+	</main>
+
+	<Footer />
+
+</Layout>
+
+<script>
+	import { api, el, ensureAccountHost, errorText, setBusy, showAlert, signedInHint, tt } from "../scripts/account";
+
+	type Game = { slot: number; state: "unlocked" | "current" | "locked"; title: string; icon: string; description: string; ready: boolean; url: string };
+	type Me = { unlocked: number; current: number | null; counts: number[]; code: string; link: string; friends: { slot: number; name: string }[] };
+	type Data = { rules: { slots: number; friendsPerGame: number }; games: Game[]; me: Me | null };
+
+	ensureAccountHost();
+
+	const grid = document.getElementById("lab-grid")!;
+	const alertBox = document.getElementById("lab-alert")!;
+	let lastUnlocked: number | null = null;
+
+	const gameName = (g: Game) => (g.title ? tt(g.title) : tt("Juego " + g.slot, "Game " + g.slot));
+
+	const renderGrid = (games: Game[], me: Me | null, needed: number) => {
+		grid.replaceChildren(
+			...games.map((g) => {
+				const card = el("article", "lab-game is-" + g.state);
+				if (lastUnlocked !== null && me && g.state === "unlocked" && g.slot > lastUnlocked) card.classList.add("is-new");
+
+				card.append(el("span", "lab-game-n", tt("Juego " + g.slot, "Game " + g.slot)));
+				card.append(el("span", "lab-game-icon", g.state === "locked" ? "?" : g.icon || (g.state === "unlocked" ? "🎮" : "?")));
+				card.append(el("strong", "", g.state === "locked" ? tt("Bloqueado", "Locked") : gameName(g)));
+
+				if (g.state === "unlocked") {
+					card.append(el("p", "", g.description || ""));
+					if (g.ready && g.url) {
+						const play = el("a", "btn btn-primary btn-sm", tt("Jugar →", "Play →"));
+						play.href = g.url;
+						if (/^https:/i.test(g.url)) {
+							play.target = "_blank";
+							play.rel = "noopener";
+						}
+						card.append(play);
+					} else {
+						card.append(el("span", "acc-chip green", tt("Desbloqueado · muy pronto", "Unlocked · coming soon")));
+					}
+				} else if (g.state === "current") {
+					const count = me ? me.counts[g.slot - 1] : 0;
+					card.append(el("p", "", tt("Se desbloquea con 3 amigos nuevos.", "Unlocks with 3 new friends.")));
+					card.append(el("span", "acc-chip blue", `${count} / ${needed}`));
+				} else {
+					card.append(el("p", "", tt("Desbloquea el anterior primero.", "Unlock the previous one first.")));
+				}
+				return card;
+			})
+		);
+	};
+
+	const renderCurrent = (games: Game[], me: Me, needed: number) => {
+		const current = document.getElementById("lab-current")!;
+		document.getElementById("lab-done")!.hidden = me.current !== null;
+		current.hidden = me.current === null;
+		if (me.current === null) return;
+
+		const game = games[me.current - 1];
+		const count = me.counts[me.current - 1];
+		document.getElementById("lab-current-title")!.replaceChildren(el("span", "", game.icon || "🎮"), el("span", "", gameName(game)));
+		(document.getElementById("lab-current-bar") as HTMLElement).style.width = Math.min(100, (count / needed) * 100) + "%";
+		document.getElementById("lab-current-count")!.replaceChildren(
+			tt(`${count} de ${needed} amigos han confirmado tu invitación.`, `${count} of ${needed} friends have confirmed your invitation.`)
+		);
+
+		const names = me.friends.filter((f) => f.slot === me.current).map((f) => f.name);
+		document.getElementById("lab-current-friends")!.replaceChildren(
+			...Array.from({ length: needed }, (_, i) =>
+				names[i]
+					? el("div", "lab-friend is-done", el("b", "", names[i].charAt(0).toUpperCase()), names[i])
+					: el("div", "lab-friend", el("b", "", "?"), tt("Esperando…", "Waiting…"))
+			)
+		);
+
+		(document.getElementById("lab-link") as HTMLInputElement).value = me.link;
+		document.getElementById("lab-code")!.textContent = me.code.slice(0, 3) + " " + me.code.slice(3);
+
+		const message =
+			document.documentElement.lang === "en"
+				? `Help me unlock a game on SpectroDinner! Create your account with my link and I'll give you the code: ${me.link}`
+				: `¡Ayúdame a desbloquear un juego en SpectroDinner! Crea tu cuenta con mi enlace y te paso el código: ${me.link}`;
+		(document.getElementById("lab-whatsapp") as HTMLAnchorElement).href = "https://wa.me/?text=" + encodeURIComponent(message);
+
+		const share = document.getElementById("lab-share") as HTMLButtonElement;
+		share.hidden = !navigator.share;
+		share.onclick = () => navigator.share?.({ title: "SpectroDinner LAB", text: message }).catch(() => {});
+	};
+
+	const load = async () => {
+		const { ok, data } = await api<Data>("/api/games");
+		if (!ok) {
+			grid.replaceChildren(el("div", "acc-empty", errorText(data.error)));
+			return;
+		}
+		const needed = data.rules.friendsPerGame;
+		const me = data.me;
+
+		document.getElementById("lab-signed-out")!.hidden = Boolean(me);
+		const total = document.getElementById("lab-total")!;
+		total.hidden = !me;
+		if (me) {
+			total.replaceChildren(`${me.unlocked} / ${data.rules.slots} `, tt("desbloqueados", "unlocked"));
+			if (lastUnlocked !== null && me.unlocked > lastUnlocked) {
+				showAlert(alertBox, tt(`🎉 ¡Juego ${me.unlocked} desbloqueado!`, `🎉 Game ${me.unlocked} unlocked!`), "ok");
+			}
+			renderCurrent(data.games, me, needed);
+		}
+		renderGrid(data.games, me, needed);
+		if (me) lastUnlocked = me.unlocked;
+	};
+
+	document.getElementById("lab-copy")!.addEventListener("click", async () => {
+		const input = document.getElementById("lab-link") as HTMLInputElement;
+		try {
+			await navigator.clipboard.writeText(input.value);
+			showAlert(alertBox, tt("Enlace copiado. ¡Pásaselo a un amigo!", "Link copied. Send it to a friend!"), "ok");
+		} catch {
+			input.select();
+		}
+	});
+
+	document.getElementById("lab-new-code")!.addEventListener("click", async (e) => {
+		const button = e.currentTarget as HTMLButtonElement;
+		setBusy(button, true);
+		const result = await api<{ code: string }>("/api/games", { action: "new-code" });
+		setBusy(button, false);
+		if (result.ok) {
+			document.getElementById("lab-code")!.textContent = result.data.code.slice(0, 3) + " " + result.data.code.slice(3);
+			showAlert(alertBox, tt("Código nuevo. El anterior ya no sirve.", "New code. The old one no longer works."), "ok");
+		} else {
+			showAlert(alertBox, errorText(result.data.error));
+		}
+	});
+
+	load();
+
+	// Friends confirming show up live while the page is open.
+	if (signedInHint()) {
+		setInterval(() => {
+			if (!document.hidden) load();
+		}, 15_000);
+	}
+</script>

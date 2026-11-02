@@ -40,6 +40,12 @@ import PasswordField from "../../components/account/PasswordField.astro";
 			<aside>
 
 				<section class="acc-panel">
+					<h2>🎮 <T es="Juegos del LAB" en="LAB games" /></h2>
+					<p class="acc-meta" id="acc-games"><T es="Invita a amigos para desbloquearlos." en="Invite friends to unlock them." /></p>
+					<a class="btn btn-ghost btn-sm" href="/juegos/" style="margin-top: 12px"><T es="Ver juegos e invitar →" en="See games and invite →" /></a>
+				</section>
+
+				<section class="acc-panel">
 					<h2><T es="Tu cuenta" en="Your account" /></h2>
 					<div class="acc-meta">
 						<span><T es="Email" en="Email" />: <b id="acc-email">—</b></span>
@@ -261,9 +267,25 @@ import PasswordField from "../../components/account/PasswordField.astro";
 
 	// ---------- Start ----------
 
+	const loadGames = async () => {
+		const { ok, data } = await api<{ rules: { slots: number; friendsPerGame: number }; me: { unlocked: number; current: number | null; counts: number[] } | null }>("/api/games");
+		if (!ok || !data.me) return;
+		const { unlocked, current, counts } = data.me;
+		const { slots, friendsPerGame } = data.rules;
+		document.getElementById("acc-games")!.replaceChildren(
+			current
+				? tt(
+						`${unlocked} de ${slots} desbloqueados · juego ${current}: ${counts[current - 1]}/${friendsPerGame} amigos.`,
+						`${unlocked} of ${slots} unlocked · game ${current}: ${counts[current - 1]}/${friendsPerGame} friends.`
+					)
+				: tt(`¡Los ${slots} desbloqueados!`, `All ${slots} unlocked!`)
+		);
+	};
+
 	requireAccount().then((account) => {
 		if (!account) return;
 		renderAccount(account);
 		loadTickets();
+		loadGames();
 	});
 </script>

@@ -144,6 +144,39 @@ const SCHEMA = [
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_ticket_messages_ticket ON ticket_messages (ticket_id, id)`,
 
+	// The 8 LAB slots on the homepage, filled in from the panel (see server/games.ts).
+	`CREATE TABLE IF NOT EXISTS games (
+		slot INTEGER PRIMARY KEY,
+		title TEXT NOT NULL DEFAULT '',
+		description TEXT NOT NULL DEFAULT '',
+		icon TEXT NOT NULL DEFAULT '',
+		url TEXT NOT NULL DEFAULT '',
+		ready INTEGER NOT NULL DEFAULT 0,
+		updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+	)`,
+
+	// Each account's invitation: the link token and the code it shows its owner.
+	`CREATE TABLE IF NOT EXISTS invites (
+		user_id INTEGER PRIMARY KEY,
+		token TEXT NOT NULL UNIQUE,
+		code TEXT NOT NULL,
+		created_at TEXT NOT NULL DEFAULT (datetime('now'))
+	)`,
+
+	// A new account confirming whoever invited it. friend_id is UNIQUE: an
+	// account confirms once in its life. same_network flags a likely
+	// self-invite; voided ones (from the panel) don't count.
+	`CREATE TABLE IF NOT EXISTS invite_confirmations (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		inviter_id INTEGER NOT NULL,
+		slot INTEGER NOT NULL,
+		friend_id INTEGER NOT NULL UNIQUE,
+		same_network INTEGER NOT NULL DEFAULT 0,
+		voided INTEGER NOT NULL DEFAULT 0,
+		created_at TEXT NOT NULL DEFAULT (datetime('now'))
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_invite_confirmations_inviter ON invite_confirmations (inviter_id, slot)`,
+
 	// One-time data jobs that already ran, so they never run twice.
 	`CREATE TABLE IF NOT EXISTS migrations (
 		name TEXT PRIMARY KEY,

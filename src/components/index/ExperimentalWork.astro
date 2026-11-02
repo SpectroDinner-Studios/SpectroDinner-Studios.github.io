@@ -23,10 +23,14 @@ const slots = Array.from({ length: 8 });
 
 				<p>
 					<T
-						es="Además de nuestros proyectos principales, SpectroDinner Studios dedica tiempo a probar nuevas ideas, mecánicas y tecnologías. No todo experimento se convierte en un proyecto público — esta sección se irá completando a medida que ese trabajo alcance un estado presentable."
-						en="Alongside our main projects, SpectroDinner Studios spends time testing new ideas, mechanics and technologies. Not every experiment becomes a public project — this section will grow as that work reaches a presentable state."
+						es="Además de nuestros proyectos principales, SpectroDinner Studios dedica tiempo a probar nuevas ideas, mecánicas y tecnologías. En el LAB esperan 8 juegos experimentales: se desbloquean de uno en uno invitando a tus amigos."
+						en="Alongside our main projects, SpectroDinner Studios spends time testing new ideas, mechanics and technologies. 8 experimental games are waiting in the LAB: they unlock one at a time by inviting your friends."
 					/>
 				</p>
+
+				<a href="/juegos/" class="btn btn-primary btn-sm lab-cta" data-lab-link>
+					🎮 <T es="Desbloquear juegos" en="Unlock games" /> →
+				</a>
 
 			</div>
 
@@ -34,15 +38,15 @@ const slots = Array.from({ length: 8 });
 
 				<div class="inventory-head">
 					<span>LAB.INV</span>
-					<span>0 / {slots.length}</span>
+					<span data-lab-count>0 / {slots.length}</span>
 				</div>
 
-				<div class="slots">
+				<div class="slots" data-lab-slots>
 					{slots.map(() => <span class="slot">?</span>)}
 				</div>
 
 				<span class="inventory-foot">
-					<T es="Ranuras bloqueadas — próximamente" en="Locked slots — coming soon" />
+					<T es="Invita a 3 amigos por juego" en="Invite 3 friends per game" />
 				</span>
 
 			</div>
@@ -52,6 +56,36 @@ const slots = Array.from({ length: 8 });
 	</div>
 
 </section>
+
+<script>
+	import { apiUrl } from "../../scripts/api";
+	import { ACCOUNT_ORIGIN } from "../../scripts/account";
+
+	// Show this visitor's real progress in the inventory: unlocked games with
+	// their icon, the one being unlocked highlighted.
+	const slotsBox = document.querySelector<HTMLElement>("[data-lab-slots]");
+	const count = document.querySelector<HTMLElement>("[data-lab-count]");
+	const link = document.querySelector<HTMLAnchorElement>("[data-lab-link]");
+
+	if (link && location.hostname.endsWith(".github.io")) link.href = ACCOUNT_ORIGIN + "/juegos/";
+
+	type Game = { slot: number; state: string; icon: string };
+
+	fetch(apiUrl("/api/games"), { credentials: "same-origin", cache: "no-store" })
+		.then((res) => (res.ok ? res.json() : null))
+		.then((data: { games: Game[]; me: { unlocked: number } | null } | null) => {
+			if (!data || !slotsBox || !count) return;
+			count.textContent = `${data.me?.unlocked ?? 0} / ${data.games.length}`;
+			slotsBox.querySelectorAll<HTMLElement>(".slot").forEach((slot, i) => {
+				const game = data.games[i];
+				if (!game) return;
+				slot.classList.toggle("is-unlocked", game.state === "unlocked");
+				slot.classList.toggle("is-current", game.state === "current");
+				if (game.state === "unlocked") slot.textContent = game.icon || "🎮";
+			});
+		})
+		.catch(() => {});
+</script>
 
 <style>
 
@@ -73,6 +107,10 @@ const slots = Array.from({ length: 8 });
 .copy p {
 	color: var(--text-muted);
 	line-height: 1.8;
+}
+
+.lab-cta {
+	align-self: flex-start;
 }
 
 .inventory {
@@ -130,6 +168,21 @@ const slots = Array.from({ length: 8 });
 
 .slot:nth-child(3n) {
 	animation-delay: .9s;
+}
+
+.slot.is-unlocked {
+	font-family: inherit;
+	font-size: 1.6rem;
+	background: color-mix(in srgb, var(--emerald) 14%, var(--surface-1));
+	border-color: color-mix(in srgb, var(--emerald) 50%, transparent);
+	animation: none;
+}
+
+.slot.is-current {
+	border-color: var(--primary);
+	box-shadow:
+		inset 2px 2px 0 rgba(0, 0, 0, .35),
+		0 0 14px var(--primary-glow);
 }
 
 @keyframes slotPulse {
