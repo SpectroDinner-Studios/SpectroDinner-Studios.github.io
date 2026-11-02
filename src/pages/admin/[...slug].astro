@@ -493,7 +493,7 @@ export function getStaticPaths() {
 		modalidad_detalle: "Detalle de la modalidad", rangos_permisos: "Rangos y permisos", bugs_exploits: "Bugs / exploits",
 		notas_adicionales: "Notas adicionales", areas: "Áreas", experiencia: "Experiencia", enlaces: "Enlaces",
 		disponibilidad: "Disponibilidad", motivacion: "Motivación", service: "Servicio", rating: "Valoración", comment: "Comentario",
-		idioma: "Idioma",
+		idioma: "Idioma", cuenta: "Cuenta",
 	};
 	const LANGUAGE_NAMES = { es: "Español", en: "Inglés" };
 
@@ -835,6 +835,7 @@ export function getStaticPaths() {
 			const rating = Math.max(0, Math.min(5, Number(d.rating) || 0));
 			sub.append(el("span", "adm-stars", "★".repeat(rating) + "☆".repeat(5 - rating)));
 			if (d.service) sub.append(el("span", "", d.service));
+			if (d.cuenta) sub.append(el("span", "", "👤 " + d.cuenta));
 			card.append(sub, el("p", "adm-quote", "“" + (d.comment || "") + "”"));
 		} else {
 			if (d.email && EMAIL_RE.test(d.email)) {

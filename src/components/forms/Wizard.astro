@@ -9,6 +9,9 @@ interface Props {
 	steps: { icon: string; title: Text }[];
 	minutes: number;
 	submitLabel: Text;
+	// Only for signed-in accounts: the form stays hidden behind a sign-in panel
+	// (the backend refuses these forms without a session too).
+	requireAccount?: boolean;
 	success: {
 		title: Text;
 		text: Text;
@@ -18,12 +21,32 @@ interface Props {
 	};
 }
 
-const { formId, quest, steps, minutes, submitLabel, success } = Astro.props;
+const { formId, quest, steps, minutes, submitLabel, success, requireAccount = false } = Astro.props;
 
 const total = steps.length + 1; // + review step
 ---
 
-<div class="wz" data-wizard={formId}>
+{requireAccount && (
+	<section class="wz-gate hud-card" data-login-gate={formId}>
+		<p class="wz-gate-checking" data-gate-checking><T es="Comprobando tu sesión…" en="Checking your session…" /></p>
+		<div class="wz-gate-body" data-gate-out hidden>
+			<span class="wz-gate-icon" aria-hidden="true">🔒</span>
+			<h2><T es="Inicia sesión para rellenar el cuestionario" en="Sign in to fill in the questionnaire" /></h2>
+			<p>
+				<T
+					es="Con tu cuenta podrás seguir tu solicitud paso a paso y hablar con nosotros desde un ticket. Crearla tarda un minuto."
+					en="With your account you can follow your request step by step and talk to us through a ticket. It takes a minute to create."
+				/>
+			</p>
+			<div class="actions">
+				<a class="btn btn-primary" href="/registro/" data-gate-register><T es="Crear cuenta" en="Create account" /></a>
+				<a class="btn btn-ghost" href="/entrar/" data-gate-login><T es="Ya tengo cuenta" en="I have an account" /></a>
+			</div>
+		</div>
+	</section>
+)}
+
+<div class="wz" data-wizard={formId} data-require-account={requireAccount ? "" : undefined} hidden={requireAccount}>
 
 	<!-- Mission panel -->
 	<aside class="wz-side" aria-label="Progreso / Progress">

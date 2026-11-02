@@ -1190,3 +1190,46 @@
 		grid-template-columns: 1fr;
 	}
 }
+
+
+/* ---------- Sign-in gate (questionnaires that need an account) ---------- */
+
+.wz[hidden],
+.wz-gate[hidden],
+.wz-gate [hidden] {
+	display: none;
+}
+
+.wz-gate {
+	max-width: 720px;
+}
+
+.wz-gate-checking {
+	color: var(--text-dim);
+}
+
+.wz-gate-body {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 14px;
+}
+
+.wz-gate-icon {
+	font-size: 2rem;
+}
+
+.wz-gate h2 {
+	font-size: clamp(1.4rem, 3vw, 1.8rem);
+}
+
+.wz-gate p {
+	line-height: 1.7;
+	color: var(--text-muted);
+}
+
+.wz-gate .actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}

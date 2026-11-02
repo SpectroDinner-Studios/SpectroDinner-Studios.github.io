@@ -107,7 +107,36 @@ import SectionHeader from "../SectionHeader.astro";
 					<T es="Deja tu valoración" en="Leave your review" />
 				</h3>
 
-				<form id="review-form" novalidate>
+				<!-- Reviews are for clients only: shown until the account checks out. -->
+				<div class="review-gate" data-review-gate>
+					<p data-gate-checking><T es="Comprobando tu cuenta…" en="Checking your account…" /></p>
+					<div data-gate-signin hidden>
+						<p>
+							<T
+								es="Las valoraciones son solo de clientes. Entra con la cuenta con la que nos hiciste tu encargo."
+								en="Reviews are from clients only. Sign in with the account you placed your order with."
+							/>
+						</p>
+						<div class="gate-actions">
+							<a class="btn btn-primary btn-sm" href="/entrar/" data-gate-login><T es="Entrar" en="Sign in" /></a>
+							<a class="btn btn-ghost btn-sm" href="/registro/" data-gate-register><T es="Crear cuenta" en="Create account" /></a>
+						</div>
+					</div>
+					<div data-gate-noorder hidden>
+						<p>
+							<T
+								es="Solo pueden valorar quienes nos han hecho un encargo de Discord o Minecraft. En cuanto aceptemos el tuyo, podrás dejar aquí tu valoración."
+								en="Only people who've placed a Discord or Minecraft order with us can leave a review. As soon as we accept yours, you'll be able to review here."
+							/>
+						</p>
+						<div class="gate-actions">
+							<a class="btn btn-primary btn-sm" href="/cuestionario/"><T es="Servicio de Discord" en="Discord service" /></a>
+							<a class="btn btn-ghost btn-sm" href="/cuestionario-minecraft/"><T es="Servicio de Minecraft" en="Minecraft service" /></a>
+						</div>
+					</div>
+				</div>
+
+				<form id="review-form" novalidate hidden>
 
 					<div class="grid-fields">
 
@@ -242,6 +271,7 @@ import SectionHeader from "../SectionHeader.astro";
 </section>
 
 <script>
+	import { ACCOUNT_ORIGIN, currentAccount, signedInHint } from "../../scripts/account";
 	import { apiUrl } from "../../scripts/api";
 	import { SubmitError, submitForm } from "../../scripts/submit";
 
@@ -354,8 +384,38 @@ import SectionHeader from "../SectionHeader.astro";
 		.catch(() => {});
 
 	// ---------- Leave a review ----------
+	// Only for clients: a signed-in account with an accepted or finished
+	// order (the backend checks the same). Everyone else sees why, and how.
 
 	const form = document.getElementById("review-form") as HTMLFormElement | null;
+	const gate = document.querySelector<HTMLElement>("[data-review-gate]");
+
+	const showGate = (state: "signin" | "noorder" | "form") => {
+		if (!gate || !form) return;
+		gate.querySelector<HTMLElement>("[data-gate-checking]")!.hidden = true;
+		gate.querySelector<HTMLElement>("[data-gate-signin]")!.hidden = state !== "signin";
+		gate.querySelector<HTMLElement>("[data-gate-noorder]")!.hidden = state !== "noorder";
+		gate.hidden = state === "form";
+		form.hidden = state !== "form";
+	};
+
+	const setupReviewAccess = async () => {
+		// Accounts live on the Cloudflare site: the GitHub copy links there.
+		const base = location.hostname.endsWith(".github.io") ? ACCOUNT_ORIGIN : "";
+		const next = encodeURIComponent("/#review-form");
+		gate?.querySelector<HTMLAnchorElement>("[data-gate-login]")?.setAttribute("href", `${base}/entrar/?next=${next}`);
+		gate?.querySelector<HTMLAnchorElement>("[data-gate-register]")?.setAttribute("href", `${base}/registro/?next=${next}`);
+
+		const account = !base && signedInHint() ? await currentAccount() : null;
+		if (!account) return showGate("signin");
+		if (!account.canReview) return showGate("noorder");
+
+		const nickname = form?.elements.namedItem("nombre") as HTMLInputElement | null;
+		if (nickname && !nickname.value) nickname.value = account.name;
+		showGate("form");
+	};
+
+	setupReviewAccess();
 	const status = document.getElementById("review-status");
 	const statusPending = document.getElementById("review-status-pending");
 	const statusSent = document.getElementById("review-status-sent");
@@ -493,7 +553,9 @@ import SectionHeader from "../SectionHeader.astro";
 				}
 			}
 		} catch (err) {
-			if (err instanceof SubmitError && err.code === "rate_limited") limit?.removeAttribute("hidden");
+			if (err instanceof SubmitError && err.code === "login_required") showGate("signin");
+			else if (err instanceof SubmitError && err.code === "no_order") showGate("noorder");
+			else if (err instanceof SubmitError && err.code === "rate_limited") limit?.removeAttribute("hidden");
 			else error?.removeAttribute("hidden");
 		} finally {
 			setSubmitting(false);
@@ -644,6 +706,28 @@ import SectionHeader from "../SectionHeader.astro";
 	color: var(--text-muted);
 }
 
+
+/* Who may review */
+
+.review-gate {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	line-height: 1.7;
+	color: var(--text-muted);
+}
+
+.review-gate > div {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.gate-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
 
 /* Loading, "Ver todas", empty and error states */
 

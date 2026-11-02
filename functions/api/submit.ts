@@ -3,7 +3,7 @@ import { ensureSchema } from "../../server/db";
 import { validateSubmission } from "../../server/forms";
 import { corsPreflight, json, readJsonObject, withCors } from "../../server/http";
 import { getSettings } from "../../server/settings";
-import { createTicket, submissionSubject } from "../../server/tickets";
+import { createTicket, hasReviewableOrder, submissionSubject } from "../../server/tickets";
 import { getUser } from "../../server/users";
 import type { PagesHandler } from "../../server/types";
 
@@ -12,6 +12,10 @@ const DEFAULT_MAKE_WEBHOOK = "https://hook.eu1.make.com/0k965b8ykue9xfa4wuny31jj
 
 const RATE_LIMIT = 5; // submissions per IP every 10 minutes
 const REVIEW_LIMIT = 3; // reviews per IP per day (they can go live instantly)
+
+// Forms that need a signed-in account: the questionnaires (so every order has
+// a ticket to follow) and reviews (only from clients, see below).
+const ACCOUNT_FORMS = ["discord", "minecraft", "review"];
 
 export const onRequestOptions: PagesHandler = async ({ request }) => corsPreflight(request);
 
@@ -31,6 +35,16 @@ const submit: PagesHandler = async ({ request, env, waitUntil }) => {
 
 	const settings = await getSettings(env.DB);
 	if (result.form === "voluntariado" && !settings.volunteering_open) return json({ error: "closed" }, 403);
+
+	const user = env.SESSION_SECRET ? await getUser(request, env.DB, env.SESSION_SECRET) : null;
+	if (ACCOUNT_FORMS.includes(result.form) && !user) return json({ error: "login_required" }, 401);
+
+	// Reviews only from accounts with an accepted or finished order, tagged
+	// with the account so the panel shows who wrote each one.
+	if (result.form === "review" && user) {
+		if (!(await hasReviewableOrder(env.DB, user.id))) return json({ error: "no_order" }, 403);
+		result.data.cuenta = user.email;
+	}
 
 	// Only a salted hash of the IP is stored, just for rate limiting.
 	const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
@@ -82,18 +96,15 @@ const submit: PagesHandler = async ({ request, env, waitUntil }) => {
 
 	const id = Number(meta.last_row_id) || undefined;
 
-	// Sent while signed in (only possible on this site, not from the GitHub
-	// copy): open a ticket so the request can be followed from the account.
+	// Sent while signed in: open a ticket so the request can be followed from
+	// the account (always the case for the questionnaires).
 	let ticketId: number | undefined;
-	if (id && result.form !== "review" && env.SESSION_SECRET) {
-		const user = await getUser(request, env.DB, env.SESSION_SECRET);
-		if (user) {
-			ticketId = await createTicket(
-				env.DB,
-				{ userId: user.id, category: result.form, subject: submissionSubject(result.form, id, String(result.data.idioma ?? "es")), submissionId: id },
-				{ author: "system", body: `submitted:${result.form}` }
-			);
-		}
+	if (id && result.form !== "review" && user) {
+		ticketId = await createTicket(
+			env.DB,
+			{ userId: user.id, category: result.form, subject: submissionSubject(result.form, id, String(result.data.idioma ?? "es")), submissionId: id },
+			{ author: "system", body: `submitted:${result.form}` }
+		);
 	}
 
 	// The id is shown to the visitor as their request number.

@@ -87,7 +87,7 @@ export async function api<T = Record<string, any>>(path: string, body?: unknown)
 	}
 }
 
-export type Account = { id: number; name: string; email: string; created_at: string; unread: number };
+export type Account = { id: number; name: string; email: string; created_at: string; unread: number; canReview: boolean };
 
 export async function currentAccount(): Promise<Account | null> {
 	const { data } = await api<{ user: Account | null }>("/api/auth/me");

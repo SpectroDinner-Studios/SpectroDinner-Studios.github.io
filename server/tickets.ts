@@ -77,6 +77,20 @@ export async function linkedSubmission(db: D1Database, submissionId: number | nu
 	return row ?? null;
 }
 
+// Who may leave a review: an account with a Discord or Minecraft order (sent
+// from it) that was accepted or finished in the panel.
+export async function hasReviewableOrder(db: D1Database, userId: number): Promise<boolean> {
+	const row = await db
+		.prepare(
+			`SELECT 1 FROM tickets t JOIN submissions s ON s.id = t.submission_id
+				WHERE t.user_id = ? AND s.form IN ('discord', 'minecraft') AND s.status IN ('accepted', 'done')
+				LIMIT 1`
+		)
+		.bind(userId)
+		.first();
+	return Boolean(row);
+}
+
 // Subject of the ticket created for a form sent while signed in, in the
 // language the form was filled in.
 export function submissionSubject(form: string, id: number, lang: string): string {

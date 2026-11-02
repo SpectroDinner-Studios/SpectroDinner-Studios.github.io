@@ -1,4 +1,4 @@
-import { currentAccount, loginUrl, signedInHint } from "./account";
+import { currentAccount, ensureAccountHost, loginUrl, signedInHint } from "./account";
 import { SubmitError, submitForm } from "./submit";
 
 /*
@@ -30,6 +30,7 @@ const MESSAGES = {
 		emptyStep: "Sin respuestas en este paso.",
 		picked: (n: number) => `${n} elegida${n === 1 ? "" : "s"}`,
 		closed: "Este formulario está cerrado ahora mismo. Tus respuestas siguen guardadas en este navegador.",
+		login: "Tu sesión ha caducado. Vuelve a entrar para enviarlo: tus respuestas siguen guardadas.",
 		limited: "Has enviado varias solicitudes seguidas. Espera unos minutos e inténtalo de nuevo.",
 	},
 	en: {
@@ -45,6 +46,7 @@ const MESSAGES = {
 		emptyStep: "No answers in this step.",
 		picked: (n: number) => `${n} selected`,
 		closed: "This form is closed right now. Your answers are still saved in this browser.",
+		login: "Your session has expired. Sign in again to send it: your answers are still saved.",
 		limited: "You've sent several requests in a row. Wait a few minutes and try again.",
 	},
 };
@@ -626,8 +628,8 @@ export function initWizard({ formId, buildPayload, onChange }: WizardOptions): v
 			showSuccess(result.id, result.ticketId);
 		} catch (err) {
 			const code = err instanceof SubmitError ? err.code : "";
-			if (code === "closed" || code === "rate_limited") {
-				stepError.textContent = code === "closed" ? t().closed : t().limited;
+			if (code === "closed" || code === "rate_limited" || code === "login_required") {
+				stepError.textContent = code === "closed" ? t().closed : code === "login_required" ? t().login : t().limited;
 				stepError.hidden = false;
 			} else {
 				submitError.hidden = false;
@@ -642,8 +644,9 @@ export function initWizard({ formId, buildPayload, onChange }: WizardOptions): v
 
 	// ---------- Accounts ----------
 	// Signed in: say so and fill in name/email if still empty. Signed out:
-	// suggest an account to follow the request. (Not on the GitHub Pages copy,
-	// which can't share the Cloudflare site's session.)
+	// suggest an account to follow the request — or, for forms that need one,
+	// keep the form hidden behind the sign-in panel. (Accounts live on the
+	// Cloudflare site, so the GitHub Pages copy of those forms sends you there.)
 
 	const accountBanner = q<HTMLElement>("[data-account-banner]");
 
@@ -655,10 +658,27 @@ export function initWizard({ formId, buildPayload, onChange }: WizardOptions): v
 		}
 	};
 
+	const requiresAccount = root.hasAttribute("data-require-account");
+	const gate = document.querySelector<HTMLElement>(`[data-login-gate="${formId}"]`);
+
 	const setupAccount = async () => {
+		if (requiresAccount) ensureAccountHost();
 		if (!accountBanner || location.hostname.endsWith(".github.io")) return;
 
 		const account = signedInHint() ? await currentAccount() : null;
+
+		if (requiresAccount && gate) {
+			gate.querySelector<HTMLElement>("[data-gate-checking]")!.hidden = true;
+			if (!account) {
+				gate.querySelector<HTMLAnchorElement>("[data-gate-register]")!.href = "/registro/?next=" + encodeURIComponent(location.pathname);
+				gate.querySelector<HTMLAnchorElement>("[data-gate-login]")!.href = loginUrl(location.pathname);
+				gate.querySelector<HTMLElement>("[data-gate-out]")!.hidden = false;
+				return;
+			}
+			gate.hidden = true;
+			root.hidden = false;
+		}
+
 		if (account) {
 			q<HTMLElement>("[data-account-name]")!.textContent = account.name;
 			q<HTMLElement>("[data-account-out]")!.hidden = true;

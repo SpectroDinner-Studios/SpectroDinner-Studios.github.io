@@ -10,8 +10,9 @@ const postJson = (url: string, payload: unknown) =>
 		body: JSON.stringify(payload),
 	});
 
-// A submission the backend refused on purpose: "closed" (form switched off in
-// the panel), "rate_limited", or a validation error code.
+// A submission the backend refused on purpose: "login_required", "no_order"
+// (reviews), "closed" (form switched off in the panel), "rate_limited", or a
+// validation error code.
 export class SubmitError extends Error {
 	code: string;
 
@@ -54,7 +55,7 @@ export async function submitForm(
 		};
 	}
 
-	if (response && [400, 403, 429].includes(response.status)) {
+	if (response && [400, 401, 403, 429].includes(response.status)) {
 		const result = (await response.json().catch(() => ({}))) as { error?: unknown };
 		throw new SubmitError(typeof result.error === "string" ? result.error : String(response.status));
 	}
