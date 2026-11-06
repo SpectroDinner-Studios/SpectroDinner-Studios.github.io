@@ -47,3 +47,15 @@
   X-Frame-Options: DENY
 /juegos/*
   X-Frame-Options: DENY
+
+# Classroom survey: never framed, cached or indexed.
+/cuestionarios
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+  Referrer-Policy: no-referrer
+  Cache-Control: no-store
+/cuestionarios/*
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+  Referrer-Policy: no-referrer
+  Cache-Control: no-store

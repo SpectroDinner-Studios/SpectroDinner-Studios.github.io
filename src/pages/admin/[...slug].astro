@@ -131,6 +131,80 @@ export function getStaticPaths() {
 			</div>
 		</section>
 
+		<section id="adm-survey" hidden>
+
+			<div class="adm-sv-main" id="adm-sv-main">
+
+				<div class="adm-panel">
+					<div class="adm-panel-head">
+						<h2>Acceso a la encuesta</h2>
+						<span class="adm-chip" id="adm-sv-now"></span>
+					</div>
+
+					<div class="adm-sv-levels">
+						<span class="adm-sv-label">Curso</span>
+						<div class="adm-filter" id="adm-sv-course" role="group" aria-label="Curso"></div>
+						<span class="adm-sv-label">Grupo</span>
+						<div class="adm-filter" id="adm-sv-group" role="group" aria-label="Grupo"></div>
+						<span class="adm-sv-label">Estado</span>
+						<div class="adm-sv-state" id="adm-sv-state"></div>
+					</div>
+
+					<div class="adm-sv-live" id="adm-sv-live" hidden>
+						<div>
+							<span class="adm-sv-label" id="adm-sv-password-label">Contraseña actual</span>
+							<strong class="adm-sv-password" id="adm-sv-password"></strong>
+						</div>
+						<div class="adm-panel-actions">
+							<button type="button" class="btn btn-primary btn-sm" id="adm-sv-big">🖥 Mostrar en grande</button>
+							<button type="button" class="btn btn-ghost btn-sm" id="adm-sv-rotate">🔄 Nueva contraseña</button>
+						</div>
+					</div>
+
+					<p class="adm-hint adm-sv-counters" id="adm-sv-counters"></p>
+
+					<form class="adm-sv-config" id="adm-sv-config" novalidate>
+						<label>Usos por contraseña
+							<input type="number" id="adm-sv-uses" min="0" max="1000" step="1" placeholder="Ilimitados" />
+						</label>
+						<label>Máximo de accesos del grupo
+							<input type="number" id="adm-sv-max" min="0" max="1000" step="1" placeholder="Sin límite" />
+						</label>
+						<button type="submit" class="btn btn-ghost btn-sm">Guardar límites</button>
+						<small>Con 1, la contraseña cambia tras cada alumno. Vacío significa ilimitado: con usos ilimitados, la contraseña no cambia hasta que pulses «Nueva contraseña».</small>
+					</form>
+				</div>
+
+				<div class="adm-panel">
+					<div class="adm-panel-head">
+						<h2>Resultados</h2>
+						<div class="adm-filter" id="adm-sv-scope" role="group" aria-label="Vista de resultados"></div>
+					</div>
+					<div id="adm-sv-results"></div>
+					<div class="adm-actions">
+						<button type="button" class="btn btn-primary btn-sm" id="adm-sv-open">Ver respuestas</button>
+						<button type="button" class="btn btn-ghost btn-sm" id="adm-sv-csv-results">⤓ CSV resultados</button>
+						<button type="button" class="btn btn-ghost btn-sm" id="adm-sv-csv-answers">⤓ CSV respuestas</button>
+					</div>
+				</div>
+
+			</div>
+
+			<div id="adm-sv-list" hidden>
+				<button type="button" class="btn btn-ghost btn-sm" id="adm-sv-back">← Volver a la encuesta</button>
+				<div class="adm-toolbar adm-sv-filters">
+					<input type="search" id="adm-sv-search" placeholder="Buscar en las respuestas…" autocomplete="off" />
+					<select id="adm-sv-f-course" aria-label="Filtrar por curso"></select>
+					<select id="adm-sv-f-group" aria-label="Filtrar por grupo"></select>
+					<select id="adm-sv-f-choice" aria-label="Filtrar por proyecto"></select>
+				</div>
+				<p class="adm-count" id="adm-sv-count"></p>
+				<div class="adm-quick adm-sv-words" id="adm-sv-words"></div>
+				<div class="adm-list" id="adm-sv-responses" aria-live="polite"></div>
+			</div>
+
+		</section>
+
 		<section id="adm-users" hidden>
 			<div class="adm-toolbar">
 				<input type="search" id="adm-us-search" placeholder="Buscar por nombre o email…" autocomplete="off" />
@@ -180,6 +254,21 @@ export function getStaticPaths() {
 			</div>
 		</dialog>
 
+		<dialog class="adm-sv-big" id="adm-sv-big-dialog" aria-label="Contraseña en grande">
+			<button type="button" class="btn btn-ghost btn-sm adm-sv-big-close" id="adm-sv-big-close">Cerrar</button>
+			<p class="adm-sv-big-group" id="adm-sv-big-group"></p>
+			<div class="adm-sv-big-body">
+				<div class="adm-sv-big-qr" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h37v37H0z"/><path stroke="#000000" d="M2 2.5h7m1 0h2m2 0h1m1 0h2m2 0h1m1 0h1m1 0h2m2 0h7M2 3.5h1m5 0h1m2 0h2m5 0h5m1 0h1m1 0h1m1 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m2 0h2m1 0h2m2 0h4m1 0h4m1 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m3 0h1m1 0h2m4 0h1m2 0h2m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m2 0h2m4 0h1m2 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h1m5 0h1m2 0h1m1 0h1m4 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h2m1 0h2m2 0h8M2 10.5h1m3 0h1m1 0h3m1 0h1m1 0h1m3 0h2m3 0h2m2 0h5m2 0h1M3 11.5h1m1 0h1m1 0h1m4 0h1m2 0h1m1 0h3m3 0h1m1 0h1m1 0h1m3 0h3M2 12.5h1m3 0h1m1 0h2m1 0h2m4 0h1m2 0h1m1 0h6m3 0h1m1 0h1M5 13.5h2m2 0h1m4 0h1m1 0h1m2 0h2m1 0h2m4 0h1m4 0h2M3 14.5h1m2 0h3m1 0h4m1 0h3m2 0h5m2 0h5m2 0h1M3 15.5h4m3 0h5m3 0h1m1 0h1m2 0h1m1 0h1m1 0h1m1 0h1m1 0h2M2 16.5h2m4 0h2m2 0h3m1 0h1m1 0h1m3 0h1m2 0h4m1 0h1m2 0h1M3 17.5h4m2 0h1m1 0h3m2 0h1m2 0h2m2 0h1m1 0h4m1 0h1M2 18.5h1m1 0h5m3 0h1m3 0h2m1 0h1m2 0h3m1 0h1m1 0h1m1 0h2m1 0h1M2 19.5h2m1 0h3m2 0h1m3 0h2m1 0h3m3 0h1m1 0h1m5 0h3M2 20.5h2m2 0h1m1 0h1m3 0h1m1 0h1m1 0h2m2 0h1m4 0h5m1 0h1m1 0h1M5 21.5h3m1 0h3m2 0h5m2 0h3m1 0h5m3 0h1M5 22.5h1m2 0h2m1 0h3m1 0h1m1 0h2m3 0h3m1 0h1m1 0h1m1 0h2m1 0h2M2 23.5h4m3 0h2m1 0h2m2 0h1m3 0h1m4 0h1m1 0h1m1 0h1m2 0h2M8 24.5h1m1 0h1m2 0h2m2 0h1m1 0h2m2 0h1m1 0h2m2 0h2m1 0h2M4 25.5h2m3 0h2m1 0h3m1 0h4m1 0h1m1 0h6m1 0h2m2 0h1M2 26.5h3m1 0h3m1 0h1m1 0h4m3 0h1m1 0h4m1 0h5m3 0h1M10 27.5h6m1 0h2m4 0h1m2 0h1m3 0h1m1 0h2M2 28.5h7m1 0h1m3 0h2m1 0h3m6 0h1m1 0h1m1 0h2m1 0h1M2 29.5h1m5 0h1m2 0h2m2 0h1m1 0h1m1 0h6m1 0h1m3 0h1M2 30.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h2m3 0h1m2 0h2m1 0h6m1 0h2M2 31.5h1m1 0h3m1 0h1m3 0h2m1 0h1m2 0h1m4 0h1m2 0h1m1 0h4M2 32.5h1m1 0h3m1 0h1m4 0h2m3 0h3m1 0h4m1 0h6M2 33.5h1m5 0h1m5 0h3m2 0h2m2 0h1m2 0h1M2 34.5h7m1 0h1m1 0h2m1 0h3m1 0h1m1 0h6m7 0h1"/></svg></div>
+				<div class="adm-sv-big-text">
+					<span>Entra en</span>
+					<p class="adm-sv-big-url">spectrodinner-studios.pages.dev/cuestionarios</p>
+					<span>Contraseña</span>
+					<p class="adm-sv-big-password" id="adm-sv-big-password" aria-live="polite"></p>
+					<span id="adm-sv-big-count"></span>
+				</div>
+			</div>
+		</dialog>
+
 		<dialog class="adm-dialog" id="adm-dialog">
 			<p id="adm-dialog-text"></p>
 			<div class="adm-dialog-actions">
@@ -224,6 +313,69 @@ export function getStaticPaths() {
 .adm-danger { --btn-bg: color-mix(in srgb, var(--danger) 14%, transparent); --btn-fg: var(--danger); --btn-ring: color-mix(in srgb, var(--danger) 45%, transparent); }
 
 .adm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 22px; }
+
+/* Classroom survey */
+.adm-sv-main { display: flex; flex-direction: column; gap: 14px; }
+.adm-sv-main[hidden] { display: none; }
+.adm-sv-levels { display: grid; grid-template-columns: 70px 1fr; align-items: center; gap: 10px 14px; }
+.adm-sv-levels .adm-filter { justify-self: start; }
+.adm-sv-levels .adm-filter button { white-space: nowrap; }
+.adm-sv-label { font-family: var(--font-pixel); font-size: .66rem; letter-spacing: .05em; text-transform: uppercase; color: var(--text-dim); }
+.adm-sv-state { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-family: var(--font-display); font-weight: 600; }
+.adm-sv-live { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; padding: 14px 16px; background: var(--gold-bg); border: 1px dashed var(--gold-border); border-radius: var(--radius-xs); }
+.adm-sv-live[hidden] { display: none; }
+.adm-sv-live .adm-panel-actions { flex-wrap: wrap; }
+.adm-sv-live .adm-sv-label { display: block; margin-bottom: 4px; }
+.adm-sv-password { font-family: var(--font-display); font-size: 2.1rem; letter-spacing: .14em; color: var(--gold-text); }
+.adm-panel .adm-sv-counters { margin: 12px 0 0; }
+.adm-sv-config { display: grid; grid-template-columns: 1fr 1fr auto; align-items: end; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border-2); }
+.adm-sv-config label { display: flex; flex-direction: column; gap: 6px; font-size: .84rem; font-weight: 600; color: var(--text-muted); }
+.adm-sv-config input { width: 100%; padding: 9px 10px; font: inherit; font-weight: 400; color: var(--text); background: var(--bg-sunken); border: 1px solid var(--border-2); border-radius: var(--radius-xs); }
+.adm-sv-config input:focus { border-color: var(--primary); outline: none; }
+.adm-sv-config small { grid-column: 1 / -1; font-size: .82rem; line-height: 1.5; color: var(--text-dim); }
+.adm-sv-total { margin-bottom: 12px; font-size: .92rem; color: var(--text-muted); }
+.adm-sv-total b { font-family: var(--font-display); font-size: 1.4rem; color: var(--text); }
+.adm-sv-bar { display: grid; grid-template-columns: 150px 1fr 96px; align-items: center; gap: 10px; margin-bottom: 8px; font-size: .9rem; }
+.adm-sv-bar i { display: block; height: 12px; overflow: hidden; background: var(--surface-3); border-radius: 6px; }
+.adm-sv-bar i b { display: block; height: 100%; background: linear-gradient(90deg, var(--primary), var(--emerald)); transition: width .4s ease; }
+.adm-sv-bar span:last-child { text-align: right; color: var(--text-muted); }
+.adm-sv-scroll { overflow-x: auto; }
+.adm-sv-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.adm-sv-table th, .adm-sv-table td { padding: 7px 10px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border-1); }
+.adm-sv-table th { font-family: var(--font-pixel); font-size: .62rem; font-weight: 400; letter-spacing: .04em; text-transform: uppercase; color: var(--text-dim); }
+.adm-sv-table th:first-child, .adm-sv-table td:first-child { text-align: left; }
+.adm-sv-table tr.is-empty td { color: var(--text-dim); }
+.adm-sv-filters { margin-top: 12px; }
+.adm-sv-filters select { padding: 10px 12px; font: inherit; font-size: .88rem; color: var(--text); background: var(--bg-sunken); border: 1px solid var(--border-2); border-radius: var(--radius-xs); }
+.adm-sv-words { margin-bottom: 12px; }
+.adm-sv-words:empty { display: none; }
+.adm-sv-answer { margin: 10px 0 0; font-size: .92rem; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+.adm-sv-answer b { display: block; font-family: var(--font-pixel); font-size: .62rem; font-weight: 400; letter-spacing: .05em; text-transform: uppercase; color: var(--primary-light); }
+
+@container (max-width: 560px) {
+	.adm-sv-levels { grid-template-columns: 1fr; gap: 6px; }
+	.adm-sv-levels .adm-filter { justify-self: stretch; }
+	.adm-sv-levels .adm-filter button { flex: 1; padding: 9px 4px; }
+	.adm-sv-levels .adm-sv-label:not(:first-child) { margin-top: 8px; }
+	.adm-sv-config { grid-template-columns: 1fr; }
+	.adm-sv-bar { grid-template-columns: 1fr auto; }
+	.adm-sv-bar i { grid-column: 1 / -1; grid-row: 2; }
+}
+
+/* "Mostrar en grande": only what the class needs to see */
+.adm-sv-big { width: 100vw; max-width: none; height: 100vh; max-height: none; margin: 0; padding: 32px; color: var(--text); background: var(--background); border: 0; }
+.adm-sv-big[open] { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; }
+.adm-sv-big::backdrop { background: var(--background, #05070d); }
+.adm-sv-big-close { position: absolute; top: 20px; right: 20px; }
+.adm-sv-big-group { margin: 0; font-family: var(--font-display); font-size: clamp(1.4rem, 4vw, 2.6rem); font-weight: 700; }
+.adm-sv-big-body { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(24px, 6vw, 72px); }
+.adm-sv-big-qr { flex: none; width: min(38vh, 340px); padding: 10px; background: #fff; border-radius: var(--radius-xs); }
+.adm-sv-big-qr svg { display: block; width: 100%; height: auto; }
+.adm-sv-big-text { display: flex; flex-direction: column; gap: 8px; color: var(--text-muted); font-size: clamp(1rem, 2vw, 1.3rem); }
+.adm-sv-big-url { margin: 0 0 16px; font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.adm-sv-big-password { margin: 0 0 8px; font-family: var(--font-display); font-size: clamp(3rem, 11vw, 7.5rem); font-weight: 700; line-height: 1.1; letter-spacing: .1em; color: var(--gold-text); }
+.adm-sv-big-password.is-new { animation: admSvFlash 1s ease-out 1; }
+@keyframes admSvFlash { from { color: var(--emerald); text-shadow: 0 0 40px var(--emerald); } }
 
 /* LAB games */
 #adm-games { display: flex; flex-direction: column; gap: 14px; }
@@ -427,7 +579,7 @@ export function getStaticPaths() {
 		{ key: "maintenance", icon: "🛠️", title: "Modo mantenimiento", warn: true, on: "Los visitantes ven la página de mantenimiento. Tú, desde este navegador, sigues viendo la web normal.", off: "La web funciona con normalidad.", confirm: "Los visitantes verán la página de mantenimiento hasta que lo desactives. ¿Activarlo?" },
 	];
 
-	const ACTION_ICONS = { delete: "🗑", restore: "↩️", approve: "✅", hide: "🙈", accept: "✔️", reject: "✖️", done: "🏁", read: "👁", unread: "🔵", note: "📝", setting: "⚙️", "read-all": "☑️", "ticket-reply": "💬", "ticket-close": "🔒", "ticket-reopen": "🔓", "user-reset": "🔑", "user-disable": "⛔", "user-enable": "✅", "user-delete": "🗑", "game-save": "🎮", "invite-void": "🚫", "invite-restore": "♻️" };
+	const ACTION_ICONS = { delete: "🗑", restore: "↩️", approve: "✅", hide: "🙈", accept: "✔️", reject: "✖️", done: "🏁", read: "👁", unread: "🔵", note: "📝", setting: "⚙️", "read-all": "☑️", "ticket-reply": "💬", "ticket-close": "🔒", "ticket-reopen": "🔓", "user-reset": "🔑", "user-disable": "⛔", "user-enable": "✅", "user-delete": "🗑", "game-save": "🎮", "invite-void": "🚫", "invite-restore": "♻️", "survey-open": "📋", "survey-close": "⏹️", "survey-rotate": "🔄", "survey-config": "🎚️", "survey-delete": "🗑" };
 
 	// ---------- Reply templates ----------
 	// v = { name, ref, about } · one per decision, for volunteers and orders.
@@ -669,6 +821,7 @@ export function getStaticPaths() {
 			["tickets", { label: "Tickets", icon: "🎫", badge: () => state.tickets.unread }],
 			["users", { label: "Usuarios", icon: "👤" }],
 			["games", { label: "Juegos", icon: "🎮", badge: () => state.flagged }],
+			["survey", { label: "Encuesta", icon: "📋" }],
 			["security", { label: "Seguridad", icon: "🛡️" }],
 			["settings", { label: "Ajustes", icon: "⚙️" }],
 		];
@@ -1217,7 +1370,7 @@ export function getStaticPaths() {
 		$("adm-actions").replaceChildren(
 			...(actions.length
 				? actions.map((a) => {
-						const li = el("li", a.action === "delete" || a.action === "user-delete" ? "is-delete" : "");
+						const li = el("li", ["delete", "user-delete", "survey-delete"].includes(a.action) ? "is-delete" : "");
 						li.append(el("span", "", ACTION_ICONS[a.action] || "•"), el("span", "", a.summary || a.action));
 						const when = el("small", "", relative(a.at));
 						when.title = absolute(a.at);
@@ -1788,6 +1941,419 @@ export function getStaticPaths() {
 		renderInvites();
 	};
 
+	// ---------- Classroom survey ----------
+
+	const SV_CHOICES = { securiteu: "SecuritEU", euskatronix: "Euskatronix", ambos: "Los dos por igual" };
+	const SV_COURSES = [1, 2, 3, 4];
+	const SV_GROUPS = ["A", "B", "C", "D"];
+	const SV_SCOPES = [["global", "Global"], ["course", "Por curso"], ["group", "Por grupo"]];
+	const SV_POLL_MS = 2000;
+	// Left out of "most repeated words".
+	const SV_STOPWORDS = new Set("para pero porque como cuando donde desde hasta sobre entre este esta esto estos estas ese esa eso esos esas aquel muy más mucho mucha muchos muchas poco poca todo toda todos todas algo nada cosa cosas también tiene tienen tener hace hacer puede pueden sería sido están estar sean algunas algunos otro otra otros otras cual cada creo parece gusta gustado gustó".split(" "));
+
+	const sv = { course: 1, grp: "A", groups: [], password: null, counts: [], scope: "global", responses: [], picked: false, resultsKey: "", accesses: null, shownPassword: "" };
+
+	const svName = (course, grp) => course + ".º DBH - " + grp;
+	const svRef = (id) => "#" + String(id).padStart(3, "0");
+	const svActive = () => sv.groups.find((g) => g.active);
+	const svSelected = () => sv.groups.find((g) => g.course === sv.course && g.grp === sv.grp);
+	const svPercent = (n, total) => (total ? Math.round((n / total) * 1000) / 10 : 0);
+
+	// Votes per project for the rows of `counts` that pass the filter.
+	const svTally = (test) => {
+		const tally = { securiteu: 0, euskatronix: 0, ambos: 0, total: 0 };
+		for (const row of sv.counts) {
+			if (!test(row)) continue;
+			tally[row.choice] += row.n;
+			tally.total += row.n;
+		}
+		return tally;
+	};
+
+	const svFailed = (err, text) => {
+		if (err.message !== "auth") toast(text, true);
+	};
+
+	const svPicker = (box, values, isPicked, isActive, label, onPick) => {
+		box.replaceChildren(
+			...values.map((value) => {
+				const b = el("button", "", label(value) + (isActive(value) ? " ●" : ""));
+				b.type = "button";
+				b.setAttribute("aria-pressed", String(isPicked(value)));
+				b.addEventListener("click", () => onPick(value));
+				return b;
+			})
+		);
+	};
+
+	const renderSurveyPickers = () => {
+		const active = svActive();
+		svPicker($("adm-sv-course"), SV_COURSES, (c) => c === sv.course, (c) => active?.course === c, (c) => c + ".º DBH", (c) => {
+			sv.course = c;
+			renderSurveySelection();
+		});
+		svPicker($("adm-sv-group"), SV_GROUPS, (g) => g === sv.grp, (g) => active?.course === sv.course && active.grp === g, (g) => g, (g) => {
+			sv.grp = g;
+			renderSurveySelection();
+		});
+
+		const on = Boolean(svSelected()?.active);
+		const toggle = el("button", "adm-toggle");
+		toggle.type = "button";
+		toggle.setAttribute("role", "switch");
+		toggle.setAttribute("aria-checked", String(on));
+		toggle.setAttribute("aria-label", "Acceso de " + svName(sv.course, sv.grp));
+		toggle.addEventListener("click", async () => {
+			const previous = svActive();
+			toggle.disabled = true;
+			try {
+				await api("encuesta", on ? { action: "close" } : { action: "open", course: sv.course, grp: sv.grp });
+			} catch (err) {
+				svFailed(err, "No se pudo cambiar el acceso.");
+				toggle.disabled = false;
+				return;
+			}
+			if (on) toast(svName(sv.course, sv.grp) + " desactivado: nadie más puede entrar");
+			else toast(svName(sv.course, sv.grp) + " activado" + (previous ? " · " + svName(previous.course, previous.grp) + " desactivado" : ""));
+			await loadSurvey();
+		});
+		$("adm-sv-state").replaceChildren(el("span", "", svName(sv.course, sv.grp)), el("span", "", "OFF"), toggle, el("span", "", "ON"));
+	};
+
+	// The two limits belong to the selected group. Filled in only when the
+	// selection changes, so the 2-second refresh can't wipe what you're typing.
+	const renderSurveySelection = () => {
+		const group = svSelected();
+		$("adm-sv-uses").value = group?.uses_per_password || "";
+		$("adm-sv-max").value = group?.max_accesses || "";
+		renderSurveyPickers();
+	};
+
+	const renderSurveyLive = () => {
+		const active = svActive();
+		const now = $("adm-sv-now");
+		now.textContent = active ? "Activo ahora: " + svName(active.course, active.grp) : "Ningún grupo activo";
+		now.className = "adm-chip " + (active ? "green" : "");
+
+		$("adm-sv-live").hidden = !active;
+		if (active) $("adm-sv-password-label").textContent = "Contraseña actual · " + svName(active.course, active.grp);
+
+		const full = active && active.max_accesses > 0 && active.accesses >= active.max_accesses;
+		const answered = active ? svTally((r) => r.course === active.course && r.grp === active.grp).total : 0;
+		$("adm-sv-counters").textContent = active
+			? "Accesos " + active.accesses + (active.max_accesses ? " de " + active.max_accesses : "") + " · Respuestas " + answered +
+				(active.uses_per_password === 1 ? "" : active.uses_per_password ? " · Esta contraseña lleva " + active.password_uses + " de " + active.uses_per_password + " usos" : " · Contraseña de usos ilimitados") +
+				(full ? " · Límite alcanzado: nadie más puede entrar hasta que lo subas" : "")
+			: "Elige curso y grupo y pon el estado en ON. Solo puede haber un grupo activo: al activar otro, el anterior se apaga solo.";
+
+		const password = sv.password ? sv.password.slice(0, 3) + " " + sv.password.slice(3) : "";
+		$("adm-sv-password").textContent = password;
+		$("adm-sv-big-password").textContent = full ? "—" : password;
+		$("adm-sv-big-group").textContent = active ? svName(active.course, active.grp) : "Ningún grupo activo";
+		$("adm-sv-big-count").textContent = active ? "Han entrado " + active.accesses + (active.max_accesses ? " de " + active.max_accesses : "") : "";
+
+		// Make a new password noticeable on the big screen.
+		if (sv.shownPassword && password !== sv.shownPassword) {
+			const big = $("adm-sv-big-password");
+			big.classList.remove("is-new");
+			void big.offsetWidth;
+			big.classList.add("is-new");
+		}
+		sv.shownPassword = password;
+	};
+
+	const svCells = (tally) => ["securiteu", "euskatronix", "ambos"].map((c) => svPercent(tally[c], tally.total) + " % (" + tally[c] + ")");
+
+	const svTable = (firstColumn, rows) => {
+		const table = el("table", "adm-sv-table");
+		const head = el("tr");
+		for (const title of [firstColumn, "Total", ...Object.values(SV_CHOICES)]) head.append(el("th", "", title));
+		table.append(head);
+		for (const [label, tally] of rows) {
+			const tr = el("tr", tally.total ? "" : "is-empty");
+			for (const text of [label, tally.total, ...svCells(tally)]) tr.append(el("td", "", text));
+			table.append(tr);
+		}
+		const scroll = el("div", "adm-sv-scroll");
+		scroll.append(table);
+		return scroll;
+	};
+
+	const svCourseRows = () => SV_COURSES.map((c) => [c + ".º DBH", svTally((r) => r.course === c)]);
+	const svGroupRows = () =>
+		SV_COURSES.flatMap((c) => SV_GROUPS.map((g) => [svName(c, g), svTally((r) => r.course === c && r.grp === g)]));
+
+	const renderSurveyResults = () => {
+		$("adm-sv-scope").replaceChildren(
+			...SV_SCOPES.map(([value, label]) => {
+				const b = el("button", "", label);
+				b.type = "button";
+				b.setAttribute("aria-pressed", String(sv.scope === value));
+				b.addEventListener("click", () => {
+					sv.scope = value;
+					renderSurveyResults();
+				});
+				return b;
+			})
+		);
+
+		const box = $("adm-sv-results");
+		const all = svTally(() => true);
+		if (!all.total) {
+			box.replaceChildren(el("p", "adm-empty", "Todavía no hay respuestas."));
+			return;
+		}
+
+		if (sv.scope === "course") return box.replaceChildren(svTable("Curso", svCourseRows()));
+		if (sv.scope === "group") return box.replaceChildren(svTable("Grupo", svGroupRows()));
+
+		const total = el("p", "adm-sv-total");
+		total.append(el("b", "", all.total), all.total === 1 ? " respuesta en total" : " respuestas en total");
+		const bars = Object.entries(SV_CHOICES).map(([key, label]) => {
+			const row = el("div", "adm-sv-bar");
+			const track = el("i");
+			const fill = el("b");
+			fill.style.width = svPercent(all[key], all.total) + "%";
+			track.append(fill);
+			row.append(el("span", "", label), track, el("span", "", svPercent(all[key], all.total) + " % (" + all[key] + ")"));
+			return row;
+		});
+		box.replaceChildren(total, ...bars);
+	};
+
+	const loadSurvey = async () => {
+		const data = await api("encuesta");
+		sv.groups = data.groups;
+		sv.password = data.password;
+		sv.counts = data.counts;
+
+		// Open the tab on whichever group is active.
+		const active = svActive();
+		if (!sv.picked) {
+			sv.picked = true;
+			if (active) {
+				sv.course = active.course;
+				sv.grp = active.grp;
+			}
+			renderSurveySelection();
+		} else {
+			renderSurveyPickers();
+		}
+
+		// A student entering counts as activity, so the idle logout can't close
+		// the panel in the middle of a class.
+		const accesses = sv.groups.reduce((sum, g) => sum + g.accesses, 0);
+		if (sv.accesses !== null && accesses > sv.accesses) markActive();
+		sv.accesses = accesses;
+
+		renderSurveyLive();
+
+		const key = JSON.stringify(sv.counts);
+		if (key !== sv.resultsKey) {
+			sv.resultsKey = key;
+			renderSurveyResults();
+		}
+	};
+
+	setInterval(() => {
+		if (state.tab === "survey" && !document.hidden) loadSurvey().catch(() => {});
+	}, SV_POLL_MS);
+
+	const svFilterOptions = (select, first, options) => {
+		select.replaceChildren(
+			...[["", first], ...options].map(([value, label]) => {
+				const option = el("option", "", label);
+				option.value = value;
+				return option;
+			})
+		);
+	};
+
+	const svVisible = () => {
+		const course = $("adm-sv-f-course").value;
+		const grp = $("adm-sv-f-group").value;
+		const choice = $("adm-sv-f-choice").value;
+		const q = $("adm-sv-search").value.trim().toLowerCase();
+		return sv.responses.filter(
+			(r) =>
+				(!course || r.course === Number(course)) &&
+				(!grp || r.grp === grp) &&
+				(!choice || r.choice === choice) &&
+				(!q || (svRef(r.id) + " " + r.reason + " " + r.improvement).toLowerCase().includes(q))
+		);
+	};
+
+	// The words people repeat most, to see at a glance what the answers say.
+	const renderSurveyWords = (rows) => {
+		const seen = new Map();
+		for (const r of rows) {
+			// Once per response, so one person repeating a word doesn't weigh more.
+			const words = new Set((r.reason + " " + r.improvement).toLowerCase().match(/\p{L}{4,}/gu) || []);
+			for (const word of words) if (!SV_STOPWORDS.has(word)) seen.set(word, (seen.get(word) || 0) + 1);
+		}
+		const top = [...seen].filter(([, n]) => n > 1).sort((a, b) => b[1] - a[1]).slice(0, 12);
+		$("adm-sv-words").replaceChildren(
+			...top.map(([word, n]) => {
+				const b = el("button", "", word + " · " + n);
+				b.type = "button";
+				b.addEventListener("click", () => {
+					$("adm-sv-search").value = word;
+					renderSurveyResponses();
+				});
+				return b;
+			})
+		);
+	};
+
+	const renderSurveyResponses = () => {
+		const rows = svVisible();
+		$("adm-sv-count").textContent = rows.length + " de " + sv.responses.length + " respuestas";
+		renderSurveyWords(rows);
+
+		if (!rows.length) {
+			$("adm-sv-responses").replaceChildren(el("p", "adm-empty", sv.responses.length ? "Nada coincide con los filtros." : "Todavía no hay respuestas."));
+			return;
+		}
+
+		$("adm-sv-responses").replaceChildren(
+			...rows.map((r) => {
+				const card = el("article", "adm-card");
+				const head = el("div", "adm-card-head");
+				head.append(el("strong", "", "Respuesta " + svRef(r.id)), el("span", "adm-chip blue", svName(r.course, r.grp)), el("span", "adm-chip gold", SV_CHOICES[r.choice] || r.choice));
+				const meta = el("span", "adm-meta");
+				meta.append(el("span", "", new Date(r.received_on + "T12:00:00Z").toLocaleDateString("es-ES", { dateStyle: "medium" })));
+				head.append(meta);
+				card.append(head);
+
+				const answer = (title, text) => {
+					const p = el("p", "adm-sv-answer");
+					p.append(el("b", "", title), text);
+					return p;
+				};
+				card.append(answer("Motivo", r.reason));
+				if (r.improvement) card.append(answer("Qué mejoraría o añadiría", r.improvement));
+
+				const actions = el("div", "adm-actions");
+				actions.append(
+					button("🗑 Borrar", async () => {
+						if (!(await confirmDialog("¿Borrar la respuesta " + svRef(r.id) + "? No se puede deshacer.", "Borrar"))) return;
+						try {
+							await api("encuesta", { action: "delete", id: r.id });
+						} catch (err) {
+							svFailed(err, "No se pudo borrar.");
+							return;
+						}
+						toast("Respuesta " + svRef(r.id) + " borrada");
+						await loadSurveyResponses();
+						await loadSurvey();
+					}, "btn btn-sm adm-danger")
+				);
+				card.append(actions);
+				return card;
+			})
+		);
+	};
+
+	const loadSurveyResponses = async () => {
+		sv.responses = (await api("encuesta?vista=respuestas")).responses;
+		renderSurveyResponses();
+	};
+
+	const showSurveyList = (open) => {
+		$("adm-sv-main").hidden = open;
+		$("adm-sv-list").hidden = !open;
+	};
+
+	// Same protection against spreadsheet formulas as the other exports: these
+	// cells hold whatever students typed.
+	const svDownloadCsv = (name, rows) => {
+		const cell = (value) => {
+			let text = String(value ?? "");
+			if (/^[=+\-@\t\r]/.test(text)) text = "'" + text;
+			return '"' + text.replace(/"/g, '""') + '"';
+		};
+		const blob = new Blob(["﻿" + rows.map((row) => row.map(cell).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" });
+		const link = el("a");
+		link.href = URL.createObjectURL(blob);
+		link.download = "spectrodinner-encuesta-" + name + "-" + new Date().toISOString().slice(0, 10) + ".csv";
+		link.click();
+		setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+	};
+
+	$("adm-sv-config").addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const limit = (id) => ($(id).value === "" ? 0 : Number($(id).value));
+		const usesPerPassword = limit("adm-sv-uses");
+		const maxAccesses = limit("adm-sv-max");
+		try {
+			await api("encuesta", { action: "config", course: sv.course, grp: sv.grp, usesPerPassword, maxAccesses });
+		} catch (err) {
+			svFailed(err, "Escribe números enteros entre 0 y 1000, o déjalo vacío.");
+			return;
+		}
+		toast("Límites guardados para " + svName(sv.course, sv.grp));
+		await loadSurvey();
+		renderSurveySelection();
+	});
+
+	$("adm-sv-rotate").addEventListener("click", async () => {
+		try {
+			await api("encuesta", { action: "rotate" });
+		} catch (err) {
+			svFailed(err, "No se pudo cambiar la contraseña.");
+			return;
+		}
+		toast("Contraseña nueva");
+		await loadSurvey();
+	});
+
+	$("adm-sv-big").addEventListener("click", () => {
+		$("adm-sv-big-dialog").showModal();
+		document.documentElement.requestFullscreen?.().catch(() => {});
+	});
+	$("adm-sv-big-close").addEventListener("click", () => $("adm-sv-big-dialog").close());
+	$("adm-sv-big-dialog").addEventListener("close", () => {
+		if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+	});
+
+	$("adm-sv-open").addEventListener("click", async () => {
+		showSurveyList(true);
+		try {
+			await loadSurveyResponses();
+		} catch (err) {
+			svFailed(err, "No se pudieron cargar las respuestas.");
+		}
+	});
+	$("adm-sv-back").addEventListener("click", () => showSurveyList(false));
+
+	svFilterOptions($("adm-sv-f-course"), "Todos los cursos", SV_COURSES.map((c) => [String(c), c + ".º DBH"]));
+	svFilterOptions($("adm-sv-f-group"), "Todos los grupos", SV_GROUPS.map((g) => [g, "Grupo " + g]));
+	svFilterOptions($("adm-sv-f-choice"), "Todos los proyectos", Object.entries(SV_CHOICES));
+	for (const id of ["adm-sv-f-course", "adm-sv-f-group", "adm-sv-f-choice"]) $(id).addEventListener("change", renderSurveyResponses);
+	$("adm-sv-search").addEventListener("input", renderSurveyResponses);
+
+	$("adm-sv-csv-results").addEventListener("click", () => {
+		const header = ["Ámbito", "Total", ...Object.values(SV_CHOICES).flatMap((label) => [label, label + " %"])];
+		const line = (label, tally) => [label, tally.total, ...["securiteu", "euskatronix", "ambos"].flatMap((c) => [tally[c], svPercent(tally[c], tally.total)])];
+		const rows = [["Global", svTally(() => true)], ...svCourseRows(), ...svGroupRows()];
+		svDownloadCsv("resultados", [header, ...rows.map(([label, tally]) => line(label, tally))]);
+		toast("Resultados exportados");
+	});
+
+	$("adm-sv-csv-answers").addEventListener("click", async () => {
+		try {
+			sv.responses = (await api("encuesta?vista=respuestas")).responses;
+		} catch (err) {
+			svFailed(err, "No se pudieron cargar las respuestas.");
+			return;
+		}
+		if (!sv.responses.length) return toast("Todavía no hay respuestas.", true);
+		const header = ["Respuesta", "Curso", "Grupo", "Proyecto", "Motivo", "Qué mejoraría o añadiría", "Fecha"];
+		const rows = sv.responses.map((r) => [svRef(r.id), r.course + ".º DBH", r.grp, SV_CHOICES[r.choice] || r.choice, r.reason, r.improvement, r.received_on]);
+		svDownloadCsv("respuestas", [header, ...rows]);
+		toast(rows.length + " respuestas exportadas");
+	});
+
 	// ---------- Accounts ----------
 
 	const us = { list: [], query: "" };
@@ -1893,12 +2459,14 @@ export function getStaticPaths() {
 		const isTickets = tab === "tickets";
 		const isUsers = tab === "users";
 		const isGames = tab === "games";
-		$("adm-inbox").hidden = isSecurity || isSettings || isTickets || isUsers || isGames;
+		const isSurvey = tab === "survey";
+		$("adm-inbox").hidden = isSecurity || isSettings || isTickets || isUsers || isGames || isSurvey;
 		$("adm-security").hidden = !isSecurity;
 		$("adm-settings").hidden = !isSettings;
 		$("adm-tickets").hidden = !isTickets;
 		$("adm-users").hidden = !isUsers;
 		$("adm-games").hidden = !isGames;
+		$("adm-survey").hidden = !isSurvey;
 		if (!isTickets || !keepThread) showTicketList();
 		renderTabs();
 		try {
@@ -1914,6 +2482,11 @@ export function getStaticPaths() {
 				await loadUsers();
 			} else if (isGames) {
 				await loadGamesAdmin();
+			} else if (isSurvey) {
+				if (!keepThread) showSurveyList(false);
+				await loadSurvey();
+				renderSurveyResults();
+				if (!$("adm-sv-list").hidden) await loadSurveyResponses();
 			} else {
 				renderFilter();
 				$("adm-list").replaceChildren(el("div", "adm-skeleton"), el("div", "adm-skeleton"));

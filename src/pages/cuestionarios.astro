@@ -1,0 +1,299 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/account.css";
+
+const choices = [
+	{ value: "securiteu", icon: "🛡️", title: "SecuritEU", text: "Seguridad física y digital para particulares y empresas." },
+	{ value: "euskatronix", icon: "🤖", title: "Euskatronix", text: "Entretenimiento familiar y restauración con animatrónica." },
+	{ value: "ambos", icon: "⚖️", title: "Los dos por igual" },
+];
+---
+
+<Layout title="Encuesta | SpectroDinner™" description="Encuesta sobre los proyectos SecuritEU y Euskatronix." noindex>
+
+	<main class="sv">
+
+		<header class="sv-brand">
+			<img src="/logo.png" alt="" width="36" height="36" />
+			<span>SpectroDinner Studios</span>
+		</header>
+
+		<!-- 1 · Password -->
+		<section class="acc-card sv-card" id="sv-access">
+			<span class="eyebrow">Encuesta</span>
+			<h1 tabindex="-1">¿Qué proyecto te ha gustado más?</h1>
+			<p class="sv-lead">Son 3 preguntas y tardarás un par de minutos. Para empezar, escribe la contraseña que te den en clase.</p>
+
+			<p class="acc-alert" id="sv-access-alert" role="alert" hidden></p>
+
+			<form class="acc-stack" id="sv-access-form" novalidate autocomplete="off">
+				<label class="acc-field" for="sv-password">
+					Contraseña
+					<input
+						id="sv-password"
+						class="sv-password"
+						name="clave"
+						type="text"
+						maxlength="9"
+						autocomplete="off"
+						autocapitalize="characters"
+						spellcheck="false"
+						placeholder="ABC 123"
+						required
+					/>
+				</label>
+				<button type="submit" class="btn btn-primary" id="sv-access-submit">Entrar →</button>
+			</form>
+		</section>
+
+		<!-- 2 · Questions -->
+		<section class="acc-card sv-card" id="sv-survey" hidden>
+			<span class="eyebrow">Encuesta</span>
+			<h1 tabindex="-1">Tu opinión</h1>
+			<p class="sv-lead">No te pedimos ningún dato personal. No escribas tu nombre ni el de otras personas.</p>
+
+			<form class="acc-stack" id="sv-form" novalidate autocomplete="off">
+
+				<fieldset class="acc-field">
+					<legend>1. ¿Cuál de los dos proyectos te ha gustado más?</legend>
+					<div class="acc-cats">
+						{choices.map((choice) => (
+							<label class="acc-cat">
+								<input type="radio" name="choice" value={choice.value} required />
+								<span class="acc-cat-icon" aria-hidden="true">{choice.icon}</span>
+								<strong>{choice.title}</strong>
+								{choice.text && <small>{choice.text}</small>}
+							</label>
+						))}
+					</div>
+				</fieldset>
+
+				<label class="acc-field" for="sv-reason">
+					2. ¿Por qué has elegido esa opción?
+					<textarea id="sv-reason" name="reason" rows="3" maxlength="300" autocomplete="off" required aria-describedby="sv-reason-count"></textarea>
+					<small class="sv-count" id="sv-reason-count"><span data-count>0</span> / 300</small>
+				</label>
+
+				<label class="acc-field" for="sv-improvement">
+					<span>3. ¿Qué mejorarías o añadirías? <small>(opcional)</small></span>
+					<textarea id="sv-improvement" name="improvement" rows="3" maxlength="500" autocomplete="off" aria-describedby="sv-improvement-count"></textarea>
+					<small class="sv-count" id="sv-improvement-count"><span data-count>0</span> / 500</small>
+				</label>
+
+				<p class="acc-alert" id="sv-form-alert" role="alert" hidden></p>
+
+				<button type="submit" class="btn btn-primary" id="sv-submit">Enviar respuesta →</button>
+
+			</form>
+		</section>
+
+		<!-- 3 · Sent -->
+		<section class="acc-card sv-card sv-done" id="sv-sent" hidden>
+			<span class="sv-tick" aria-hidden="true">✓</span>
+			<h1 tabindex="-1">¡Respuesta enviada!</h1>
+			<p class="sv-lead">Gracias por participar. Ya puedes cerrar esta página.</p>
+			<button type="button" class="btn btn-ghost btn-sm" id="sv-next">Va a responder otra persona</button>
+		</section>
+
+	</main>
+
+</Layout>
+
+<script>
+	import { api, ensureAccountHost, setBusy, showAlert } from "../scripts/account";
+
+	// The GitHub Pages copy has no backend for this: it lives on the main site.
+	ensureAccountHost();
+
+	const MESSAGES: Record<string, string> = {
+		invalid_password: "Esa contraseña no es correcta. Revísala y vuelve a probar.",
+		password_used: "Esa contraseña ya no vale. Pide la nueva.",
+		rate_limited: "Demasiados intentos seguidos. Espera unos minutos.",
+		session_expired: "Se ha acabado el tiempo para responder. Pide una contraseña nueva: lo que has escrito sigue aquí.",
+		choice_invalid: "Elige una opción en la pregunta 1.",
+		reason_invalid: "En la pregunta 2, escribe el motivo (entre 3 y 300 caracteres).",
+		improvement_invalid: "La pregunta 3 admite como máximo 500 caracteres.",
+		unavailable: "La encuesta no está disponible ahora mismo.",
+		network: "No se ha podido conectar. Revisa tu conexión.",
+	};
+
+	const message = (code: unknown) => document.createTextNode(MESSAGES[String(code)] ?? "Algo ha salido mal. Vuelve a probar.");
+
+	const access = document.getElementById("sv-access")!;
+	const survey = document.getElementById("sv-survey")!;
+	const sent = document.getElementById("sv-sent")!;
+	const accessForm = document.getElementById("sv-access-form") as HTMLFormElement;
+	const accessAlert = document.getElementById("sv-access-alert")!;
+	const form = document.getElementById("sv-form") as HTMLFormElement;
+	const formAlert = document.getElementById("sv-form-alert")!;
+
+	const show = (screen: HTMLElement) => {
+		for (const part of [access, survey, sent]) part.hidden = part !== screen;
+		window.scrollTo(0, 0);
+		screen.querySelector("h1")?.focus();
+	};
+
+	const syncCounts = () => {
+		for (const [input, counter] of [["sv-reason", "sv-reason-count"], ["sv-improvement", "sv-improvement-count"]]) {
+			const length = (document.getElementById(input) as HTMLTextAreaElement).value.length;
+			document.querySelector(`#${counter} [data-count]`)!.textContent = String(length);
+		}
+	};
+
+	form.addEventListener("input", syncCounts);
+
+	accessForm.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const input = document.getElementById("sv-password") as HTMLInputElement;
+		const button = document.getElementById("sv-access-submit") as HTMLButtonElement;
+
+		if (!input.value.trim()) {
+			showAlert(accessAlert, message("invalid_password"));
+			input.focus();
+			return;
+		}
+
+		setBusy(button, true);
+		const result = await api("/api/encuesta/acceso", { password: input.value });
+		setBusy(button, false);
+
+		if (!result.ok) {
+			showAlert(accessAlert, message(result.data.error));
+			input.select();
+			return;
+		}
+
+		showAlert(accessAlert, null);
+		accessForm.reset();
+		show(survey);
+	});
+
+	form.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const button = document.getElementById("sv-submit") as HTMLButtonElement;
+		const data = new FormData(form);
+		const answer = {
+			choice: String(data.get("choice") || ""),
+			reason: String(data.get("reason") || "").trim(),
+			improvement: String(data.get("improvement") || "").trim(),
+		};
+
+		// Same rules as the server, to answer at once.
+		const problem = !answer.choice ? "choice_invalid" : answer.reason.length < 3 ? "reason_invalid" : "";
+		if (problem) {
+			showAlert(formAlert, message(problem));
+			return;
+		}
+
+		setBusy(button, true);
+		const result = await api("/api/encuesta/responder", answer);
+		setBusy(button, false);
+
+		if (result.ok) {
+			showAlert(formAlert, null);
+			form.reset();
+			syncCounts();
+			show(sent);
+		} else if (result.status === 401) {
+			showAlert(accessAlert, message("session_expired"));
+			show(access);
+		} else {
+			showAlert(formAlert, message(result.data.error));
+		}
+	});
+
+	document.getElementById("sv-next")!.addEventListener("click", () => show(access));
+
+	// Coming back to a session still open (after a reload, for example).
+	api<{ session: boolean }>("/api/encuesta/acceso").then(({ ok, data }) => {
+		if (!ok) showAlert(accessAlert, message(data.error ?? "unavailable"));
+		else if (data.session) show(survey);
+	});
+</script>
+
+<style>
+
+.sv {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 22px;
+
+	min-height: 100svh;
+	padding: 32px 16px 56px;
+}
+
+.sv [hidden] {
+	display: none !important;
+}
+
+.sv-brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+
+	font-family: var(--font-display);
+	font-weight: 700;
+	letter-spacing: .03em;
+}
+
+.sv-card {
+	width: 100%;
+	max-width: 620px;
+}
+
+.sv-card h1 {
+	font-size: clamp(1.5rem, 5vw, 2rem);
+	font-weight: 700;
+	line-height: 1.2;
+	outline: none;
+}
+
+.sv-lead {
+	line-height: 1.6;
+	color: var(--text-muted);
+}
+
+/* One option per line reads best at any width. */
+.sv .acc-cats {
+	grid-template-columns: 1fr;
+}
+
+.sv .acc-field textarea {
+	min-height: 96px;
+}
+
+.sv .sv-password {
+	font-family: var(--font-display);
+	font-size: 1.5rem;
+	font-weight: 700;
+	letter-spacing: .2em;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.sv-count {
+	text-align: right;
+}
+
+.sv-done {
+	align-items: center;
+	text-align: center;
+}
+
+.sv-tick {
+	display: grid;
+	place-items: center;
+
+	width: 64px;
+	height: 64px;
+
+	font-size: 2rem;
+	color: #06281b;
+
+	background: var(--emerald);
+	border-radius: 50%;
+	box-shadow: 0 0 24px color-mix(in srgb, var(--emerald) 50%, transparent);
+}
+
+</style>
